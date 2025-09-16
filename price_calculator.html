@@ -1,0 +1,406 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Garden Room Price Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="A shareable, single-file price calculator for garden rooms. Adjust the config to match your pricing and share the link—no backend required." />
+  <style>
+    /* Print-friendly */
+    @media print {
+      .no-print { display: none !important; }
+      .print-block { display: block !important; }
+    }
+    .number-input::-webkit-outer-spin-button, .number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">Garden Room Price Calculator</h1>
+        <p class="text-slate-600">Single-file, shareable. Adjust inputs and send the link to clients.</p>
+      </div>
+      <div class="flex items-center gap-2 no-print">
+        <select id="currency" class="px-3 py-2 rounded-xl border border-slate-300 bg-white shadow-sm">
+          <option value="EUR">€ EUR</option>
+          <option value="GBP">£ GBP</option>
+        </select>
+        <button id="shareBtn" class="px-4 py-2 rounded-xl bg-slate-900 text-white shadow hover:bg-slate-800">Copy shareable link</button>
+        <button id="printBtn" class="px-4 py-2 rounded-xl border border-slate-300 bg-white shadow hover:bg-slate-100">Print / Save PDF</button>
+      </div>
+    </header>
+
+    <!-- Config panel (edit defaults here) -->
+    <details class="mt-4 no-print">
+      <summary class="cursor-pointer text-sm text-slate-600">Pricing config (internal): tweak default rates</summary>
+      <div class="grid md:grid-cols-3 gap-4 mt-3 text-sm">
+        <label class="block">Base rate €/m²
+          <input type="number" step="1" id="cfg_baseRate" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Insulation (Standard) €/m²
+          <input type="number" step="1" id="cfg_insulStd" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Insulation (Premium) €/m²
+          <input type="number" step="1" id="cfg_insulPrem" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Foundation (Ground Screws) €/m²
+          <input type="number" step="1" id="cfg_foundScrews" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Foundation (Concrete) €/m²
+          <input type="number" step="1" id="cfg_foundConcrete" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Delivery free radius (km)
+          <input type="number" step="1" id="cfg_freeKm" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Delivery rate €/km beyond
+          <input type="number" step="1" id="cfg_ratePerKm" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">VAT %
+          <input type="number" step="0.1" id="cfg_vat" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Discount % (default 0)
+          <input type="number" step="0.5" id="cfg_discount" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+      </div>
+    </details>
+
+    <main class="mt-6 grid md:grid-cols-2 gap-6">
+      <!-- Left: Inputs -->
+      <section class="bg-white rounded-2xl shadow p-4 md:p-6">
+        <h2 class="text-xl font-semibold mb-4">Project details</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <label class="block col-span-1">Width (m)
+            <input type="number" step="0.1" id="width" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+          </label>
+          <label class="block col-span-1">Depth (m)
+            <input type="number" step="0.1" id="depth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+          </label>
+          <label class="block col-span-2">Ceiling height (m)
+            <input type="number" step="0.1" id="height" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+          </label>
+          <label class="block col-span-2">Cladding
+            <select id="cladding" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300">
+              <option value="standard">Standard</option>
+              <option value="cedar">Cedar (+12%)</option>
+              <option value="composite">Composite (+8%)</option>
+            </select>
+          </label>
+          <label class="block col-span-2">Insulation
+            <select id="insulation" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300">
+              <option value="std">Standard</option>
+              <option value="prem">Premium</option>
+            </select>
+          </label>
+          <label class="block col-span-2">Foundation
+            <select id="foundation" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300">
+              <option value="screws">Ground Screws</option>
+              <option value="concrete">Concrete Slab</option>
+              <option value="existing">Existing / By Client (0)</option>
+            </select>
+          </label>
+          <label class="block col-span-2">Electrical Pack
+            <select id="electrical" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300">
+              <option value="basic">Basic (6 sockets, 4 spots, DB)</option>
+              <option value="plus">Plus (adds external lights)</option>
+              <option value="pro">Pro (smart controls)</option>
+              <option value="none">None</option>
+            </select>
+          </label>
+          <label class="block col-span-2">Glazing
+            <select id="glazing" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300">
+              <option value="standard">Standard (1 door, 1 window)</option>
+              <option value="panoramic">Panoramic sliders</option>
+              <option value="bi-fold">Bi-fold doors</option>
+              <option value="minimal">Minimal (door only)</option>
+            </select>
+          </label>
+          <label class="block col-span-2">Roofing
+            <select id="roof" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300">
+              <option value="epdm">EPDM (included)</option>
+              <option value="steel">Steel profile (+€20/m²)</option>
+              <option value="sedum">Sedum green roof (+€60/m²)</option>
+            </select>
+          </label>
+          <label class="block col-span-2">Delivery distance from base (km)
+            <input type="number" step="1" id="distance" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+          </label>
+          <label class="block col-span-2">Extras (description)
+            <input type="text" id="extrasDesc" placeholder="e.g., internal partition, decking" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+          </label>
+          <label class="block col-span-2">Extras (amount)
+            <input type="number" step="1" id="extrasAmt" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+          </label>
+        </div>
+      </section>
+
+      <!-- Right: Summary -->
+      <section class="bg-white rounded-2xl shadow p-4 md:p-6">
+        <h2 class="text-xl font-semibold mb-4">Estimate</h2>
+        <div id="summary" class="space-y-3"></div>
+        <div class="mt-6 grid md:grid-cols-2 gap-3">
+          <div class="bg-slate-50 rounded-xl p-4">
+            <p class="text-sm text-slate-600">Notes (shows on print/share)</p>
+            <textarea id="notes" rows="5" class="w-full mt-2 px-3 py-2 rounded-xl border border-slate-300" placeholder="Lead time, inclusions/exclusions, planning notes…"></textarea>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-4">
+            <p class="text-sm text-slate-600">Quote details</p>
+            <label class="block mt-2 text-sm">Client name
+              <input id="clientName" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+            </label>
+            <label class="block mt-2 text-sm">Quote ID
+              <input id="quoteId" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+            </label>
+            <label class="block mt-2 text-sm">Discount % (optional)
+              <input type="number" step="0.5" id="discountPct" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+            </label>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-8 text-center text-xs text-slate-500">
+      <p class="print-block hidden">Generated by the Garden Room Price Calculator</p>
+      <p class="no-print">This is a static, shareable tool. Host it anywhere that serves a single HTML file.</p>
+    </footer>
+  </div>
+
+  <script>
+    // --- Configurable pricing defaults ---
+    const defaults = {
+      currency: 'EUR',
+      baseRatePerM2: 1450,       // base build €/m²
+      insulationStdPerM2: 45,
+      insulationPremPerM2: 85,
+      foundationScrewsPerM2: 80,
+      foundationConcretePerM2: 130,
+      electrical: { none: 0, basic: 950, plus: 1400, pro: 2200 },
+      glazing: { minimal: 600, standard: 1800, panoramic: 3800, 'bi-fold': 5200 },
+      roofingExtraPerM2: { epdm: 0, steel: 20, sedum: 60 },
+      claddingMultiplier: { standard: 1.00, cedar: 1.12, composite: 1.08 },
+      deliveryFreeKm: 30,
+      deliveryRatePerKm: 2.2,    // €/km beyond free radius
+      vatPct: 13.5,
+      discountPct: 0
+    };
+
+    // --- Helpers ---
+    const qs = (sel) => document.querySelector(sel);
+    const fmtCurrency = (v) => {
+      const cur = qs('#currency').value;
+      const sym = cur === 'GBP' ? '£' : '€';
+      return sym + new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(v);
+    };
+
+    function areaM2() {
+      const w = parseFloat(qs('#width').value) || 0;
+      const d = parseFloat(qs('#depth').value) || 0;
+      return Math.max(0, w * d);
+    }
+
+    function roofAreaM2() {
+      // Simple: roof area ~= floor area. Add small factor if depth > 4m to approximate overhang.
+      const a = areaM2();
+      const d = parseFloat(qs('#depth').value) || 0;
+      return a * (d > 4 ? 1.03 : 1.0);
+    }
+
+    function compute() {
+      const a = areaM2();
+      const roofA = roofAreaM2();
+
+      const baseRate = parseFloat(qs('#cfg_baseRate').value) || defaults.baseRatePerM2;
+      const insStd = parseFloat(qs('#cfg_insulStd').value) || defaults.insulationStdPerM2;
+      const insPrem = parseFloat(qs('#cfg_insulPrem').value) || defaults.insulationPremPerM2;
+      const foundS = parseFloat(qs('#cfg_foundScrews').value) || defaults.foundationScrewsPerM2;
+      const foundC = parseFloat(qs('#cfg_foundConcrete').value) || defaults.foundationConcretePerM2;
+      const freeKm = parseFloat(qs('#cfg_freeKm').value) || defaults.deliveryFreeKm;
+      const rateKm = parseFloat(qs('#cfg_ratePerKm').value) || defaults.deliveryRatePerKm;
+      const vatPct = parseFloat(qs('#cfg_vat').value) || defaults.vatPct;
+      const defaultDiscountPct = parseFloat(qs('#cfg_discount').value) || defaults.discountPct;
+
+      const cladding = qs('#cladding').value;
+      const insulation = qs('#insulation').value;
+      const foundation = qs('#foundation').value;
+      const electrical = qs('#electrical').value;
+      const glazing = qs('#glazing').value;
+      const roof = qs('#roof').value;
+      const distance = parseFloat(qs('#distance').value) || 0;
+      const extrasAmt = parseFloat(qs('#extrasAmt').value) || 0;
+
+      // Line items
+      const base = a * baseRate * (defaults.claddingMultiplier[cladding] || 1);
+      const insulationCost = a * (insulation === 'prem' ? insPrem : insStd);
+      const foundationCost = a * (foundation === 'screws' ? foundS : foundation === 'concrete' ? foundC : 0);
+      const electricalCost = defaults.electrical[electrical] || 0;
+      const glazingCost = defaults.glazing[glazing] || 0;
+      const roofingExtra = roofA * (defaults.roofingExtraPerM2[roof] || 0);
+      const deliveryExtraKm = Math.max(0, distance - freeKm);
+      const deliveryCost = deliveryExtraKm * rateKm;
+
+      let subtotal = base + insulationCost + foundationCost + electricalCost + glazingCost + roofingExtra + deliveryCost + extrasAmt;
+
+      const discountPct = parseFloat(qs('#discountPct').value);
+      const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
+      const discountAmt = subtotal * (appliedDiscountPct / 100);
+
+      const net = subtotal - discountAmt;
+      const vat = net * (vatPct / 100);
+      const total = net + vat;
+
+      const lines = [
+        { label: `Base build (${a.toFixed(2)} m² @ ${fmtCurrency(baseRate)} /m²)`, amount: base },
+        { label: `Insulation (${insulation === 'prem' ? 'Premium' : 'Standard'})`, amount: insulationCost },
+        { label: `Foundation (${foundation === 'screws' ? 'Ground Screws' : foundation === 'concrete' ? 'Concrete' : 'Existing/By Client'})`, amount: foundationCost },
+        { label: `Electrical (${electrical})`, amount: electricalCost },
+        { label: `Glazing (${glazing})`, amount: glazingCost },
+        { label: `Roofing upgrade (${roof})`, amount: roofingExtra },
+        { label: deliveryExtraKm > 0 ? `Delivery (${deliveryExtraKm} km beyond ${freeKm} km)` : 'Delivery (within free radius)', amount: deliveryCost },
+      ];
+      if (extrasAmt > 0) {
+        const desc = qs('#extrasDesc').value?.trim();
+        lines.push({ label: `Extras${desc ? `: ${desc}` : ''}`, amount: extrasAmt });
+      }
+
+      renderSummary({ a, lines, subtotal, discountPct: appliedDiscountPct, discountAmt, net, vatPct, vat, total });
+      updateUrlParams();
+      persistToLocalStorage();
+    }
+
+    function renderSummary(model) {
+      const s = qs('#summary');
+      s.innerHTML = '';
+      const grid = document.createElement('div');
+      grid.className = 'divide-y divide-slate-200 rounded-xl border border-slate-200 overflow-hidden';
+
+      model.lines.forEach(line => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between px-4 py-3 bg-white';
+        row.innerHTML = `<span class="text-sm">${line.label}</span><span class="font-medium">${fmtCurrency(line.amount)}</span>`;
+        grid.appendChild(row);
+      });
+
+      const sub = document.createElement('div');
+      sub.className = 'flex items-center justify-between px-4 py-3 bg-slate-50';
+      sub.innerHTML = `<span class="text-sm">Subtotal</span><span class="font-medium">${fmtCurrency(model.subtotal)}</span>`;
+
+      const disc = document.createElement('div');
+      disc.className = 'flex items-center justify-between px-4 py-3 bg-white';
+      disc.innerHTML = `<span class="text-sm">Discount (${model.discountPct.toFixed(1)}%)</span><span class="font-medium">- ${fmtCurrency(model.discountAmt)}</span>`;
+
+      const net = document.createElement('div');
+      net.className = 'flex items-center justify-between px-4 py-3 bg-slate-50';
+      net.innerHTML = `<span class="text-sm">Net</span><span class="font-medium">${fmtCurrency(model.net)}</span>`;
+
+      const vat = document.createElement('div');
+      vat.className = 'flex items-center justify-between px-4 py-3 bg-white';
+      vat.innerHTML = `<span class="text-sm">VAT (${model.vatPct.toFixed(1)}%)</span><span class="font-medium">${fmtCurrency(model.vat)}</span>`;
+
+      const total = document.createElement('div');
+      total.className = 'flex items-center justify-between px-4 py-4 bg-slate-900 text-white';
+      total.innerHTML = `<span class="text-base font-semibold tracking-wide">Total (incl. VAT)</span><span class="text-lg font-bold">${fmtCurrency(model.total)}</span>`;
+
+      s.appendChild(grid);
+      s.appendChild(sub);
+      s.appendChild(disc);
+      s.appendChild(net);
+      s.appendChild(vat);
+      s.appendChild(total);
+    }
+
+    function updateUrlParams() {
+      const params = new URLSearchParams();
+      ['width','depth','height','cladding','insulation','foundation','electrical','glazing','roof','distance','extrasDesc','extrasAmt','clientName','quoteId','notes','discountPct'].forEach(id => {
+        const el = qs('#' + id);
+        if (!el) return;
+        const val = el.value;
+        if (val !== '' && val != null) params.set(id, val);
+      });
+      params.set('currency', qs('#currency').value);
+      // Config
+      [['cfg_baseRate','baseRatePerM2'], ['cfg_insulStd','insStd'], ['cfg_insulPrem','insPrem'], ['cfg_foundScrews','foundS'], ['cfg_foundConcrete','foundC'], ['cfg_freeKm','freeKm'], ['cfg_ratePerKm','rateKm'], ['cfg_vat','vat'], ['cfg_discount','disc']]
+        .forEach(([id,key]) => { const v = qs('#'+id).value; if (v) params.set(key, v); });
+
+      const newUrl = location.pathname + '?' + params.toString();
+      history.replaceState(null, '', newUrl);
+    }
+
+    function loadFromUrlParams() {
+      const params = new URLSearchParams(location.search);
+      const setIf = (id, key=id) => { if (params.has(key)) qs('#'+id).value = params.get(key); };
+      ['width','depth','height','cladding','insulation','foundation','electrical','glazing','roof','distance','extrasDesc','extrasAmt','clientName','quoteId','notes','discountPct'].forEach(id => setIf(id));
+      setIf('currency','currency');
+      // Config
+      const cfgMap = {
+        cfg_baseRate: 'baseRatePerM2', cfg_insulStd: 'insStd', cfg_insulPrem: 'insPrem',
+        cfg_foundScrews: 'foundS', cfg_foundConcrete: 'foundC', cfg_freeKm: 'freeKm', cfg_ratePerKm: 'rateKm', cfg_vat: 'vat', cfg_discount: 'disc'
+      };
+      Object.entries(cfgMap).forEach(([id,key]) => setIf(id,key));
+    }
+
+    function persistToLocalStorage() {
+      const data = {};
+      ['width','depth','height','cladding','insulation','foundation','electrical','glazing','roof','distance','extrasDesc','extrasAmt','clientName','quoteId','notes','discountPct','currency','cfg_baseRate','cfg_insulStd','cfg_insulPrem','cfg_foundScrews','cfg_foundConcrete','cfg_freeKm','cfg_ratePerKm','cfg_vat','cfg_discount']
+        .forEach(id => data[id] = qs('#'+id).value);
+      localStorage.setItem('gr_calc', JSON.stringify(data));
+    }
+
+    function loadFromLocalStorage() {
+      try {
+        const data = JSON.parse(localStorage.getItem('gr_calc') || '{}');
+        Object.entries(data).forEach(([id,val]) => { const el = qs('#'+id); if (el && val != null) el.value = val; });
+      } catch {}
+    }
+
+    function initDefaults() {
+      // Inputs sensible defaults
+      qs('#width').value = 4;
+      qs('#depth').value = 3;
+      qs('#height').value = 2.5;
+      qs('#distance').value = 10;
+      qs('#discountPct').value = '';
+      qs('#extrasAmt').value = '';
+      qs('#currency').value = defaults.currency;
+      // Config defaults
+      qs('#cfg_baseRate').value = defaults.baseRatePerM2;
+      qs('#cfg_insulStd').value = defaults.insulationStdPerM2;
+      qs('#cfg_insulPrem').value = defaults.insulationPremPerM2;
+      qs('#cfg_foundScrews').value = defaults.foundationScrewsPerM2;
+      qs('#cfg_foundConcrete').value = defaults.foundationConcretePerM2;
+      qs('#cfg_freeKm').value = defaults.deliveryFreeKm;
+      qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
+      qs('#cfg_vat').value = defaults.vatPct;
+      qs('#cfg_discount').value = defaults.discountPct;
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(location.href).then(() => {
+        const btn = qs('#shareBtn');
+        const old = btn.textContent;
+        btn.textContent = 'Link copied!';
+        setTimeout(()=>btn.textContent=old, 1200);
+      }).catch(()=>{
+        alert('Could not copy. Manually copy the URL from the address bar.');
+      });
+    }
+
+    // Events
+    ['input','change'].forEach(ev => {
+      document.body.addEventListener(ev, (e) => {
+        const id = e.target?.id;
+        if (!id) return;
+        compute();
+      });
+    });
+
+    qs('#shareBtn').addEventListener('click', copyLink);
+    qs('#printBtn').addEventListener('click', ()=>window.print());
+
+    // Boot
+    initDefaults();
+    loadFromLocalStorage();
+    loadFromUrlParams();
+    compute();
+  </script>
+</body>
+</html>
