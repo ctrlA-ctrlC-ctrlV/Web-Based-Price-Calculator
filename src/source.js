@@ -1,3 +1,5 @@
+import { encryptJson, decryptJson } from './cryption.js'
+
 // --- Configurable pricing defaults ---
 const defaults = {
     currency: 'EUR',
@@ -440,6 +442,42 @@ function loadFromLocalStorage() {
     }
 }
 
+// -------------- URL encryption ----------------
+function currentParamsToObject() {
+  // ensure URL has the latest UI state
+  updateUrlParams();
+  const params = new URLSearchParams(location.search);
+  const obj = {};
+  for (const [k, v] of params.entries()) obj[k] = v;
+  // force client mode
+  obj.mode = 'client';
+  return obj;
+}
+
+async function copyClientLinkEncrypted() {
+  try {
+    const state = currentParamsToObject();
+    const enc = await encryptJson(state);
+    console.log(enc);
+
+    const url = new URL(location.href);
+    url.search = '';            // strip public query
+    url.hash = '#enc=' + enc;   // put encrypted payload in fragment
+
+    await navigator.clipboard.writeText(url.toString());
+
+    const btn = document.querySelector('#clientLinkBtn');
+    if (btn) {
+      const old = btn.textContent;
+      btn.textContent = 'Encrypted link copied!';
+      setTimeout(() => btn.textContent = old, 1200);
+    }
+  } catch (e) {
+    console.error('copyClientLinkEncrypted failed:', e);
+    alert('Could not create encrypted link.');
+  }
+}
+
 function initDefaults() {
     // Inputs sensible defaults
     qs('#width').value = 4;
@@ -503,11 +541,57 @@ function copyClientLink() {
 // Button wiring
 if (qs('#addWindowBtn')) qs('#addWindowBtn').addEventListener('click', () => addWindow());
 if (qs('#shareBtn')) qs('#shareBtn').addEventListener('click', copyLink);
-if (qs('#clientLinkBtn')) qs('#clientLinkBtn').addEventListener('click', copyClientLink);
+//if (qs('#clientLinkBtn')) qs('#clientLinkBtn').addEventListener('click', copyClientLink);
 if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>window.print());
 
+function wireEncryptedLinkBtn() {
+  const btn = document.querySelector('#clientLinkBtn');
+  if (btn) btn.addEventListener('click', copyClientLinkEncrypted);
+}
+
 // Boot
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const m = location.hash.match(/[#&]enc=([^&]+)/);
+        if (m && m[1]) {
+        const payload = decodeURIComponent(m[1]);
+        const dec = await decryptJson(payload);      // { ...all  params..., mode:'client' }
+
+        // Swap decrypted params into location.search so existing loaders work unchanged
+        const params = new URLSearchParams();
+        Object.entries(dec).forEach(([k, v]) => {
+            if (v != null && v !== '') params.set(k, String(v));
+        });
+        history.replaceState(null, '', location.pathname + '?' + params.toString());
+        }
+    } catch (e) {
+        console.error('Decrypt on load failed:', e);
+    }
+
+    initDefaults();
+    const loadedFromUrl = loadFromUrlParams();
+    if (!loadedFromUrl) addWindow();
+    loadFromLocalStorage();        
+    compute();
+
+    if (isClientMode()) {
+        const cfg = document.querySelector('details'); // your config <details>
+        if (cfg) cfg.remove();
+        
+        // remove internal sharebtn in client mode
+        const shareBtn = qs('#shareBtn');
+        if (shareBtn) shareBtn.style.display = 'none';
+
+        // clean the URL by dropping the fragment
+        if (location.hash) {
+        history.replaceState(null, '', location.pathname + location.search);
+        }
+    }
+
+    wireEncryptedLinkBtn();
+});
+
+/*window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
     const loadedFromUrl = loadFromUrlParams();
     if (!loadedFromUrl) addWindow();
@@ -521,4 +605,4 @@ window.addEventListener('DOMContentLoaded', () => {
         const shareBtn = qs('#shareBtn');
         if (shareBtn) shareBtn.style.display = 'none';
     }
-});
+});*/
