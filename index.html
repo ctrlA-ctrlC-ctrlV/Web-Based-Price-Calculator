@@ -26,7 +26,8 @@
           <option value="EUR">€ EUR</option>
           <option value="GBP">£ GBP</option>
         </select>
-        <button id="shareBtn" class="px-4 py-2 rounded-xl bg-slate-900 text-white shadow hover:bg-slate-800">Copy shareable link</button>
+        <button id="shareBtn" class="px-4 py-2 rounded-xl bg-slate-900 text-white shadow hover:bg-slate-800">Copy internal link</button>
+        <button id="clientLinkBtn" class="px-4 py-2 rounded-xl border border-slate-300 bg-white shadow hover:bg-slate-100">Copy client link</button>
         <button id="printBtn" class="px-4 py-2 rounded-xl border border-slate-300 bg-white shadow hover:bg-slate-100">Print / Save PDF</button>
       </div>
     </header>
@@ -297,6 +298,8 @@
 
     // --- Helpers ---
     const qs = (sel, root = document) => root.querySelector(sel);
+    const isClientMode = () => new URLSearchParams(location.search).get('mode') === 'client';
+
     const fmtCurrency = (v) => {
       const cur = qs('#currency').value;
       const sym = cur === 'GBP' ? '£' : '€';
@@ -503,6 +506,12 @@
     function updateUrlParams() {
         const params = new URLSearchParams();
 
+        // preserve client mode if present
+        const current = new URLSearchParams(location.search);
+        if (current.get('mode') === 'client') {
+          params.set('mode', 'client');
+        }
+        
         // Plain inputs (left panel + quote details)
         [
             'width','depth','cladding',
@@ -710,6 +719,7 @@
         qs('#currency').value = defaults.currency;
         // Config defaults
         qs('#cfg_baseRate').value = defaults.baseRatePerM2;
+        qs('#cfg_cladRate').value = defaults.cladRate;
         qs('#cfg_fixedCharge').value = defaults.fixedCharge;
         qs('#cfg_windowCharge').value = defaults.windowCharge;
         qs('#cfg_windowRate').value = defaults.windowRate;//
@@ -720,12 +730,35 @@
     }
 
     function copyLink() {
+      updateUrlParams();
+
       navigator.clipboard.writeText(location.href).then(() => {
         const btn = qs('#shareBtn');
         const old = btn.textContent;
         btn.textContent = 'Link copied!';
         setTimeout(()=>btn.textContent=old, 1200);
       }).catch(()=>{
+        alert('Could not copy. Manually copy the URL from the address bar.');
+      });
+    }
+
+    function copyClientLink() {
+      updateUrlParams();
+
+      const url = new URL(location.href);
+      const inParams = new URLSearchParams(url.search);
+
+      // force client mode
+      inParams.set('mode', 'client');
+
+      url.search = inParams.toString();
+
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const btn = qs('#clientLinkBtn');
+        const old = btn.textContent;
+        btn.textContent = 'Client link copied!';
+        setTimeout(() => btn.textContent = old, 1200);
+      }).catch(() => {
         alert('Could not copy. Manually copy the URL from the address bar.');
       });
     }
@@ -739,9 +772,11 @@
       });
     });
 
+    // Button wiring
     if (qs('#addWindowBtn')) qs('#addWindowBtn').addEventListener('click', () => addWindow());
-    qs('#shareBtn').addEventListener('click', copyLink);
-    qs('#printBtn').addEventListener('click', ()=>window.print());
+    if (qs('#shareBtn')) qs('#shareBtn').addEventListener('click', copyLink);
+    if (qs('#clientLinkBtn')) qs('#clientLinkBtn').addEventListener('click', copyClientLink);
+    if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>window.print());
 
     // Boot
     window.addEventListener('DOMContentLoaded', () => {
@@ -750,6 +785,14 @@
         if (!loadedFromUrl) addWindow();
         loadFromLocalStorage();        
         compute();
+
+        if (isClientMode()) {
+          const cfg = document.querySelector('details'); // your config <details>
+          if (cfg) cfg.remove();
+
+          const shareBtn = qs('#shareBtn');
+          if (shareBtn) shareBtn.style.display = 'none';
+        }
     });
   </script>
 </body>
