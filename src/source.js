@@ -170,7 +170,7 @@ function compute() {
     const total = net + vat;
 
     const lines = [
-        { label: `Base build (${a.toFixed(2)} m² @ ${fmtCurrency(baseRate)} /m²)`, amount: base },
+        { label: `Base build (${a.toFixed(2)} m²`, amount: base },
         { label: `Cladding (${cladSize.toFixed(2)} m²)`, amount: cladCost },
         { label: `Bathrooms`, amount: bathCost },
         { label: `Electrical`, amount: eleCost },
