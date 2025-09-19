@@ -13,7 +13,6 @@ const defaults = {
     doubeSocket: 60,
     innerDoorChar: 500,
     innerWallType: { none: 0, inner_wall_type_p: 200, inner_wall_type_s:300 },
-    ex_door: { minimal: 600, standard: 1800, panoramic: 3800, 'bi-fold': 5200 },
     floor: { none: 0, wooden: 40, tile: 60},
     deliveryFreeKm: 30,
     deliveryRatePerKm: 2.2,    // €/km beyond free radius
@@ -130,7 +129,7 @@ function compute() {
     const innerDoor = qs('#inner_door').value || 0;
     const innerWallType = qs('#inner_wall_type').value;
     const innerWallQuan = qs('#wall_quan').value || 0;
-    const exDoor = qs('#ex_door').value;
+    //const exDoor = qs('#ex_door').value;
     const floorType = qs('#floor_type').value;
     const floorSize = qs('#floor_size').value || 0;
     const distance = parseFloat(qs('#distance').value) || 0;
@@ -146,7 +145,7 @@ function compute() {
     const innerDoorCost = innerDoor * defaults.innerDoorChar;
     const innerWallCost = defaults.innerWallType[innerWallType] * innerWallQuan;
     const windowCost = getWinData();
-    const exterDoorCost = defaults.ex_door[exDoor];
+    //const exterDoorCost = defaults.ex_door[exDoor];
     const floorCost = defaults.floor[floorType] * floorSize; //floor type * floor size
     const deliveryExtraKm = Math.max(0, distance - freeKm);;
     const deliverCost = deliveryExtraKm * rateKm;
@@ -157,7 +156,7 @@ function compute() {
     const ex_steelDoorCost = steelDoor * defaults.ex_steelDoorCharge;
 
     // Total Calculation
-    let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exterDoorCost + floorCost + deliverCost;
+    let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + floorCost + deliverCost;
     let extraSubtotal  = ex_espCost + ex_renderCost + ex_steelDoorCost;
     let subtotal = noneExtraSubtotal + extraSubtotal;
 
@@ -177,7 +176,7 @@ function compute() {
         { label: `Internal doors`, amount: innerDoorCost },
         { label: `Internal walls`, amount: innerWallCost },
         { label: `Windows`, amount: windowCost },
-        { label: `External door`, amount: exterDoorCost },
+        //{ label: `External door`, amount: exterDoorCost },
         { label: `Flooring`, amount: floorCost },
         { label: deliveryExtraKm > 0 ? `Delivery (${deliveryExtraKm} km beyond ${freeKm} km)` : 'Delivery (within free radius)', amount: deliverCost },
     ];
@@ -246,7 +245,7 @@ function updateUrlParams() {
         'bathroom_1','bathroom_2',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
-        'ex_door',
+        //'ex_door',
         'floor_type','floor_size',
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
@@ -322,7 +321,6 @@ function loadFromUrlParams() {
         'bathroom_1','bathroom_2',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
-        'ex_door',
         'floor_type','floor_size',
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
@@ -382,7 +380,6 @@ function persistToLocalStorage() {
         'bathroom_1','bathroom_2',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
-        'ex_door',
         'floor_type','floor_size',
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
@@ -510,7 +507,7 @@ if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>window.print(
 window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
     const loadedFromUrl = loadFromUrlParams();
-    if (!loadedFromUrl) addWindow();
+    if (!loadedFromUrl) addWindow(); //Bug fix request: when page load no window is created
     loadFromLocalStorage();        
     compute();
 
