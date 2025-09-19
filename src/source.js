@@ -100,7 +100,10 @@ function addWindow(prefill = { width: '', height: '' }) {
         hEl.addEventListener(ev, compute);
     });
 
-    rmBtn.addEventListener('click', () => { node.remove(); });
+    rmBtn.addEventListener('click', () => { 
+        node.remove(); 
+        compute();
+    });
 
     list.appendChild(node);
     compute();
@@ -423,7 +426,7 @@ function loadFromLocalStorage() {
         });
 
         // Windows restore
-        if (Array.isArray(data.windows)) {
+        if (Array.isArray(data.windows) && data.windows.length > 0) {
         const list = qs('#windowsList');
         if (list) list.innerHTML = '';
         data.windows.forEach(win => {
@@ -488,6 +491,12 @@ function copyClientLink() {
     });
 }
 
+function ensureAtLeastOneWindowRow() {
+  const list = qs('#windowsList');
+  if (!list) return;
+  if (list.children.length === 0) addWindow();
+}
+
 // Events: User input
 ['input','change'].forEach(ev => {
     document.body.addEventListener(ev, (e) => {
@@ -506,10 +515,11 @@ if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>window.print(
 // Boot
 window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
+    ensureAtLeastOneWindowRow();
     const loadedFromUrl = loadFromUrlParams();
     if (!loadedFromUrl) addWindow(); //Bug fix request: when page load no window is created
     loadFromLocalStorage();        
-    compute();
+    compute();    
 
     if (isClientMode()) {
         const cfg = document.querySelector('details'); // your config <details>
