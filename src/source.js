@@ -318,7 +318,6 @@ function updateUrlParams() {
         'bathroom_1','bathroom_2',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
-        //'ex_door',
         'floor_type','floor_size',
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
@@ -353,10 +352,10 @@ function updateUrlParams() {
     });
 
     // Windows: serialize as "w1x h1,w2x h2,..."
-    const list = qs('#windowsList');
-    if (list) {
+    const winlist = qs('#windowsList');
+    if (winlist) {
         const parts = [];
-        [...list.children].forEach(row => {
+        [...winlist.children].forEach(row => {
         const wEl = row.querySelector('[data-field="width"]');
         const hEl = row.querySelector('[data-field="height"]');
         const w = parseFloat(wEl?.value) || 0;
@@ -365,6 +364,21 @@ function updateUrlParams() {
         });
         if (parts.length) params.set('windows', parts.join(','));
         else params.delete('windows');
+    }
+
+    // door: serialize as "w1x h1,w2x h2,..."
+    const exDoorlist = qs('#EXDoorsList');
+    if (exDoorlist) {
+        const parts = [];
+        [...exDoorlist.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        const w = parseFloat(wEl?.value) || 0;
+        const h = parseFloat(hEl?.value) || 0;
+        if (w > 0 && h > 0) parts.push(`${w}x${h}`);
+        });
+        if (parts.length) params.set('exDoors', parts.join(','));
+        else params.delete('exDoors');
     }
 
     const newUrl = location.pathname + '?' + params.toString();
@@ -442,6 +456,31 @@ function loadFromUrlParams() {
             });
         }
     }
+
+    // exDoors: parse "w1xh1,w2xh2,..."
+    if (params.has('exDoors')) {
+        const str = params.get('exDoors') || '';
+        const pairs = str.split(',').map(s => s.trim()).filter(Boolean);
+
+        const list = qs('#EXDoorsList');
+        if (!list) {
+            console.warn('[load:url] #EXDoorsList not found; exDoors skipped');
+        } else {
+            list.innerHTML = ''; // clear existing rows
+            pairs.forEach(p => {
+                const [wStr, hStr] = p.split('x');
+                const w = parseFloat(wStr);
+                const h = parseFloat(hStr);
+                if (isFinite(w) && isFinite(h) && w > 0 && h > 0) {
+                    if (typeof addEXDoor === 'function') {
+                        addEXDoor({ width: w, height: h });
+                    } else {
+                        console.warn('[load:url] addWindow() not available yet');
+                    }
+                }
+            });
+        }
+    }
 }
 
 function persistToLocalStorage() {
@@ -468,10 +507,10 @@ function persistToLocalStorage() {
     });
 
     // Windows array: [ {width: 1.2, height: 1.0}, ... ]
-    const list = qs('#windowsList');
-    if (list) {
+    const winlist = qs('#windowsList');
+    if (winlist) {
         const arr = [];
-        [...list.children].forEach(row => {
+        [...winlist.children].forEach(row => {
         const wEl = row.querySelector('[data-field="width"]');
         const hEl = row.querySelector('[data-field="height"]');
         const w = parseFloat(wEl?.value) || 0;
@@ -479,6 +518,20 @@ function persistToLocalStorage() {
         if (w > 0 && h > 0) arr.push({ width: w, height: h });
         });
         data.windows = arr;
+    }
+
+    // exDoors array: [ {width: 1.2, height: 1.0}, ... ]
+    const exDoorlist = qs('#EXDoorsList');
+    if (exDoorlist) {
+        const arr = [];
+        [...exDoorlist.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        const w = parseFloat(wEl?.value) || 0;
+        const h = parseFloat(hEl?.value) || 0;
+        if (w > 0 && h > 0) arr.push({ width: w, height: h });
+        });
+        data.exDoors = arr;
     }
 
     localStorage.setItem('gr_calc', JSON.stringify(data));
@@ -490,20 +543,32 @@ function loadFromLocalStorage() {
 
         // Plain inputs
         Object.entries(data).forEach(([id, val]) => {
-        if (id === 'windows') return; // handled separately
-        const el = qs('#' + id);
-        if (el && val != null) el.value = val;
+            if (id === 'windows') return; // handled separately
+            if (id === 'exdoors') return;
+            const el = qs('#' + id);
+            if (el && val != null) el.value = val;
         });
 
         // Windows restore
         if (Array.isArray(data.windows) && data.windows.length > 0) {
-        const list = qs('#windowsList');
-        if (list) list.innerHTML = '';
-        data.windows.forEach(win => {
-            if (isFinite(win.width) && isFinite(win.height)) {
-            addWindow({ width: win.width, height: win.height });
-            }
-        });
+            const winlist = qs('#windowsList');
+            if (winlist) winlist.innerHTML = '';
+            data.windows.forEach(win => {
+                if (isFinite(win.width) && isFinite(win.height)) {
+                addWindow({ width: win.width, height: win.height });
+                }
+            });
+        }
+
+        // exdoors restore
+        if (Array.isArray(data.exDoors) && data.exDoors.length > 0) {
+            const exDoorlist = qs('#EXDoorsList');
+            if (exDoorlist) exDoorlist.innerHTML = '';
+            data.exDoors.forEach(exdoor => {
+                if (isFinite(exdoor.width) && isFinite(exdoor.height)) {
+                addEXDoor({ width: exdoor.width, height: exdoor.height });
+                }
+            });
         }
     } catch (err) {
         console.error('Error loading localStorage:', err);
