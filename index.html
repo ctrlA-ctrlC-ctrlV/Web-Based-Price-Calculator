@@ -51,6 +51,12 @@
         <label class="block">Window rate €/m²
           <input type="number" step="1" id="cfg_windowRate" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">External Door Fixed Fee
+          <input type="number" step="1" id="cfg_EXDoorCharge" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">External Door €/m²
+          <input type="number" step="1" id="cfg_EXDoorRate" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
         <label class="block">Delivery free radius (km)
           <input type="number" step="1" id="cfg_freeKm" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
@@ -142,10 +148,10 @@
             <!-- Windows Module -->
             <section class="col-span-2">
             <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-medium">Windows & Door</h3>
+                <h3 class="text-lg font-medium">Windows</h3>
                 <button id="addWindowBtn"
                 class="no-print px-3 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800">
-                + Add window/door
+                + Add window
                 </button>
             </div>
 
@@ -175,16 +181,43 @@
             </div>
             </template>
             <p style="margin-bottom: 2px;"></p>
-            
-            <!--Door
-            <label class="block col-span-2">External Door
-                <select id="ex_door" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300">
-                    <option value="minimal">Minimal (door only)</option>
-                    <option value="bi-fold">Bi-fold doors</option>
-                    <option value="panoramic">Panoramic sliders</option>
-                </select>
-            </label>
-            <p style="margin-bottom: 20px;"></p>-->
+          
+            <!-- Door Module -->
+            <section class="col-span-2">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-medium">External Door</h3>
+                <button id="addEXDoorBtn"
+                class="no-print px-3 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800">
+                + Add door
+                </button>
+            </div>
+
+            <div id="EXDoorsList" class="space-y-3"></div>
+
+            <!-- Template for each door row -->
+            <template id="EXDoorRowTpl">
+            <div class="grid grid-cols-12 gap-3 p-3 bg-white rounded-2xl border border-slate-200">
+                <div class="col-span-5">
+                <label class="text-sm font-medium">Width (m)
+                    <input type="number" step="0.01" min="0"
+                        class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300"
+                        data-field="width" placeholder="e.g. 1.20" />
+                </label>
+                </div>
+                <div class="col-span-5">
+                <label class="text-sm font-medium">Height (m)
+                    <input type="number" step="0.01" min="0"
+                        class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300"
+                        data-field="height" placeholder="e.g. 1.00" />
+                </label>
+                </div>
+                <div class="col-span-2 flex items-end">
+                <button class="no-print w-full px-3 py-2 rounded-xl border border-red-300 text-red-700 hover:bg-red-50"
+                        data-action="remove">Del</button>
+                </div>
+            </div>
+            </template>
+            <p style="margin-bottom: 2px;"></p>
 
             <!--Floor-->
             <section class="col-span-2"> 

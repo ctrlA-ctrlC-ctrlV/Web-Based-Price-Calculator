@@ -8,6 +8,8 @@ const defaults = {
     bathTypeTwoCharge: 4500,
     windowCharge: 500,
     windowRate: 400,
+    exDoorCharge: 500,
+    exDoorRate: 400,
     floor: { none: 0, wooden: 30, tile: 50 },
     switch: 50,
     doubeSocket: 60,
@@ -52,10 +54,13 @@ async function getRate() {
 }
 
 function calcWinRow(wEl, hEl) {
+    const windowCharge = parseFloat(qs('#cfg_windowCharge').value) || defaults.windowCharge;
+    const windowRate = parseFloat(qs('#cfg_windowRate').value) || defaults.windowRate;
+
     const w = parseFloat(wEl.value) || 0;
     const h = parseFloat(hEl.value) || 0;
     const area = (w > 0 && h > 0) ? (w * h) : 0;
-    const price = area > 0 ? (area * defaults.windowRate) + defaults.windowCharge : 0;
+    const price = area > 0 ? (area * windowRate) + windowCharge : 0;
     
     return {area, price};
 }
@@ -95,11 +100,76 @@ function addWindow(prefill = { width: '', height: '' }) {
     if (prefill.width !== undefined)  wEl.value = prefill.width;
     if (prefill.height !== undefined) hEl.value = prefill.height;
 
+    // Event listener for user input for width and hight box of each window
     ['input','change'].forEach(ev => {
         wEl.addEventListener(ev, compute);
         hEl.addEventListener(ev, compute);
     });
 
+    // Event listener for remove button click
+    rmBtn.addEventListener('click', () => { 
+        node.remove(); 
+        compute();
+    });
+
+    list.appendChild(node);
+    compute();
+}
+
+function calcEXDoor(wEl, hEl) {
+    const windowCharge = parseFloat(qs('#cfg_EXDoorCharge').value) || defaults.exDoorCharge;
+    const windowRate = parseFloat(qs('#cfg_EXDoorRate').value) || defaults.exDoorRate;
+
+    const w = parseFloat(wEl.value) || 0;
+    const h = parseFloat(hEl.value) || 0;
+    const area = (w > 0 && h > 0) ? (w * h) : 0;
+    const price = area > 0 ? (area * windowRate) + windowCharge : 0;
+    
+    return {area, price};
+}
+
+function getEXDoorData() {
+    const list = qs('#EXDoorsList');
+    if (!list) {
+        console.warn('#EXDoorsList not found');
+        return { exdoorPriceSum: 0, exdoorAreaSum: 0, exdoorCount: 0 };
+    }
+    let exdoorPriceSum = 0;
+
+    [...list.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        if (!wEl || !hEl) return;
+
+        const { area, price } = calcWinRow(wEl, hEl);
+
+        if (area > 0) {
+            exdoorPriceSum += price;
+        }       
+    });
+    
+    return exdoorPriceSum;
+}
+
+function addEXDoor(prefill = { width: '', height: '' }) {
+    const list = qs('#EXDoorsList');
+    const rowTpl = qs('#EXDoorRowTpl');
+
+    const node = rowTpl.content.firstElementChild.cloneNode(true);
+    const wEl = qs('[data-field="width"]', node);
+    const hEl = qs('[data-field="height"]', node);
+    const rmBtn = qs('[data-action="remove"]', node);
+
+    if (prefill.width !== undefined)  wEl.value = prefill.width;
+    if (prefill.height !== undefined) hEl.value = prefill.height;
+
+    // Event listener for user input for width and hight box of each door
+    ['input','change'].forEach(ev => {
+        wEl.addEventListener(ev, compute);
+        hEl.addEventListener(ev, compute);
+    });
+
+    // Event listener for remove button click
     rmBtn.addEventListener('click', () => { 
         node.remove(); 
         compute();
@@ -116,8 +186,8 @@ function compute() {
     const baseRate = parseFloat(qs('#cfg_baseRate').value) || defaults.baseRatePerM2;
     const fixedCharge = parseFloat(qs('#cfg_fixedCharge').value) || defaults.fixedCharge;
     const cladRate = parseFloat(qs('#cfg_cladRate').value) || defaults.cladRate;
-    const windowCharge = parseFloat(qs('#cfg_windowCharge').value) || defaults.windowCharge;;
-    const windowRate = parseFloat(qs('#cfg_windowRate').value) || defaults.windowRate;
+    //const windowCharge = parseFloat(qs('#cfg_windowCharge').value) || defaults.windowCharge;
+    //const windowRate = parseFloat(qs('#cfg_windowRate').value) || defaults.windowRate;
     const freeKm = parseFloat(qs('#cfg_freeKm').value) || defaults.deliveryFreeKm;
     const rateKm = parseFloat(qs('#cfg_ratePerKm').value) || defaults.deliveryRatePerKm;
     const vatPct = parseFloat(qs('#cfg_vat').value) || defaults.vatPct;
@@ -148,7 +218,7 @@ function compute() {
     const innerDoorCost = innerDoor * defaults.innerDoorChar;
     const innerWallCost = defaults.innerWallType[innerWallType] * innerWallQuan;
     const windowCost = getWinData();
-    //const exterDoorCost = defaults.ex_door[exDoor];
+    const exDoorCost = getEXDoorData();
     const floorCost = defaults.floor[floorType] * floorSize; //floor type * floor size
     const deliveryExtraKm = Math.max(0, distance - freeKm);;
     const deliverCost = deliveryExtraKm * rateKm;
@@ -179,7 +249,7 @@ function compute() {
         { label: `Internal doors`, amount: innerDoorCost },
         { label: `Internal walls`, amount: innerWallCost },
         { label: `Windows`, amount: windowCost },
-        //{ label: `External door`, amount: exterDoorCost },
+        { label: `External door`, amount: exDoorCost },
         { label: `Flooring`, amount: floorCost },
         { label: deliveryExtraKm > 0 ? `Delivery (${deliveryExtraKm} km beyond ${freeKm} km)` : 'Delivery (within free radius)', amount: deliverCost },
     ];
@@ -364,7 +434,7 @@ function loadFromUrlParams() {
                 const h = parseFloat(hStr);
                 if (isFinite(w) && isFinite(h) && w > 0 && h > 0) {
                     if (typeof addWindow === 'function') {
-                        addWindow({ width: w, height: h }); // your addWindow should attach listeners & call compute()
+                        addWindow({ width: w, height: h });
                     } else {
                         console.warn('[load:url] addWindow() not available yet');
                     }
@@ -450,7 +520,9 @@ function initDefaults() {
     qs('#cfg_cladRate').value = defaults.cladRate;
     qs('#cfg_fixedCharge').value = defaults.fixedCharge;
     qs('#cfg_windowCharge').value = defaults.windowCharge;
-    qs('#cfg_windowRate').value = defaults.windowRate;//
+    qs('#cfg_windowRate').value = defaults.windowRate;
+    qs('#cfg_EXDoorCharge').value = defaults.windowCharge;
+    qs('#cfg_EXDoorRate').value = defaults.windowRate;
     qs('#cfg_freeKm').value = defaults.deliveryFreeKm;
     qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
     qs('#cfg_vat').value = 13.5;
@@ -497,6 +569,12 @@ function ensureAtLeastOneWindowRow() {
   if (list.children.length === 0) addWindow();
 }
 
+function ensureAtLeastOneEXDoorRow() {
+  const list = qs('#EXDoorsList');
+  if (!list) return;
+  if (list.children.length === 0) addEXDoor();
+}
+
 // Events: User input
 ['input','change'].forEach(ev => {
     document.body.addEventListener(ev, (e) => {
@@ -508,6 +586,7 @@ function ensureAtLeastOneWindowRow() {
 
 // Button wiring
 if (qs('#addWindowBtn')) qs('#addWindowBtn').addEventListener('click', () => addWindow());
+if (qs('#addEXDoorBtn')) qs('#addEXDoorBtn').addEventListener('click', () => addEXDoor());
 if (qs('#shareBtn')) qs('#shareBtn').addEventListener('click', copyLink);
 if (qs('#clientLinkBtn')) qs('#clientLinkBtn').addEventListener('click', copyClientLink);
 if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>window.print());
@@ -515,14 +594,14 @@ if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>window.print(
 // Boot
 window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
-    ensureAtLeastOneWindowRow();
     const loadedFromUrl = loadFromUrlParams();
-    if (!loadedFromUrl) addWindow(); //Bug fix request: when page load no window is created
-    loadFromLocalStorage();        
+    loadFromLocalStorage(); 
+    ensureAtLeastOneWindowRow();
+    ensureAtLeastOneEXDoorRow();           
     compute();    
 
     if (isClientMode()) {
-        const cfg = document.querySelector('details'); // your config <details>
+        const cfg = document.querySelector('details');
         if (cfg) cfg.remove();
 
         const shareBtn = qs('#shareBtn');
