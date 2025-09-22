@@ -600,12 +600,6 @@ function buildPrintQuote() {
   qs('#p_quoteId').textContent = val('quoteId') || '';
   qs('#p_quoteDate').textContent = val('quoteDate') || todayISO();
 
-  // Discount %
-  const inputDisc = parseFloat(val('discountPct'));
-  const defaultDisc = parseFloat(val('cfg_discount')) || 0;
-  const appliedDisc = (isFinite(inputDisc) && inputDisc >= 0) ? inputDisc : defaultDisc;
-  qs('#p_discountPct').textContent = appliedDisc ? `${fmtNum(appliedDisc,1)}%` : '—';
-
   // Derived sizes
   const width = parseFloat(val('width')) || 0;
   const depth = parseFloat(val('depth')) || 0;
@@ -693,6 +687,12 @@ function buildPrintQuote() {
   if (render > 0) addLi('Render finish', `${fmtNum(render,0)} m²`);
   const steel = parseFloat(val('ex_steelDoor')) || 0;
   if (steel > 0) addLi('Steel doors (qty)', `${fmtNum(steel,0)}`);
+  
+  // Discount %
+  const inputDisc = parseFloat(val('discountPct'));
+  const defaultDisc = parseFloat(val('cfg_discount')) || 0;
+  const appliedDisc = (isFinite(inputDisc) && inputDisc >= 0) ? inputDisc : defaultDisc;
+  if (appliedDisc != 0) addLi('Discount', `${fmtNum(appliedDisc,1)}%`);
 
   // Notes
   const notes = val('notes');
@@ -782,6 +782,9 @@ if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>{
     buildPrintQuote();
     window.print();
 });
+
+// build the print quote just-in-time
+window.addEventListener('beforeprint', buildPrintQuote);
 
 // Boot
 window.addEventListener('DOMContentLoaded', () => {

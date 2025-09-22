@@ -6,11 +6,63 @@
   <link href="dist/output.css" rel="stylesheet">
   <meta name="description" content="A shareable, single-file price calculator for garden rooms. Adjust the config to match your pricing and share the link—no backend required." />
   <style>
-    /* Print-friendly */
     @media print {
-      .no-print { display: none !important; }
-      .print-block { display: block !important; }
+      /* hide header/footer and any .no-print stuff */
+      header, footer, .no-print { display: none !important; }
+      /* keep main, but hide all its children except #printQuote */
+      main > *:not(#printQuote) { display: none !important; }
+      /* show the quote template */
+      #printQuote { display: block !important; }
+
+      /* Page setup */
+      @page { size: A4; margin: 16mm; }
+
+      /* Basic typography for print */
+      body { color: #0f172a; font-size: 12pt; line-height: 1.35; }
+
+      /* Prevent awkward page breaks */
+      .avoid-break { break-inside: avoid; page-break-inside: avoid; }
+
+      /* Quote header look */
+      #printQuote .quote-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding-bottom: 10mm; border-bottom: 3px solid #0ea5e9;  /* brand accent */
+      }
+      #printQuote .brand-title {
+        font-size: 44pt; font-weight: 700; letter-spacing: -0.5px;
+      }
+      #printQuote .meta {
+        text-align: right; font-size: 10.5pt;
+      }
+      #printQuote .meta .row { display: flex; gap: 16mm; justify-content: space-between; }
+      #printQuote .meta .row span:first-child {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #4d79b6;
+        letter-spacing: 0.04em;
+        margin-bottom: 2mm;
+        text-transform: uppercase;
+      }
+      #printQuote .section-title {
+        font-size: 10pt; font-weight: 600; color: #64748b; letter-spacing: 0.04em;
+        margin-top: 10mm; margin-bottom: 3mm;
+      }
+      #printQuote .desc-list li { padding: 2mm 0; border-bottom: 1px solid #e5e7eb; }
+      #printQuote .desc-list li:last-child { border-bottom: 0; }
+
+      /* Logo sizing for print clarity */
+      #printQuote .logo { max-height: 24mm; width: auto; object-fit: contain; }
+
+      .quote-heading-2 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #4d79b6;
+        letter-spacing: 0.04em;
+        margin-bottom: 2mm;
+        text-transform: uppercase;
+      }
     }
+    .number-input::-webkit-outer-spin-button,
     .number-input::-webkit-outer-spin-button, .number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   </style>
 </head>
@@ -285,7 +337,9 @@
               <input id="clientName" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
             </label>
             <label class="block mt-2 text-sm">Address & Eircode
-              <input id="clientAddress" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+              <textarea id="clientAddress"
+                rows="2"
+                class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300"></textarea>
             </label>
             <label class="block mt-2 text-sm">Phone
               <input id="clientPhone" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
@@ -308,20 +362,34 @@
 
       <!-- Print only template -->
       <section id="printQuote" class="print-block hidden">
-        <div class="mt-10">
-          <h1 class="text-5xl font-extrabold tracking-tight">QUOTE</h1>
+        <div class="mt-14">
+          <!-- Header: title + logo -->
+          <div class="quote-header">
+            <div class="brand-left">
+              <div class="brand-title">QUOTE</div>
+            </div>
+            <div class="brand-right">
+              <img src="./assets/sdeal-logo.png" alt="SDeal Construction" class="logo" />
+            </div>
+          </div>
 
-          <div class="grid grid-cols-2 gap-6 mt-10">
+          <div class="grid grid-cols-2 gap-6 mt-8 avoid-break">
             <div>
-              <h2 class="text-sm font-semibold text-slate-500">BILL TO</h2>
+              <div class="quote-heading-2">BILL TO</div>
               <div class="mt-2 leading-relaxed">
-                <div id="p_clientName" class="font-medium"></div>
+                <div id="p_clientName"></div>
                 <div id="p_clientAddress"></div>
                 <div id="p_clientPhone"></div>
                 <div id="p_clientEmail"></div>
               </div>
             </div>
-            <div class="text-right">
+            <div class="meta">
+              <div class="space-y-1 inline-block text-left">
+                <div class="row"><span>QUOTE #</span><span id="p_quoteId" class="font-medium"></span></div>
+                <div class="row"><span>QUOTE DATE</span><span id="p_quoteDate" class="font-medium"></span></div>
+              </div>
+            </div>
+            <!--<div class="text-right">
               <div class="space-y-1 inline-block text-left">
                 <div class="flex items-center justify-between gap-6">
                   <span class="text-sm font-semibold text-slate-500">QUOTE #</span>
@@ -331,26 +399,28 @@
                   <span class="text-sm font-semibold text-slate-500">QUOTE DATE</span>
                   <span id="p_quoteDate" class="font-medium"></span>
                 </div>
-                <div class="flex items-center justify-between gap-6">
-                  <span class="text-sm font-semibold text-slate-500">DISCOUNT</span>
-                  <span id="p_discountPct" class="font-medium"></span>
-                </div>
               </div>
-            </div>
+            </div>-->
           </div>
+          
+          <h3 class="section-title">DESCRIPTION</h3>
+          <ul id="p_lines" class="desc-list text-[13px] leading-relaxed"></ul>
 
-          <hr class="my-6 border-t-2 border-slate-300">
+          <!-- Notes -->
+          <h3 class="section-title">ADDITIONAL NOTES</h3>
+          <p id="p_notes" class="mt-1 whitespace-pre-wrap"></p>
+          <!--<hr class="my-6 border-t-2 border-slate-300">
 
           <h3 class="text-sm font-semibold text-slate-500">DESCRIPTION</h3>
           <div class="mt-3">
-            <!-- We’ll populate this list via JS, skipping empty items -->
+             We’ll populate this list via JS, skipping empty items 
             <ul id="p_lines" class="space-y-1 text-[15px] leading-relaxed"></ul>
           </div>
 
           <div class="mt-6">
             <h3 class="text-sm font-semibold text-slate-500">ADDITIONAL NOTES</h3>
             <p id="p_notes" class="mt-2 whitespace-pre-wrap"></p>
-          </div>
+          </div>-->
         </div>
       </section>
     </main>
