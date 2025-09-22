@@ -389,38 +389,21 @@
                 <div class="row"><span>QUOTE DATE</span><span id="p_quoteDate" class="font-medium"></span></div>
               </div>
             </div>
-            <!--<div class="text-right">
-              <div class="space-y-1 inline-block text-left">
-                <div class="flex items-center justify-between gap-6">
-                  <span class="text-sm font-semibold text-slate-500">QUOTE #</span>
-                  <span id="p_quoteId" class="font-medium"></span>
-                </div>
-                <div class="flex items-center justify-between gap-6">
-                  <span class="text-sm font-semibold text-slate-500">QUOTE DATE</span>
-                  <span id="p_quoteDate" class="font-medium"></span>
-                </div>
-              </div>
-            </div>-->
           </div>
-          
+
+          <!-- Description -->
           <h3 class="section-title">DESCRIPTION</h3>
           <ul id="p_lines" class="desc-list text-[13px] leading-relaxed"></ul>
+
+          <!-- Total -->
+          <div id="p_total" class="mt-8 flex justify-between items-center font-bold text-lg border-t-2 border-slate-300 pt-4">
+            <span class="quote-heading uppercase">TOTAL</span>
+            <span id="p_totalValue"></span>
+          </div>
 
           <!-- Notes -->
           <h3 class="section-title">ADDITIONAL NOTES</h3>
           <p id="p_notes" class="mt-1 whitespace-pre-wrap"></p>
-          <!--<hr class="my-6 border-t-2 border-slate-300">
-
-          <h3 class="text-sm font-semibold text-slate-500">DESCRIPTION</h3>
-          <div class="mt-3">
-             We’ll populate this list via JS, skipping empty items 
-            <ul id="p_lines" class="space-y-1 text-[15px] leading-relaxed"></ul>
-          </div>
-
-          <div class="mt-6">
-            <h3 class="text-sm font-semibold text-slate-500">ADDITIONAL NOTES</h3>
-            <p id="p_notes" class="mt-2 whitespace-pre-wrap"></p>
-          </div>-->
         </div>
       </section>
     </main>
