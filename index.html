@@ -284,12 +284,72 @@
             <label class="block mt-2 text-sm">Client name
               <input id="clientName" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
             </label>
+            <label class="block mt-2 text-sm">Address & Eircode
+              <input id="clientAddress" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+            </label>
+            <label class="block mt-2 text-sm">Phone
+              <input id="clientPhone" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+            </label>
+            <label class="block mt-2 text-sm">Email
+              <input id="clientEmail" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+            </label>
+            <label class="block mt-2 text-sm">Quote date
+              <input type="date" id="quoteDate" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+            </label>
             <label class="block mt-2 text-sm">Quote ID
               <input id="quoteId" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
             </label>
             <label class="block mt-2 text-sm">Discount % (optional)
               <input type="number" step="0.5" id="discountPct" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
             </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Print only template -->
+      <section id="printQuote" class="print-block hidden">
+        <div class="mt-10">
+          <h1 class="text-5xl font-extrabold tracking-tight">QUOTE</h1>
+
+          <div class="grid grid-cols-2 gap-6 mt-10">
+            <div>
+              <h2 class="text-sm font-semibold text-slate-500">BILL TO</h2>
+              <div class="mt-2 leading-relaxed">
+                <div id="p_clientName" class="font-medium"></div>
+                <div id="p_clientAddress"></div>
+                <div id="p_clientPhone"></div>
+                <div id="p_clientEmail"></div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="space-y-1 inline-block text-left">
+                <div class="flex items-center justify-between gap-6">
+                  <span class="text-sm font-semibold text-slate-500">QUOTE #</span>
+                  <span id="p_quoteId" class="font-medium"></span>
+                </div>
+                <div class="flex items-center justify-between gap-6">
+                  <span class="text-sm font-semibold text-slate-500">QUOTE DATE</span>
+                  <span id="p_quoteDate" class="font-medium"></span>
+                </div>
+                <div class="flex items-center justify-between gap-6">
+                  <span class="text-sm font-semibold text-slate-500">DISCOUNT</span>
+                  <span id="p_discountPct" class="font-medium"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-6 border-t-2 border-slate-300">
+
+          <h3 class="text-sm font-semibold text-slate-500">DESCRIPTION</h3>
+          <div class="mt-3">
+            <!-- We’ll populate this list via JS, skipping empty items -->
+            <ul id="p_lines" class="space-y-1 text-[15px] leading-relaxed"></ul>
+          </div>
+
+          <div class="mt-6">
+            <h3 class="text-sm font-semibold text-slate-500">ADDITIONAL NOTES</h3>
+            <p id="p_notes" class="mt-2 whitespace-pre-wrap"></p>
           </div>
         </div>
       </section>

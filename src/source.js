@@ -321,7 +321,7 @@ function updateUrlParams() {
         'floor_type','floor_size',
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
-        'clientName','quoteId','notes',
+        'clientName','clientAddress','clientPhone','clientEmail','quoteDate','quoteId','notes',
         'discountPct'
     ].forEach(id => {
         const el = qs('#' + id);
@@ -411,7 +411,7 @@ function loadFromUrlParams() {
         'floor_type','floor_size',
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
-        'clientName','quoteId','notes',
+        'clientName','clientAddress','clientPhone','clientEmail','quoteDate','quoteId','notes',
         'discountPct'
     ].forEach(id => setIf(id));
 
@@ -495,7 +495,7 @@ function persistToLocalStorage() {
         'floor_type','floor_size',
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
-        'clientName','quoteId','notes',
+        'clientName','clientAddress','clientPhone','clientEmail','quoteDate','quoteId','notes',
         'discountPct',
         'currency',
         'cfg_baseRate','cfg_fixedCharge','cfg_cladRate',
@@ -573,6 +573,130 @@ function loadFromLocalStorage() {
     } catch (err) {
         console.error('Error loading localStorage:', err);
     }
+}
+
+function buildPrintQuote() {
+  // Helpers
+  const val = id => (qs('#' + id)?.value ?? '').toString().trim();
+  const addLi = (label, value) => {
+    if (!value) return;
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="font-medium">${label}:</span> ${value}`;
+    list.appendChild(li);
+  };
+  const fmtNum = (n, dp=2) => Number(n).toFixed(dp).replace(/\.00$/, '');
+  const todayISO = () => new Date().toISOString().slice(0,10);
+
+  // Targets
+  const list = qs('#p_lines');
+  if (!list) return;
+  list.innerHTML = '';
+
+  // Top panel
+  qs('#p_clientName').textContent = val('clientName') || '';
+  qs('#p_clientAddress').textContent = val('clientAddress') || '';
+  qs('#p_clientPhone').textContent = val('clientPhone') || '';
+  qs('#p_clientEmail').textContent = val('clientEmail') || '';
+  qs('#p_quoteId').textContent = val('quoteId') || '';
+  qs('#p_quoteDate').textContent = val('quoteDate') || todayISO();
+
+  // Discount %
+  const inputDisc = parseFloat(val('discountPct'));
+  const defaultDisc = parseFloat(val('cfg_discount')) || 0;
+  const appliedDisc = (isFinite(inputDisc) && inputDisc >= 0) ? inputDisc : defaultDisc;
+  qs('#p_discountPct').textContent = appliedDisc ? `${fmtNum(appliedDisc,1)}%` : '—';
+
+  // Derived sizes
+  const width = parseFloat(val('width')) || 0;
+  const depth = parseFloat(val('depth')) || 0;
+  const roomArea = Math.max(0, width * depth);
+
+  // DESCRIPTION LINES (no prices)
+
+  // Room size
+  if (width > 0 && depth > 0) {
+    addLi('Room size', `${fmtNum(width)} m × ${fmtNum(depth)} m  (${fmtNum(roomArea)} m²)`);
+  }
+
+  // Cladding size
+  const cladding = parseFloat(val('cladding')) || 0;
+  if (cladding > 0) addLi('Cladding size', `${fmtNum(cladding)} m²`);
+
+  // Bathrooms (amounts only)
+  const b1 = parseFloat(val('bathroom_1')) || 0;
+  const b2 = parseFloat(val('bathroom_2')) || 0;
+  if (b1 > 0) addLi('Toilet + Sink (qty)', fmtNum(b1,0));
+  if (b2 > 0) addLi('Toilet + Sink + Shower (qty)', fmtNum(b2,0));
+
+  // Electrical
+  const sw = parseFloat(val('switch')) || 0;
+  const ds = parseFloat(val('d_socket')) || 0;
+  if (sw > 0) addLi('Switches (qty)', fmtNum(sw,0));
+  if (ds > 0) addLi('Double sockets (qty)', fmtNum(ds,0));
+
+  // Internal doors
+  const innerDoor = parseFloat(val('inner_door')) || 0;
+  if (innerDoor > 0) addLi('Internal doors (qty)', fmtNum(innerDoor,0));
+
+  // Internal wall
+  const wallType = val('inner_wall_type');
+  const wallSize = parseFloat(val('wall_quan')) || 0;
+  const wallTypeLabelMap = {
+    'none': 'None',
+    'inner_wall_type_p': 'Panel wall',
+    'inner_wall_type_s': 'Skimmed & painted wall'
+  };
+  if (wallType && wallType !== 'none' && wallSize > 0) {
+    addLi('Internal wall', `${wallTypeLabelMap[wallType] || wallType} — ${fmtNum(wallSize)} m`);
+  }
+
+  // Windows: each size (no price)
+  const wList = qs('#windowsList');
+  if (wList && wList.children.length) {
+    const winLines = [];
+    [...wList.children].forEach(row => {
+      const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
+      const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
+      if (w > 0 && h > 0) winLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
+    });
+    if (winLines.length) addLi('Windows', winLines.join('; '));
+  }
+
+  // Exterior doors: each size (no price) — optional list if you’re using it
+  const dList = qs('#EXDoorsList');
+  if (dList && dList.children.length) {
+    const doorLines = [];
+    [...dList.children].forEach(row => {
+      const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
+      const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
+      if (w > 0 && h > 0) doorLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
+    });
+    if (doorLines.length) addLi('Exterior doors', doorLines.join('; '));
+  }
+
+  // Floor (no price) – size only if provided
+  const floorType = val('floor_type');
+  const floorSize = parseFloat(val('floor_size')) || 0;
+  const floorLabel = { none: 'None', wooden: 'Wooden', tile: 'Tile' }[floorType];
+  if (floorSize > 0 && floorType && floorType !== 'none') {
+    addLi('Floor', `${floorLabel || floorType} — ${fmtNum(floorSize)} m²`);
+  }
+
+  // Delivery distance (this is a detail — include if you want it in the doc)
+  const distance = parseFloat(val('distance')) || 0;
+  if (distance > 0) addLi('Delivery distance', `${fmtNum(distance,0)} km`);
+
+  // Extras (no price)
+  const eps = parseFloat(val('ex_EPSInsulation')) || 0;
+  if (eps > 0) addLi('100mm EPS insulation', `${fmtNum(eps,0)} m²`);
+  const render = parseFloat(val('ex_renderFinish')) || 0;
+  if (render > 0) addLi('Render finish', `${fmtNum(render,0)} m²`);
+  const steel = parseFloat(val('ex_steelDoor')) || 0;
+  if (steel > 0) addLi('Steel doors (qty)', `${fmtNum(steel,0)}`);
+
+  // Notes
+  const notes = val('notes');
+  qs('#p_notes').textContent = notes || '';
 }
 
 function initDefaults() {
@@ -654,7 +778,10 @@ if (qs('#addWindowBtn')) qs('#addWindowBtn').addEventListener('click', () => add
 if (qs('#addEXDoorBtn')) qs('#addEXDoorBtn').addEventListener('click', () => addEXDoor());
 if (qs('#shareBtn')) qs('#shareBtn').addEventListener('click', copyLink);
 if (qs('#clientLinkBtn')) qs('#clientLinkBtn').addEventListener('click', copyClientLink);
-if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>window.print());
+if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>{
+    buildPrintQuote();
+    window.print();
+});
 
 // Boot
 window.addEventListener('DOMContentLoaded', () => {
