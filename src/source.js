@@ -875,7 +875,7 @@ function initDefaults() {
     qs('#cfg_windowRate').value = defaults.windowRate;
     qs('#cfg_EXDoorCharge').value = defaults.exDoorCharge;
     qs('#cfg_EXDoorRate').value = defaults.exDoorRate;
-    qs('#cfg_skylightsCharge').value = defaults.skylightsCharge;
+    qs('#cfg_skylightsCharge').value = defaults.skylightCharge;
     qs('#cfg_skylightsRate').value = defaults.skylightRate;
     qs('#cfg_freeKm').value = defaults.deliveryFreeKm;
     qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
