@@ -250,6 +250,21 @@ function addSkylight(prefill = { width: '', height: '' }) {
 //------------------------------- End of Skylight Module ------------------------------------
 
 // ------------------------------- Start of Extras Module -------------------------------
+// --- helpers
+function extraRow(kind) {
+  return [...(qs('#extrasList')?.children || [])].find(n => n.dataset.kind === kind) || null;
+}
+function setOptionDisabled(kind, disabled) {
+  const opt = qs(`#extraPicker option[value="${kind}"]`);
+  if (opt) opt.disabled = !!disabled;
+}
+function flashRow(el) {
+  if (!el) return;
+  el.classList.add('ring-2','ring-sky-400');
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => el.classList.remove('ring-2','ring-sky-400'), 900);
+}
+
 function perimeterM() {
   const w = parseFloat(qs('#width').value) || 0;
   const d = parseFloat(qs('#depth').value) || 0;
@@ -260,37 +275,42 @@ function addExtra(kind) {
   const list = qs('#extrasList');
   if (!list) return;
 
+  // only-one kinds
+  const singletons = new Set(['eps', 'render', 'steelDoor']);
+  if (singletons.has(kind)) {
+    const existing = extraRow(kind);
+    if (existing) { flashRow(existing); return; }
+  }
+
+  let node = null;
+
   if (kind === 'eps' || kind === 'render') {
     const tpl = qs('#tpl-extra-perimeter');
-    const node = tpl.content.firstElementChild.cloneNode(true);
+    node = tpl.content.firstElementChild.cloneNode(true);
     node.dataset.kind = kind;
     qs('[data-label]', node).textContent =
       kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
+
     const lenEl = qs('[data-field="length"]', node);
-    // initialize & keep in sync with width/depth
     const updateLen = () => { lenEl.value = perimeterM().toFixed(2); compute(); };
     updateLen();
     ['input','change'].forEach(ev => {
       qs('#width')?.addEventListener(ev, updateLen);
       qs('#depth')?.addEventListener(ev, updateLen);
     });
-    qs('[data-action="remove"]', node).addEventListener('click', () => { node.remove(); compute(); });
-    list.appendChild(node);
   }
 
   if (kind === 'steelDoor') {
     const tpl = qs('#tpl-extra-steel');
-    const node = tpl.content.firstElementChild.cloneNode(true);
+    node = tpl.content.firstElementChild.cloneNode(true);
     node.dataset.kind = 'steelDoor';
     const qtyEl = qs('[data-field="qty"]', node);
     ['input','change'].forEach(ev => qtyEl.addEventListener(ev, compute));
-    qs('[data-action="remove"]', node).addEventListener('click', () => { node.remove(); compute(); });
-    list.appendChild(node);
   }
 
   if (kind === 'other') {
     const tpl = qs('#tpl-extra-other');
-    const node = tpl.content.firstElementChild.cloneNode(true);
+    node = tpl.content.firstElementChild.cloneNode(true);
     node.dataset.kind = 'other';
     const nameEl = qs('[data-field="name"]', node);
     const costEl = qs('[data-field="cost"]', node);
@@ -298,10 +318,20 @@ function addExtra(kind) {
       nameEl.addEventListener(ev, compute);
       costEl.addEventListener(ev, compute);
     });
-    qs('[data-action="remove"]', node).addEventListener('click', () => { node.remove(); compute(); });
-    list.appendChild(node);
   }
 
+  if (!node) return;
+
+  // common remove handler + re-enable option for singletons
+  qs('[data-action="remove"]', node).addEventListener('click', () => {
+    const k = node.dataset.kind;
+    node.remove();
+    if (singletons.has(k)) setOptionDisabled(k, false);
+    compute();
+  });
+
+  list.appendChild(node);
+  if (singletons.has(kind)) setOptionDisabled(kind, true);
   compute();
 }
 
@@ -344,6 +374,12 @@ function initExtrasUi() {
   const addBtn = qs('#addExtraBtn');
   const picker = qs('#extraPicker');
   if (!addBtn || !picker) return;
+
+  // disable options for singletons already present
+  ['eps','render','steelDoor'].forEach(k => {
+    if (extraRow(k)) setOptionDisabled(k, true);
+  });
+
   addBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const v = picker.value;
