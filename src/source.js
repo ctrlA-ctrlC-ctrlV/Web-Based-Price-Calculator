@@ -13,7 +13,7 @@ const defaults = {
     skylightCharge: 900,
     skylightRate: 750,
     switch: 50,
-    doubeSocket: 60,
+    doubleSocket: 60,
     innerDoorChar: 500,
     innerWallType: { none: 0, inner_wall_type_p: 200, inner_wall_type_s:300 },
     floor: { none: 0, wooden: 40, tile: 60},
@@ -249,6 +249,111 @@ function addSkylight(prefill = { width: '', height: '' }) {
 }
 //------------------------------- End of Skylight Module ------------------------------------
 
+// ------------------------------- Start of Extras Module -------------------------------
+function perimeterM() {
+  const w = parseFloat(qs('#width').value) || 0;
+  const d = parseFloat(qs('#depth').value) || 0;
+  return Math.max(0, 2 * (w + d));
+}
+
+function addExtra(kind) {
+  const list = qs('#extrasList');
+  if (!list) return;
+
+  if (kind === 'eps' || kind === 'render') {
+    const tpl = qs('#tpl-extra-perimeter');
+    const node = tpl.content.firstElementChild.cloneNode(true);
+    node.dataset.kind = kind;
+    qs('[data-label]', node).textContent =
+      kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
+    const lenEl = qs('[data-field="length"]', node);
+    // initialize & keep in sync with width/depth
+    const updateLen = () => { lenEl.value = perimeterM().toFixed(2); compute(); };
+    updateLen();
+    ['input','change'].forEach(ev => {
+      qs('#width')?.addEventListener(ev, updateLen);
+      qs('#depth')?.addEventListener(ev, updateLen);
+    });
+    qs('[data-action="remove"]', node).addEventListener('click', () => { node.remove(); compute(); });
+    list.appendChild(node);
+  }
+
+  if (kind === 'steelDoor') {
+    const tpl = qs('#tpl-extra-steel');
+    const node = tpl.content.firstElementChild.cloneNode(true);
+    node.dataset.kind = 'steelDoor';
+    const qtyEl = qs('[data-field="qty"]', node);
+    ['input','change'].forEach(ev => qtyEl.addEventListener(ev, compute));
+    qs('[data-action="remove"]', node).addEventListener('click', () => { node.remove(); compute(); });
+    list.appendChild(node);
+  }
+
+  if (kind === 'other') {
+    const tpl = qs('#tpl-extra-other');
+    const node = tpl.content.firstElementChild.cloneNode(true);
+    node.dataset.kind = 'other';
+    const nameEl = qs('[data-field="name"]', node);
+    const costEl = qs('[data-field="cost"]', node);
+    ['input','change'].forEach(ev => {
+      nameEl.addEventListener(ev, compute);
+      costEl.addEventListener(ev, compute);
+    });
+    qs('[data-action="remove"]', node).addEventListener('click', () => { node.remove(); compute(); });
+    list.appendChild(node);
+  }
+
+  compute();
+}
+
+function getExtras() {
+  const list = qs('#extrasList');
+  if (!list) return { cost: 0, lines: [] };
+
+  let total = 0;
+  const lines = [];
+
+  [...list.children].forEach(row => {
+    const kind = row.dataset.kind;
+    if (kind === 'eps' || kind === 'render') {
+      const len = perimeterM(); // locked to perimeter
+      const rate = (kind === 'eps')
+        ? (parseFloat(defaults.ex_ESPInstRate) || 0)
+        : (parseFloat(defaults.ex_renderRate) || 0);
+      const cost = len * rate;
+      total += cost;
+      lines.push({ label: `${kind === 'eps' ? '100mm EPS insulation' : 'Render finish'} (${len.toFixed(2)} m perimeter)`, amount: cost });
+    } else if (kind === 'steelDoor') {
+      const qty = parseFloat(qs('[data-field="qty"]', row)?.value) || 0;
+      const unit = parseFloat(defaults.ex_steelDoorCharge) || 0;
+      const cost = qty * unit;
+      total += cost;
+      lines.push({ label: `Steel door(s) × ${qty}`, amount: cost });
+    } else if (kind === 'other') {
+      const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
+      const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
+      total += cost;
+      lines.push({ label: name, amount: cost });
+    }
+  });
+
+  return { cost: total, lines };
+}
+
+// Wire the UI controls (once DOM is ready in boot)
+function initExtrasUi() {
+  const addBtn = qs('#addExtraBtn');
+  const picker = qs('#extraPicker');
+  if (!addBtn || !picker) return;
+  addBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const v = picker.value;
+    if (!v) return;
+    addExtra(v);
+    picker.selectedIndex = 0;
+  });
+}
+// ------------------------------- End of Extras Module -------------------------------
+
 function compute() {
     const a = areaM2();
 
@@ -273,33 +378,34 @@ function compute() {
     const floorType = qs('#floor_type').value;
     const floorSize = qs('#floor_size').value || 0;
     const distance = parseFloat(qs('#distance').value) || 0;
-    const EPSInsulation = parseFloat(qs('#ex_EPSInsulation').value) || 0;
-    const renderFinish = parseFloat(qs('#ex_renderFinish').value) || 0;
-    const steelDoor = qs('#ex_steelDoor').value || 0;
+    //const EPSInsulation = parseFloat(qs('#ex_EPSInsulation').value) || 0;
+    //const renderFinish = parseFloat(qs('#ex_renderFinish').value) || 0;
+    //const steelDoor = qs('#ex_steelDoor').value || 0;
 
     // Calculation of non extra
     const base = a * baseRate + fixedCharge;
     const cladCost = cladSize * cladRate;
     const bathCost = bathTypeOne * defaults.bathTypeOneCharge + bathTypeTwo * defaults.bathTypeTwoCharge ; // FIX THIS
-    const eleCost = eSwitch * defaults.switch + dSocket * defaults.doubeSocket;
+    const eleCost = eSwitch * defaults.switch + dSocket * defaults.doubleSocket;
     const innerDoorCost = innerDoor * defaults.innerDoorChar;
     const innerWallCost = defaults.innerWallType[innerWallType] * innerWallQuan;
     const windowCost = getWinData();
     const exDoorCost = getEXDoorData();
     const skylightCost = getSkylightData();
     const floorCost = defaults.floor[floorType] * floorSize; //floor type * floor size
-    const deliveryExtraKm = Math.max(0, distance - freeKm);;
+    const deliveryExtraKm = Math.max(0, distance - freeKm);
     const deliverCost = deliveryExtraKm * rateKm;
 
     // Calculation of extra
-    const ex_espCost = EPSInsulation * defaults.ex_ESPInstRate;
-    const ex_renderCost = renderFinish * defaults.ex_renderRate;
-    const ex_steelDoorCost = steelDoor * defaults.ex_steelDoorCharge;
+    const { cost: extrasCost, lines: extraLines } = getExtras();
+    //const ex_espCost = EPSInsulation * defaults.ex_ESPInstRate;
+    //const ex_renderCost = renderFinish * defaults.ex_renderRate;
+    //const ex_steelDoorCost = steelDoor * defaults.ex_steelDoorCharge;
 
     // Total Calculation
     let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost;
-    let extraSubtotal  = ex_espCost + ex_renderCost + ex_steelDoorCost;
-    let subtotal = noneExtraSubtotal + extraSubtotal;
+    //let extraSubtotal  = 0;//ex_espCost + ex_renderCost + ex_steelDoorCost;
+    let subtotal = noneExtraSubtotal + extrasCost;
 
     const discountPct = parseFloat(qs('#discountPct').value);
     const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
@@ -322,6 +428,7 @@ function compute() {
         { label: `Flooring`, amount: floorCost },
         { label: deliveryExtraKm > 0 ? `Delivery (${deliveryExtraKm} km beyond ${freeKm} km)` : 'Delivery (within free radius)', amount: deliverCost },
     ];
+    extraLines.forEach(l => lines.push(l));
 
     renderSummary({ a, lines, subtotal, discountPct: appliedDiscountPct, discountAmt, net, vatPct, vat, total });
     const pTotalEl = qs('#p_totalValue');
@@ -682,7 +789,7 @@ function loadFromLocalStorage() {
         // Plain inputs
         Object.entries(data).forEach(([id, val]) => {
             if (id === 'windows') return; // handled separately
-            if (id === 'exdoors') return; // handled separately
+            if (id === 'exDoors') return; // handled separately
             if (id === 'skylights') return; // handled separately
             const el = qs('#' + id);
             if (el && val != null) el.value = val;
@@ -818,7 +925,7 @@ function buildPrintQuote() {
         if (doorLines.length) addLi('Exterior doors', doorLines.join('; '));
     }
 
-    // Exterior doors: each size (no price) — optional list if you’re using it
+    // Skylights: each size (no price) — optional list if you’re using it
     const sList = qs('#skylightList');
     if (sList && sList.children.length) {
         const skylightLines = [];
@@ -975,6 +1082,7 @@ window.addEventListener('beforeprint', buildPrintQuote);
 // Boot
 window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
+    initExtrasUi();
     const loadedFromUrl = loadFromUrlParams();
     loadFromLocalStorage(); 
     ensureAtLeastOneWindowRow();
