@@ -10,6 +10,8 @@ const defaults = {
     windowRate: 400,
     exDoorCharge: 500,
     exDoorRate: 400,
+    skylightCharge: 900,
+    skylightRate: 750,
     floor: { none: 0, wooden: 30, tile: 50 },
     switch: 50,
     doubeSocket: 60,
@@ -48,11 +50,12 @@ async function getRate() {
     const rate = data.rates.EUR;
     return rate; // <-- return value
     } catch (err) {
-    console.error("Error fetching exchange rate:", err);
-    return null;
+        console.error("Error fetching exchange rate:", err);
+        return null;
     }
 }
 
+//------------------------------- Start of Window Module ------------------------------------
 function calcWinRow(wEl, hEl) {
     const windowCharge = parseFloat(qs('#cfg_windowCharge').value) || defaults.windowCharge;
     const windowRate = parseFloat(qs('#cfg_windowRate').value) || defaults.windowRate;
@@ -115,7 +118,9 @@ function addWindow(prefill = { width: '', height: '' }) {
     list.appendChild(node);
     compute();
 }
+//------------------------------- End of Window Module ------------------------------------
 
+//------------------------------- Start of Door Module ------------------------------------
 function calcEXDoor(wEl, hEl) {
     const windowCharge = parseFloat(qs('#cfg_EXDoorCharge').value) || defaults.exDoorCharge;
     const windowRate = parseFloat(qs('#cfg_EXDoorRate').value) || defaults.exDoorRate;
@@ -141,7 +146,7 @@ function getEXDoorData() {
         const hEl = row.querySelector('[data-field="height"]');
         if (!wEl || !hEl) return;
 
-        const { area, price } = calcWinRow(wEl, hEl);
+        const { area, price } = calcEXDoor(wEl, hEl);
 
         if (area > 0) {
             exdoorPriceSum += price;
@@ -178,6 +183,72 @@ function addEXDoor(prefill = { width: '', height: '' }) {
     list.appendChild(node);
     compute();
 }
+//------------------------------- End of Door Module ------------------------------------
+
+//------------------------------- Start of Skylight Module ------------------------------------
+function calcSkylights(wEl, hEl) {
+    const skylightCharge = parseFloat(qs('#cfg_skylightsCharge').value) || defaults.skylightCharge;
+    const skylightRate = parseFloat(qs('#cfg_skylightsRate').value) || defaults.skylightRate;
+
+    const w = parseFloat(wEl.value) || 0;
+    const h = parseFloat(hEl.value) || 0;
+    const area = (w > 0 && h > 0) ? (w * h) : 0;
+    const price = area > 0 ? (area * skylightCharge) + skylightRate : 0;
+    
+    return {area, price};
+}
+
+function getSkylightData() {
+    const list = qs('#SkylightList');
+    if (!list) {
+        console.warn('#SkylightList not found');
+        return { skylightPriceSum: 0, skylightAreaSum: 0, skylightCount: 0 };
+    }
+    let skylightPriceSum = 0;
+
+    [...list.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        if (!wEl || !hEl) return;
+
+        const { area, price } = calcSkylights(wEl, hEl);
+
+        if (area > 0) {
+            skylightPriceSum += price;
+        }       
+    });
+    
+    return skylightPriceSum;
+}
+
+function addSkylight(prefill = { width: '', height: '' }) {
+    const list = qs('#skylightList');
+    const rowTpl = qs('#skylightRowTpl');
+
+    const node = rowTpl.content.firstElementChild.cloneNode(true);
+    const wEl = qs('[data-field="width"]', node);
+    const hEl = qs('[data-field="height"]', node);
+    const rmBtn = qs('[data-action="remove"]', node);
+
+    if (prefill.width !== undefined)  wEl.value = prefill.width;
+    if (prefill.height !== undefined) hEl.value = prefill.height;
+
+    // Event listener for user input for width and hight box of each door
+    ['input','change'].forEach(ev => {
+        wEl.addEventListener(ev, compute);
+        hEl.addEventListener(ev, compute);
+    });
+
+    // Event listener for remove button click
+    rmBtn.addEventListener('click', () => { 
+        node.remove(); 
+        compute();
+    });
+
+    list.appendChild(node);
+    compute();
+}
+//------------------------------- End of Skylight Module ------------------------------------
 
 function compute() {
     const a = areaM2();
@@ -216,6 +287,7 @@ function compute() {
     const innerWallCost = defaults.innerWallType[innerWallType] * innerWallQuan;
     const windowCost = getWinData();
     const exDoorCost = getEXDoorData();
+    const skylightCost = getSkylightData();
     const floorCost = defaults.floor[floorType] * floorSize; //floor type * floor size
     const deliveryExtraKm = Math.max(0, distance - freeKm);;
     const deliverCost = deliveryExtraKm * rateKm;
@@ -226,13 +298,13 @@ function compute() {
     const ex_steelDoorCost = steelDoor * defaults.ex_steelDoorCharge;
 
     // Total Calculation
-    let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + floorCost + deliverCost;
+    let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost;
     let extraSubtotal  = ex_espCost + ex_renderCost + ex_steelDoorCost;
     let subtotal = noneExtraSubtotal + extraSubtotal;
 
     const discountPct = parseFloat(qs('#discountPct').value);
     const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
-    const discountAmt = subtotal * (appliedDiscountPct / 100);
+    const discountAmt = appliedDiscountPct;
 
     const net = subtotal - discountAmt;
     const vat = vatPct > 0 ? net * (vatPct / 100) : 0;
@@ -246,7 +318,8 @@ function compute() {
         { label: `Internal doors`, amount: innerDoorCost },
         { label: `Internal walls`, amount: innerWallCost },
         { label: `Windows`, amount: windowCost },
-        { label: `External door`, amount: exDoorCost },
+        { label: `External doors`, amount: exDoorCost },
+        { label: `Roof windows`, amount: skylightCost },
         { label: `Flooring`, amount: floorCost },
         { label: deliveryExtraKm > 0 ? `Delivery (${deliveryExtraKm} km beyond ${freeKm} km)` : 'Delivery (within free radius)', amount: deliverCost },
     ];
@@ -282,7 +355,7 @@ function renderSummary(model) {
 
     const disc = document.createElement('div');
     disc.className = 'flex items-center justify-between px-4 py-3 bg-white';
-    disc.innerHTML = `<span class="text-sm">Discount (${(model.discountPct ?? 0).toFixed(1)}%)</span><span class="font-medium">- ${fmtCurrency(model.discountAmt || 0)}</span>`;
+    disc.innerHTML = `<span class="text-sm">Discount Amount</span><span class="font-medium">- ${fmtCurrency(model.discountAmt || 0)}</span>`;
 
     const net = document.createElement('div');
     net.className = 'flex items-center justify-between px-4 py-3 bg-slate-50';
@@ -341,6 +414,10 @@ function updateUrlParams() {
         ['cfg_cladRate','cladRate'],
         ['cfg_windowCharge','windowCharge'],
         ['cfg_windowRate','windowRate'],
+        ['cfg_EXDoorCharge','exDoorCharge'],
+        ['cfg_EXDoorRate','exDoorRate'],
+        ['cfg_skylightsCharge','skylightCharge'],
+        ['cfg_skylightsRate','skylightRate'],
         ['cfg_freeKm','freeKm'],
         ['cfg_ratePerKm','rateKm'],
         ['cfg_vat','vat'],
@@ -381,6 +458,22 @@ function updateUrlParams() {
         if (parts.length) params.set('exDoors', parts.join(','));
         else params.delete('exDoors');
     }
+
+    // skylight: serialize as "w1x h1,w2x h2,..."
+    const skylightlist = qs('#skylightList');
+    if (skylightlist) {
+        const parts = [];
+        [...skylightlist.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        const w = parseFloat(wEl?.value) || 0;
+        const h = parseFloat(hEl?.value) || 0;
+        if (w > 0 && h > 0) parts.push(`${w}x${h}`);
+        });
+        if (parts.length) params.set('skylights', parts.join(','));
+        else params.delete('skylights');
+    }
+
 
     const newUrl = location.pathname + '?' + params.toString();
     history.replaceState(null, '', newUrl);
@@ -426,6 +519,10 @@ function loadFromUrlParams() {
         cfg_cladRate: 'cladRate',
         cfg_windowCharge: 'windowCharge',
         cfg_windowRate: 'windowRate',
+        cfg_EXDoorCharge: 'exDoorCharge',
+        cfg_EXDoorRate: 'exDoorRate',
+        cfg_skylightsCharge: 'skylightCharge',
+        cfg_skylightsRate: 'skylightRate',
         cfg_freeKm: 'freeKm',
         cfg_ratePerKm: 'rateKm',
         cfg_vat: 'vat',
@@ -476,7 +573,32 @@ function loadFromUrlParams() {
                     if (typeof addEXDoor === 'function') {
                         addEXDoor({ width: w, height: h });
                     } else {
-                        console.warn('[load:url] addWindow() not available yet');
+                        console.warn('[load:url] addEXDoor() not available yet');
+                    }
+                }
+            });
+        }
+    }
+
+    // skylights: parse "w1xh1,w2xh2,..."
+    if (params.has('skylights')) {
+        const str = params.get('skylights') || '';
+        const pairs = str.split(',').map(s => s.trim()).filter(Boolean);
+
+        const list = qs('#skylightList');
+        if (!list) {
+            console.warn('[load:url] #skylightList not found; skylights skipped');
+        } else {
+            list.innerHTML = ''; // clear existing rows
+            pairs.forEach(p => {
+                const [wStr, hStr] = p.split('x');
+                const w = parseFloat(wStr);
+                const h = parseFloat(hStr);
+                if (isFinite(w) && isFinite(h) && w > 0 && h > 0) {
+                    if (typeof addSkylight === 'function') {
+                        addSkylight({ width: w, height: h });
+                    } else {
+                        console.warn('[load:url] addSkylight() not available yet');
                     }
                 }
             });
@@ -501,6 +623,8 @@ function persistToLocalStorage() {
         'currency',
         'cfg_baseRate','cfg_fixedCharge','cfg_cladRate',
         'cfg_windowCharge','cfg_windowRate',
+        'cfg_EXDoorCharge','cfg_EXDoorRate',
+        'cfg_skylightsCharge','cfg_skylightsRate',
         'cfg_freeKm','cfg_ratePerKm','cfg_vat','cfg_discount'
     ].forEach(id => {
         const el = qs('#' + id);
@@ -535,6 +659,20 @@ function persistToLocalStorage() {
         data.exDoors = arr;
     }
 
+    // skylights array: [ {width: 1.2, height: 1.0}, ... ]
+    const skylightlist = qs('#skylightList');
+    if (skylightlist) {
+        const arr = [];
+        [...skylightlist.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        const w = parseFloat(wEl?.value) || 0;
+        const h = parseFloat(hEl?.value) || 0;
+        if (w > 0 && h > 0) arr.push({ width: w, height: h });
+        });
+        data.skylights = arr;
+    }
+
     localStorage.setItem('gr_calc', JSON.stringify(data));
 }
 
@@ -545,7 +683,8 @@ function loadFromLocalStorage() {
         // Plain inputs
         Object.entries(data).forEach(([id, val]) => {
             if (id === 'windows') return; // handled separately
-            if (id === 'exdoors') return;
+            if (id === 'exdoors') return; // handled separately
+            if (id === 'skylights') return; // handled separately
             const el = qs('#' + id);
             if (el && val != null) el.value = val;
         });
@@ -568,6 +707,17 @@ function loadFromLocalStorage() {
             data.exDoors.forEach(exdoor => {
                 if (isFinite(exdoor.width) && isFinite(exdoor.height)) {
                 addEXDoor({ width: exdoor.width, height: exdoor.height });
+                }
+            });
+        }
+
+        // skylights restore
+        if (Array.isArray(data.skylights) && data.skylights.length > 0) {
+            const skylightlist = qs('#skylightList');
+            if (skylightlist) skylightlist.innerHTML = '';
+            data.skylights.forEach(skylights => {
+                if (isFinite(skylights.width) && isFinite(skylights.height)) {
+                addSkylight({ width: skylights.width, height: skylights.height });
                 }
             });
         }
@@ -669,6 +819,18 @@ function buildPrintQuote() {
         if (doorLines.length) addLi('Exterior doors', doorLines.join('; '));
     }
 
+    // Exterior doors: each size (no price) — optional list if you’re using it
+    const sList = qs('#skylightList');
+    if (sList && sList.children.length) {
+        const skylightLines = [];
+        [...sList.children].forEach(row => {
+        const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
+        const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
+        if (w > 0 && h > 0) skylightLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
+        });
+        if (skylightLines.length) addLi('Exterior doors', skylightLines.join('; '));
+    }
+
     // Floor (no price) – size only if provided
     const floorType = val('floor_type');
     const floorSize = parseFloat(val('floor_size')) || 0;
@@ -711,8 +873,10 @@ function initDefaults() {
     qs('#cfg_fixedCharge').value = defaults.fixedCharge;
     qs('#cfg_windowCharge').value = defaults.windowCharge;
     qs('#cfg_windowRate').value = defaults.windowRate;
-    qs('#cfg_EXDoorCharge').value = defaults.windowCharge;
-    qs('#cfg_EXDoorRate').value = defaults.windowRate;
+    qs('#cfg_EXDoorCharge').value = defaults.exDoorCharge;
+    qs('#cfg_EXDoorRate').value = defaults.exDoorRate;
+    qs('#cfg_skylightsCharge').value = defaults.skylightsCharge;
+    qs('#cfg_skylightsRate').value = defaults.skylightRate;
     qs('#cfg_freeKm').value = defaults.deliveryFreeKm;
     qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
     qs('#cfg_vat').value = 13.5;
@@ -753,6 +917,12 @@ function copyClientLink() {
     });
 }
 
+function updateCladSize(){
+    const width = parseFloat(qs('#width').value) || 0;
+    const depth = parseFloat(qs('#depth').value) || 0;
+    qs('#cladding').value = width > 0 && depth > 0 ? ((width+depth)*2*2.4) : 0;
+}
+
 function ensureAtLeastOneWindowRow() {
   const list = qs('#windowsList');
   if (!list) return;
@@ -765,6 +935,12 @@ function ensureAtLeastOneEXDoorRow() {
   if (list.children.length === 0) addEXDoor();
 }
 
+function ensureAtLeastOneSkylightRow() {
+  const list = qs('#skylightList');
+  if (!list) return;
+  if (list.children.length === 0) addSkylight();
+}
+
 // Events: User input
 ['input','change'].forEach(ev => {
     document.body.addEventListener(ev, (e) => {
@@ -774,15 +950,25 @@ function ensureAtLeastOneEXDoorRow() {
     });
 });
 
+['width', 'depth'].forEach(element => {
+    const el = qs(`#${element}`);
+    el?.addEventListener('input', updateCladSize);
+    el?.addEventListener('change', updateCladSize);
+});
+
+
 // Button wiring
 if (qs('#addWindowBtn')) qs('#addWindowBtn').addEventListener('click', () => addWindow());
 if (qs('#addEXDoorBtn')) qs('#addEXDoorBtn').addEventListener('click', () => addEXDoor());
+if (qs('#addSkylightBtn')) qs('#addSkylightBtn').addEventListener('click', () => addSkylight());
 if (qs('#shareBtn')) qs('#shareBtn').addEventListener('click', copyLink);
 if (qs('#clientLinkBtn')) qs('#clientLinkBtn').addEventListener('click', copyClientLink);
 if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>{
     buildPrintQuote();
     window.print();
 });
+
+
 
 // build the print quote just-in-time
 window.addEventListener('beforeprint', buildPrintQuote);
@@ -793,7 +979,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const loadedFromUrl = loadFromUrlParams();
     loadFromLocalStorage(); 
     ensureAtLeastOneWindowRow();
-    ensureAtLeastOneEXDoorRow();           
+    ensureAtLeastOneEXDoorRow();
+    ensureAtLeastOneSkylightRow();           
     compute();    
 
     if (isClientMode()) {

@@ -109,6 +109,12 @@
         <label class="block">External Door €/m²
           <input type="number" step="1" id="cfg_EXDoorRate" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">Skylights Fixed Fee
+          <input type="number" step="1" id="cfg_skylightsCharge" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Skylights €/m²
+          <input type="number" step="1" id="cfg_skylightsRate" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
         <label class="block">Delivery free radius (km)
           <input type="number" step="1" id="cfg_freeKm" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
@@ -118,7 +124,7 @@
         <label class="block">VAT %
           <input type="number" step="0.1" id="cfg_vat" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
-        <label class="block">Discount % (default 0)
+        <label class="block">Discount Amount (default 0)
           <input type="number" step="0.5" id="cfg_discount" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
       </div>
@@ -271,6 +277,43 @@
             </template>
             <p style="margin-bottom: 2px;"></p>
 
+            <!-- Skylight Module -->
+            <section class="col-span-2">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-medium">Roof Windows</h3>
+                <button id="addSkylightBtn"
+                class="no-print px-3 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800">
+                + Add Roof Window
+                </button>
+            </div>
+
+            <div id="skylightList" class="space-y-3"></div>
+
+            <!-- Template for each door row -->
+            <template id="skylightRowTpl">
+            <div class="grid grid-cols-12 gap-3 p-3 bg-white rounded-2xl border border-slate-200">
+                <div class="col-span-5">
+                <label class="text-sm font-medium">Width (m)
+                    <input type="number" step="0.01" min="0"
+                        class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300"
+                        data-field="width" placeholder="e.g. 1.20" />
+                </label>
+                </div>
+                <div class="col-span-5">
+                <label class="text-sm font-medium">Height (m)
+                    <input type="number" step="0.01" min="0"
+                        class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300"
+                        data-field="height" placeholder="e.g. 1.00" />
+                </label>
+                </div>
+                <div class="col-span-2 flex items-end">
+                <button class="no-print w-full px-3 py-2 rounded-xl border border-red-300 text-red-700 hover:bg-red-50"
+                        data-action="remove">Del</button>
+                </div>
+            </div>
+            </template>
+            <p style="margin-bottom: 2px;"></p>
+
             <!--Floor-->
             <section class="col-span-2"> 
             <div class="flex items-center justify-between mb-2">
@@ -353,7 +396,7 @@
             <label class="block mt-2 text-sm">Quote ID
               <input id="quoteId" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
             </label>
-            <label class="block mt-2 text-sm">Discount % (optional)
+            <label class="block mt-2 text-sm">Discount Amount (optional)
               <input type="number" step="0.5" id="discountPct" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
             </label>
           </div>
@@ -416,3 +459,23 @@
 </body>
 <script src="./src/source.js"></script>
 </html>
+{[
+        ['cfg_baseRate','baseRatePerM2'],
+        ['cfg_fixedCharge','fixedCharge'],
+        ['cfg_cladRate','cladRate'],
+        ['cfg_windowCharge','windowCharge'],
+        ['cfg_windowRate','windowRate'],
+        ['cfg_EXDoorCharge','exDoorCharge'],
+        ['cfg_EXDoorRate','exDoorRate'],
+        ['cfg_skylightsCharge','skylightCharge'],
+        ['cfg_skylightsRate','skylightRate'],
+        ['cfg_freeKm','freeKm'],
+        ['cfg_ratePerKm','rateKm'],
+        ['cfg_vat','vat'],
+        ['cfg_discount','disc'],
+    ].forEach(([id,key]) => {
+        const el = qs('#' + id);
+        if (!el) return;
+        const v = el.value;
+        if (v !== '' && v != null) params.set(key, v);
+    });}
