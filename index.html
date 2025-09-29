@@ -459,23 +459,3 @@
 </body>
 <script src="./src/source.js"></script>
 </html>
-{[
-        ['cfg_baseRate','baseRatePerM2'],
-        ['cfg_fixedCharge','fixedCharge'],
-        ['cfg_cladRate','cladRate'],
-        ['cfg_windowCharge','windowCharge'],
-        ['cfg_windowRate','windowRate'],
-        ['cfg_EXDoorCharge','exDoorCharge'],
-        ['cfg_EXDoorRate','exDoorRate'],
-        ['cfg_skylightsCharge','skylightCharge'],
-        ['cfg_skylightsRate','skylightRate'],
-        ['cfg_freeKm','freeKm'],
-        ['cfg_ratePerKm','rateKm'],
-        ['cfg_vat','vat'],
-        ['cfg_discount','disc'],
-    ].forEach(([id,key]) => {
-        const el = qs('#' + id);
-        if (!el) return;
-        const v = el.value;
-        if (v !== '' && v != null) params.set(key, v);
-    });}
