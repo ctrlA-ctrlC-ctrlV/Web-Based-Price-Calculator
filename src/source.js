@@ -472,7 +472,12 @@ function compute() {
         pTotalEl.textContent = fmtCurrency(total);
     }
     updateUrlParams();
-    persistToLocalStorage();    
+    persistToLocalStorage();
+    renderPrintTable(lines, {
+        subtotal,            // before discount & VAT
+        discountAmt,         // your computed amount (not %)
+        vatPct: vatPct   // e.g. parseFloat(qs('#vat').value) || defaults.vat
+    });    
 }
 
 function renderSummary(model) {
@@ -1057,6 +1062,38 @@ function copyClientLink() {
     }).catch(() => {
         alert('Could not copy. Manually copy the URL from the address bar.');
     });
+}
+
+function renderPrintTable(lines, { subtotal, discountAmt, vatPct }) {
+    const body = qs('#printItemsBody');
+    const foot = qs('#printTotalsFoot');
+    if (!body || !foot) return;
+
+    body.innerHTML = '';
+    lines.forEach(row => {
+        const { label, amount, detail, qty, rate } = row; // detail/qty/rate optional
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+        <td>
+            ${label}
+            ${detail ? `<div style="font-size:9pt;color:#64748b;margin-top:1mm">${detail}</div>` : ''}
+        </td>
+        <td class="num">${qty != null ? qty : ''}</td>
+        <td class="num">${rate != null ? fmtCurrency(rate) : ''}</td>
+        <td class="num">${fmtCurrency(amount)}</td>`;
+        body.appendChild(tr);
+    });
+
+    const net = Math.max(0, subtotal - (discountAmt || 0));
+    const vat = net * (vatPct / 100);
+    const grand = net + vat;
+
+    foot.innerHTML = `
+        <tr><td colspan="3" class="num" style="text-align:right">Subtotal</td><td class="num">${fmtCurrency(subtotal)}</td></tr>
+        ${discountAmt > 0 ? `<tr><td colspan="3" class="num" style="text-align:right">Discount</td><td class="num">- ${fmtCurrency(discountAmt)}</td></tr>` : ''}
+        <tr><td colspan="3" class="num" style="text-align:right">VAT (${vatPct}%)</td><td class="num">${fmtCurrency(vat)}</td></tr>
+        <tr class="grand"><td colspan="3" class="num" style="text-align:right">Total</td><td class="num">${fmtCurrency(grand)}</td></tr>
+    `;
 }
 
 function updateCladSize(){

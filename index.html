@@ -61,6 +61,34 @@
         margin-bottom: 2mm;
         text-transform: uppercase;
       }
+
+      /* Table layout for the quote */
+      #printQuote .quote-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+      #printQuote .quote-table thead { display: table-header-group; }
+      #printQuote .quote-table tfoot { display: table-footer-group; }
+      #printQuote .quote-table th,
+      #printQuote .quote-table td {
+        padding: 2.5mm 3mm;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: top;
+        font-size: 10.5pt;
+      }
+      #printQuote .quote-table td.num { text-align: right; white-space: nowrap; }
+      #printQuote .quote-table tr { break-inside: avoid; page-break-inside: avoid; }
+
+      /* Totals styling */
+      #printQuote .quote-table tfoot td { border-bottom: none; }
+      #printQuote .quote-table tfoot tr.grand td {
+        border-top: 2px solid #0ea5e9;
+        font-weight: 700;
+      }
+
+      /* Make sure nothing clips in print */
+      #printQuote * { overflow: visible !important; }
     }
     .number-input::-webkit-outer-spin-button,
     .number-input::-webkit-outer-spin-button, .number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -431,21 +459,6 @@
                 </div>
               </template>
             </section>
-
-            <!--Extras-->
-            <!--<section class="col-span-2"> 
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-medium">Extras</h3>
-            </div>
-            <label class="block col-span-2">100mm EPS insulation sqm
-                <input type="number" step="1" id="ex_EPSInsulation" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-            </label>
-            <label class="block col-span-2">Render finish sqm
-                <input type="number" step="1" id="ex_renderFinish" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-            </label>
-            <label class="block col-span-2">Extra steel door
-                <input type="number" step="1" id="ex_steelDoor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-            </label>-->
         </div>
       </section>
 
@@ -518,15 +531,31 @@
             </div>
           </div>
 
-          <!-- Description -->
+          <section class="print-lineitems">
+            <div class="section-title">Line items</div>
+            <table class="quote-table">
+              <thead>
+                <tr>
+                  <th style="width:55%">Item</th>
+                  <th style="width:15%; text-align:right">Qty/Len/Area</th>
+                  <th style="width:15%; text-align:right">Rate</th>
+                  <th style="width:15%; text-align:right">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="printItemsBody"></tbody>
+              <tfoot id="printTotalsFoot"></tfoot>
+            </table>
+          </section>
+
+          <!-- Description 
           <h3 class="section-title">DESCRIPTION</h3>
           <ul id="p_lines" class="desc-list text-[13px] leading-relaxed"></ul>
 
-          <!-- Total -->
+          <-- Total --
           <div id="p_total" class="mt-8 flex justify-between items-center font-bold text-lg border-t-2 border-slate-300 pt-4">
             <span class="quote-heading uppercase">TOTAL</span>
             <span id="p_totalValue"></span>
-          </div>
+          </div>-->
 
           <!-- Notes -->
           <h3 class="section-title">ADDITIONAL NOTES</h3>
