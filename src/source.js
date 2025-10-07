@@ -3,6 +3,7 @@ const defaults = {
     currency: 'EUR',
     baseRatePerM2: 1200,       // base build €/m²
     fixedCharge: 6000,
+    height: 2.4,
     cladRate: 80,
     bathTypeOneCharge: 2500,
     bathTypeTwoCharge: 4500,
@@ -265,10 +266,11 @@ function flashRow(el) {
   setTimeout(() => el.classList.remove('ring-2','ring-sky-400'), 900);
 }
 
-function perimeterM() {
-  const w = parseFloat(qs('#width').value) || 0;
-  const d = parseFloat(qs('#depth').value) || 0;
-  return Math.max(0, 2 * (w + d));
+function perimeterM2() {
+    const w = parseFloat(qs('#width').value) || 0;
+    const d = parseFloat(qs('#depth').value) || 0;
+    const h = parseFloat(qs('#cfg_height').value) || defaults.height;
+    return Math.max(0, 2 * h * (w + d));
 }
 
 function addExtra(kind) {
@@ -292,7 +294,7 @@ function addExtra(kind) {
       kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
 
     const lenEl = qs('[data-field="length"]', node);
-    const updateLen = () => { lenEl.value = perimeterM().toFixed(2); compute(); };
+    const updateLen = () => { lenEl.value = perimeterM2().toFixed(2); compute(); };
     updateLen();
     ['input','change'].forEach(ev => {
       qs('#width')?.addEventListener(ev, updateLen);
@@ -345,7 +347,7 @@ function getExtras() {
   [...list.children].forEach(row => {
     const kind = row.dataset.kind;
     if (kind === 'eps' || kind === 'render') {
-      const len = perimeterM(); // locked to perimeter
+      const len = perimeterM2(); // locked to perimeter
       const rate = (kind === 'eps')
         ? (parseFloat(defaults.ex_ESPInstRate) || 0)
         : (parseFloat(defaults.ex_renderRate) || 0);
@@ -1065,7 +1067,8 @@ function copyClientLink() {
 function updateCladSize(){
     const width = parseFloat(qs('#width').value) || 0;
     const depth = parseFloat(qs('#depth').value) || 0;
-    qs('#cladding').value = width > 0 && depth > 0 ? ((width+depth)*2*2.4) : 0;
+    const height = parseFloat(qs('#cfg_height').value) || defaults.height;
+    qs('#cladding').value = width > 0 && depth > 0 ? ((width+depth)*2*height) : 0;
 }
 
 function ensureAtLeastOneWindowRow() {
