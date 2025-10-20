@@ -393,6 +393,8 @@ function initExtrasUi() {
 // ------------------------------- End of Extras Module -------------------------------
 
 function compute() {
+    const fmtNum = (n, dp=2) => Number(n).toFixed(dp).replace(/\.00$/, '');
+    
     const a = areaM2();
 
     // Fetch config panel value
@@ -452,7 +454,7 @@ function compute() {
     const subnet = subtotal - discountAmt;
     const vat = vatPct > 0 ? subnet * (vatPct / 100) : 0;
     const net = subnet - vat;
-    const total = net + vat;//+ vat;
+    const total = fmtNum(net + vat, 0);
 
     const lines = [
         { label: `Base build (${a.toFixed(2)} m²)`, amount: base },
@@ -872,142 +874,145 @@ function loadFromLocalStorage() {
 }
 
 function buildPrintQuote() {
-  // Helpers
-  const val = id => (qs('#' + id)?.value ?? '').toString().trim();
-  const addLi = (label, value) => {
-    if (!value) return;
-    const li = document.createElement('li');
-    li.innerHTML = `<span class="font-medium">${label}:</span> ${value}`;
-    list.appendChild(li);
-  };
-  const fmtNum = (n, dp=2) => Number(n).toFixed(dp).replace(/\.00$/, '');
-  const todayISO = () => new Date().toISOString().slice(0,10);
+    // Helpers
+    const val = id => (qs('#' + id)?.value ?? '').toString().trim();
+    const addLi = (label, value) => {
+        if (!value) return;
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="font-medium">${label}:</span> ${value}`;
+        list.appendChild(li);
+    };
+    const fmtNum = (n, dp=2) => Number(n).toFixed(dp).replace(/\.00$/, '');
+    const todayISO = () => new Date().toISOString().slice(0,10);
 
-  // Target list
-  const list = qs('#p_lines');
-  if (!list) return;
-  list.innerHTML = '';
+    // Target list
+    const list = qs('#p_lines');
+    if (!list) return;
+    list.innerHTML = '';
 
-  // Header meta
-  qs('#p_clientName').textContent   = val('clientName') || '';
-  qs('#p_clientAddress').textContent= val('clientAddress') || '';
-  qs('#p_clientPhone').textContent  = val('clientPhone') || '';
-  qs('#p_clientEmail').textContent  = val('clientEmail') || '';
-  qs('#p_quoteId').textContent      = val('quoteId') || '';
-  qs('#p_quoteDate').textContent    = val('quoteDate') || todayISO();
+    // Header meta
+    qs('#p_clientName').textContent   = val('clientName') || '';
+    qs('#p_clientAddress').textContent= val('clientAddress') || '';
+    qs('#p_clientPhone').textContent  = val('clientPhone') || '';
+    qs('#p_clientEmail').textContent  = val('clientEmail') || '';
+    qs('#p_quoteId').textContent      = val('quoteId') || '';
+    qs('#p_quoteDate').textContent    = val('quoteDate') || todayISO();
 
-  // Derived sizes
-  const width = parseFloat(val('width')) || 0;
-  const depth = parseFloat(val('depth')) || 0;
-  const roomArea = Math.max(0, width * depth);
+    // Derived sizes
+    const width = parseFloat(val('width')) || 0;
+    const depth = parseFloat(val('depth')) || 0;
+    const roomArea = Math.max(0, width * depth);
 
-  // DESCRIPTION (no prices)
-  // 1) Room size / cladding
-  if (width > 0 && depth > 0) {
-    addLi('Gross floor area', `${fmtNum(width)} m × ${fmtNum(depth)} m (${fmtNum(roomArea)} m²)`);
-  }
-  const cladding = parseFloat(val('cladding')) || 0;
-  if (cladding > 0) addLi('Cladding size', `${fmtNum(cladding)} m²`);
+    // DESCRIPTION (no prices)
+    // 1) Room size / cladding
+    if (width > 0 && depth > 0) {
+        addLi('Gross floor area', `${fmtNum(width)} m × ${fmtNum(depth)} m (${fmtNum(roomArea)} m²)`);
+    }
+    const cladding = parseFloat(val('cladding')) || 0;
+    if (cladding > 0) addLi('Cladding size', `${fmtNum(cladding)} m²`);
 
-  // 2) Bathrooms
-  const b1 = parseFloat(val('bathroom_1')) || 0;
-  const b2 = parseFloat(val('bathroom_2')) || 0;
-  if (b1 > 0) addLi('Toilet + Sink (qty)', fmtNum(b1, 0));
-  if (b2 > 0) addLi('Toilet + Sink + Shower (qty)', fmtNum(b2, 0));
+    // 2) Bathrooms
+    const b1 = parseFloat(val('bathroom_1')) || 0;
+    const b2 = parseFloat(val('bathroom_2')) || 0;
+    if (b1 > 0) addLi('Toilet + Sink (qty)', fmtNum(b1, 0));
+    if (b2 > 0) addLi('Toilet + Sink + Shower (qty)', fmtNum(b2, 0));
 
-  // 3) Electrics
-  const sw = parseFloat(val('switch')) || 0;
-  const ds = parseFloat(val('d_socket')) || 0;
-  if (sw > 0) addLi('Switches (qty)', fmtNum(sw, 0));
-  if (ds > 0) addLi('Double sockets (qty)', fmtNum(ds, 0));
+    // 3) Electrics
+    const sw = parseFloat(val('switch')) || 0;
+    const ds = parseFloat(val('d_socket')) || 0;
+    if (sw > 0) addLi('Switches (qty)', fmtNum(sw, 0));
+    if (ds > 0) addLi('Double sockets (qty)', fmtNum(ds, 0));
 
-  // 4) Internal doors
-  const innerDoor = parseFloat(val('inner_door')) || 0;
-  if (innerDoor > 0) addLi('Internal doors (qty)', fmtNum(innerDoor, 0));
+    // 4) Internal doors
+    const innerDoor = parseFloat(val('inner_door')) || 0;
+    if (innerDoor > 0) addLi('Internal doors (qty)', fmtNum(innerDoor, 0));
 
-  // 5) Internal wall
-  const wallType = val('inner_wall_type');
-  const wallSize = parseFloat(val('wall_quan')) || 0;
-  const wallTypeLabelMap = {
-    'none': 'None',
-    'inner_wall_type_p': 'Panel wall',
-    'inner_wall_type_s': 'Skimmed & painted wall'
-  };
-  if (wallType && wallType !== 'none' && wallSize > 0) {
-    addLi('Internal wall', `${wallTypeLabelMap[wallType] || wallType} — ${fmtNum(wallSize)} m`);
-  }
+    // 5) Internal wall
+    const wallType = val('inner_wall_type');
+    const wallSize = parseFloat(val('wall_quan')) || 0;
+    const wallTypeLabelMap = {
+        'none': 'None',
+        'inner_wall_type_p': 'Panel wall',
+        'inner_wall_type_s': 'Skimmed & painted wall'
+    };
+    if (wallType && wallType !== 'none' && wallSize > 0) {
+        addLi('Internal wall', `${wallTypeLabelMap[wallType] || wallType} — ${fmtNum(wallSize)} m`);
+    }
 
-  // 6) Windows (each size)
-  const wList = qs('#windowsList');
-  if (wList && wList.children.length) {
-    const winLines = [];
-    [...wList.children].forEach(row => {
-      const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
-      const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
-      if (w > 0 && h > 0) winLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
-    });
-    if (winLines.length) addLi('Windows', winLines.join('; '));
-  }
+    // 6) Windows (each size)
+    const wList = qs('#windowsList');
+    if (wList && wList.children.length) {
+        const winLines = [];
+        [...wList.children].forEach(row => {
+        const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
+        const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
+        if (w > 0 && h > 0) winLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
+        });
+        if (winLines.length) addLi('Windows', winLines.join('; '));
+    }
 
-  // 7) External doors (each size)
-  const dList = qs('#EXDoorsList');
-  if (dList && dList.children.length) {
-    const doorLines = [];
-    [...dList.children].forEach(row => {
-      const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
-      const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
-      if (w > 0 && h > 0) doorLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
-    });
-    if (doorLines.length) addLi('External doors', doorLines.join('; '));
-  }
+    // 7) External doors (each size)
+    const dList = qs('#EXDoorsList');
+    if (dList && dList.children.length) {
+        const doorLines = [];
+        [...dList.children].forEach(row => {
+        const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
+        const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
+        if (w > 0 && h > 0) doorLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
+        });
+        if (doorLines.length) addLi('External doors', doorLines.join('; '));
+    }
 
-  // 8) Skylights (each size)
-  const sList = qs('#skylightList');
-  if (sList && sList.children.length) {
-    const skylightLines = [];
-    [...sList.children].forEach(row => {
-      const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
-      const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
-      if (w > 0 && h > 0) skylightLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
-    });
-    if (skylightLines.length) addLi('Skylights', skylightLines.join('; '));
-  }
+    // 8) Skylights (each size)
+    const sList = qs('#skylightList');
+    if (sList && sList.children.length) {
+        const skylightLines = [];
+        [...sList.children].forEach(row => {
+        const w = parseFloat(row.querySelector('[data-field="width"]')?.value) || 0;
+        const h = parseFloat(row.querySelector('[data-field="height"]')?.value) || 0;
+        if (w > 0 && h > 0) skylightLines.push(`${fmtNum(w)} m × ${fmtNum(h)} m`);
+        });
+        if (skylightLines.length) addLi('Skylights', skylightLines.join('; '));
+    }
 
-  // 9) Floor (type + size)
-  const floorType = val('floor_type');
-  const floorSize = parseFloat(val('floor_size')) || 0;
-  const floorLabel = { none: 'None', wooden: 'Wooden', tile: 'Tile' }[floorType];
-  if (floorType && floorType !== 'none' && floorSize > 0) {
-    addLi('Floor', `${floorLabel || floorType} — ${fmtNum(floorSize)} m²`);
-  }
+    // 9) Floor (type + size)
+    const floorType = val('floor_type');
+    const floorSize = parseFloat(val('floor_size')) || 0;
+    const floorLabel = { none: 'None', wooden: 'Wooden', tile: 'Tile' }[floorType];
+    if (floorType && floorType !== 'none' && floorSize > 0) {
+        addLi('Floor', `${floorLabel || floorType} — ${fmtNum(floorSize)} m²`);
+    }
 
-  // 10) Delivery distance
-  const distance = parseFloat(val('distance')) || 0;
-  if (distance > 0) addLi('Delivery distance', `${fmtNum(distance, 0)} km`);
+    // 10) Delivery distance
+    const distance = parseFloat(val('distance')) || 0;
+    if (distance > 0) addLi('Delivery distance', `${fmtNum(distance, 0)} km`);
 
-  // 11) Extras (NEW: read from #extrasList, not the old hidden fields)
-  const xList = qs('#extrasList');
-  if (xList && xList.children.length) {
-    const xLines = [];
-    [...xList.children].forEach(row => {
-      const kind = row.dataset.kind || row.getAttribute('data-type'); // fallback
-      if (kind === 'eps' || kind === 'render') {
-        const label = kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
-        const len = parseFloat(row.querySelector('[data-field="length"]')?.value) || 0;
-        if (len > 0) xLines.push(`${label} — ${fmtNum(len)} m`);
-      } else if (kind === 'steelDoor') {
-        const qty = parseFloat(row.querySelector('[data-field="qty"]')?.value) || 0;
-        if (qty > 0) xLines.push(`Steel door(s) — ${fmtNum(qty, 0)}`);
-      } else if (kind === 'other') {
-        const name = (row.querySelector('[data-field="name"]')?.value || 'Other').trim();
-        if (name) xLines.push(name);
-      }
-    });
-    if (xLines.length) addLi('Extras', xLines.join('; '));
-  }
+    // 11) Extras (NEW: read from #extrasList, not the old hidden fields)
+    const xList = qs('#extrasList');
+    if (xList && xList.children.length) {
+        const xLines = [];
+        [...xList.children].forEach(row => {
+        const kind = row.dataset.kind || row.getAttribute('data-type'); // fallback
+        if (kind === 'eps' || kind === 'render') {
+            const label = kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
+            const len = parseFloat(row.querySelector('[data-field="length"]')?.value) || 0;
+            if (len > 0) xLines.push(`${label} — ${fmtNum(len)} m`);
+        } else if (kind === 'steelDoor') {
+            const qty = parseFloat(row.querySelector('[data-field="qty"]')?.value) || 0;
+            if (qty > 0) xLines.push(`Steel door(s) — ${fmtNum(qty, 0)}`);
+        } else if (kind === 'other') {
+            const name = (row.querySelector('[data-field="name"]')?.value || 'Other').trim();
+            if (name) xLines.push(name);
+        }
+        });
+        if (xLines.length) addLi('Extras', xLines.join('; '));
+    }
 
-  // Notes
-  qs('#p_notes').textContent = val('notes') || '';
+    const discountAmt = parseFloat(qs('#discountPct').value);
+    if (discountAmt > 0) addLi('Discount Amount', fmtNum(discountAmt, 0));
+
+    // Notes
+    qs('#p_notes').textContent = val('notes') || '';
 }
 
 function initDefaults() {
