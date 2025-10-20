@@ -449,9 +449,10 @@ function compute() {
     const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
     const discountAmt = appliedDiscountPct;
 
-    const net = subtotal - discountAmt;
-    const vat = vatPct > 0 ? net * (vatPct / 100) : 0;
-    const total = net + vat;
+    const subnet = subtotal - discountAmt;
+    const vat = vatPct > 0 ? subnet * (vatPct / 100) : 0;
+    const net = subnet - vat;
+    const total = net + vat;//+ vat;
 
     const lines = [
         { label: `Base build (${a.toFixed(2)} m²)`, amount: base },
@@ -495,7 +496,7 @@ function renderSummary(model) {
 
     const sub = document.createElement('div');
     sub.className = 'flex items-center justify-between px-4 py-3 bg-slate-50';
-    sub.innerHTML = `<span class="text-sm">Subtotal</span><span class="font-medium">${fmtCurrency(model.subtotal || 0)}</span>`;
+    sub.innerHTML = `<span class="text-sm">Total</span><span class="font-medium">${fmtCurrency(model.subtotal || 0)}</span>`;
 
     const disc = document.createElement('div');
     disc.className = 'flex items-center justify-between px-4 py-3 bg-white';
@@ -503,7 +504,7 @@ function renderSummary(model) {
 
     const net = document.createElement('div');
     net.className = 'flex items-center justify-between px-4 py-3 bg-slate-50';
-    net.innerHTML = `<span class="text-sm">Net</span><span class="font-medium">${fmtCurrency(model.net || 0)}</span>`;
+    net.innerHTML = `<span class="text-sm">Pre VAT</span><span class="font-medium">${fmtCurrency(model.net || 0)}</span>`;
 
     const vat = document.createElement('div');
     vat.className = 'flex items-center justify-between px-4 py-3 bg-white';
