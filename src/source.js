@@ -329,12 +329,14 @@ function addExtra(kind) {
     const k = node.dataset.kind;
     node.remove();
     if (singletons.has(k)) setOptionDisabled(k, false);
-    compute();
+    compute();   
   });
 
   list.appendChild(node);
   if (singletons.has(kind)) setOptionDisabled(kind, true);
   compute();
+
+  return node;
 }
 
 function getExtras() {
@@ -658,7 +660,8 @@ function updateUrlParams() {
             } else if (kind === 'other') {
                 const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
                 const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
-                lines.push(`${name}-${cost}`)
+                const safeName = name.replaceAll(',', ' ');
+                lines.push(`${safeName}-${cost}`)
             }
         });
         if(lines.length) params.set('extras', lines.join(','));
@@ -799,28 +802,63 @@ function loadFromUrlParams() {
 
     // extras: parse as "eps, render, steelDoor-[qty], [other]-[other cost], ..." (if item exist)
     if (params.has('extras')) {
-        const str = params.get("extras") || '';
-        const items = str.split(',').map(s => s.trim()).filter(Boolean);
+        const tokens = (() => {
+            const all = params.getAll('extras');
+            if (all.length <= 1) return (params.get('extras') || '').split(',');
+            return all;
+        })()
+            .map(s => s.trim())
+            .filter(Bollean);
 
         const list = qs('#extrasList');
         if (!list) {
             console.warn('[load:url] #extrasList not found; extras skipped');
         } else {
             list.innerHTML = '';    // clear existing rows
-            items.forEach(item => {
-                const kind = item.dataset.kind;
-                if (kind === 'eps'){
-                    addExtra(kind);
-                } else if (kind === 'render') {
-                    addExtra(kind);
-                } else if (kind.has('steelDoor')) {
-                    //const qty = qs('[data-field="qty"]', row)?.value || 0;
-                    //lines.push(`steelDoor-${qty}`);
-                } else if (kind.has('other')) {
-                    //const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
-                    //const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
-                    //lines.push(`${name}-${cost}`)
+
+            tokens.forEach(token => {
+                // simple toggles
+                if (token === 'eps' || token === 'render'){
+                    addExtra(token);
+                    return;
+                } 
+                
+                // steelDoor-<qty>
+                if (token.startsWith('steelDoor-')) {
+                    const qty = parseInt(token.slice('steelDoor-'.length),10);
+                    const safeQty = Number.isFinite(qty) && qty > 0 ? qty : 1;
+
+                    const row = addExtra('steelDoor');
+
+                    row?.querySelector?.('[data-field="qty"]')?.setAttribute('value',String(safeQty));
+                    const qtyEl = row?.querySelector?.('[data-field="qty"]');
+
+                    if (qtyEl) { qtyEl.value = String(safeQty); qtyEl.dispatchEvent(new Event('input')); }
+                    
+                    return;
                 }
+                
+                // <name>-<cost> where name may contain '-'
+                const lastDash = token.lastIndexOf('-');
+                if (lastDash > -1) {
+                    const name = token.slice(0, lastDash).trim();
+                    const costNum = parseFloat(token.slice(lastDash + 1).trim());
+                    const cost = Number.isFinite(costNum) ? costNum : 0;
+
+                    const row = addExtra('other');
+                    const nameEl = row?.querySelector?.('[data-field="name"]');
+                    const costEl = row?.querySelector?.('[data-field="cost"]');
+
+                    if (nameEl) { nameEl.value = name; nameEl.dispatchEvent(new Event('input')); }
+                    if (costEl) { costEl.value = String(cost); costEl.dispatchEvent(new Event('input')); }
+
+                    return;
+                }
+
+                // fallback -> treat as "other" with 0 cost
+                const row = addExtra('other');
+                const nameEl = row?.querySelector?.('[data-field="name"]');
+                if (nameEl) { nameEl.value = token; nameEl.dispatchEvent(new Event('input')); }
             });
         }
     }
