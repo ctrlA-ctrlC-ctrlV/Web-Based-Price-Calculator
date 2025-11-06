@@ -1259,7 +1259,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
     initExtrasUi();
     const loadedFromUrl = loadFromUrlParams();
-    loadFromLocalStorage(); 
+    //loadFromLocalStorage(); 
     ensureAtLeastOneWindowRow();
     ensureAtLeastOneEXDoorRow();
     ensureAtLeastOneSkylightRow();           
