@@ -414,8 +414,8 @@ function compute() {
     const inner_wall_type_s = parseFloat(qs('#cfg_innerWallSnP').value) || defaults.innerWallType.inner_wall_type_s;
     const internalWallTypes = {
         none: none, 
-        type_p: inner_wall_type_p, 
-        type_s: inner_wall_type_s
+        inner_wall_type_p: inner_wall_type_p, 
+        inner_wall_type_s: inner_wall_type_s
     };
     const wooden = parseFloat(qs('#cfg_floorWooden').value) || defaults.floor.wooden;
     const tile = parseFloat(qs('#cfg_floorTile').value) || defaults.floor.tile;
@@ -452,6 +452,7 @@ function compute() {
     const eleCost = eSwitch * switchCharge + dSocket * doubleSocket;
     const innerDoorCost = innerDoor * innerDoorCharge;
     const innerWallCost = internalWallTypes[innerWallType] * innerWallQuan;
+    console.log(`TEST: ${innerWallCost}`);
     const windowCost = getWinData();
     const exDoorCost = getEXDoorData();
     const skylightCost = getSkylightData();
@@ -987,14 +988,6 @@ function loadFromLocalStorage() {
     } catch (err) {
         console.error('Error loading localStorage:', err);
     }
-
-    if (typeof compute === 'function') {
-    try {
-        compute();
-    } catch (err) {
-        console.error('[load:url] compute() failed:', err);
-    }
-}
 }
 
 function buildPrintQuote() {
