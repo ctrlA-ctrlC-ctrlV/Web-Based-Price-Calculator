@@ -349,14 +349,14 @@ function getExtras() {
     if (kind === 'eps' || kind === 'render') {
       const len = perimeterM2(); // locked to perimeter
       const rate = (kind === 'eps')
-        ? (parseFloat(defaults.ex_ESPInstRate) || 0)
-        : (parseFloat(defaults.ex_renderRate) || 0);
+        ? (parseFloat(qs('#cfg_extra_espInsulation').value) || parseFloat(defaults.ex_ESPInstRate)) //LOCATOR
+        : (parseFloat(qs('#cfg_extra_renderFinish').value) || parseFloat(defaults.ex_renderRate)); //LOCATOR
       const cost = len * rate;
       total += cost;
       lines.push({ label: `${kind === 'eps' ? '100mm EPS insulation' : 'Render finish'} (${len.toFixed(2)} m perimeter)`, amount: cost });
     } else if (kind === 'steelDoor') {
-      const qty = parseFloat(qs('[data-field="qty"]', row)?.value) || 0;
-      const unit = parseFloat(defaults.ex_steelDoorCharge) || 0;
+      const qty = qs('[data-field="qty"]', row)?.value || 0;
+      const unit = parseFloat(qs('#cfg_extra_steelDoor').value) || parseFloat(defaults.ex_steelDoorCharge); //LOCATOR
       const cost = qty * unit;
       total += cost;
       lines.push({ label: `Steel door(s) × ${qty}`, amount: cost });
@@ -401,6 +401,27 @@ function compute() {
     const baseRate = parseFloat(qs('#cfg_baseRate').value) || defaults.baseRatePerM2;
     const fixedCharge = parseFloat(qs('#cfg_fixedCharge').value) || defaults.fixedCharge;
     const cladRate = parseFloat(qs('#cfg_cladRate').value) || defaults.cladRate;
+    const bathTypeOneCharge = parseFloat(qs('#cfg_bathTypeOneCharge').value) || defaults.bathTypeOneCharge;
+    const bathTypeTwoCharge = parseFloat(qs('#cfg_bathTypeTwoCharge').value) || defaults.bathTypeTwoCharge;
+    const switchCharge = parseFloat(qs('#cfg_switchCharge').value) || defaults.switch;
+    const doubleSocket = parseFloat(qs('#cfg_socketCharge').value) || defaults.doubleSocket;
+    const innerDoorCharge = parseFloat(qs('#cfg_internalDoorCharge').value) || defaults.innerDoorChar;
+    
+    const none = 0;
+    const inner_wall_type_p = parseFloat(qs('#cfg_innerWallPanel').value) || defaults.innerWallType.inner_wall_type_p;
+    const inner_wall_type_s = parseFloat(qs('#cfg_innerWallSnP').value) || defaults.innerWallType.inner_wall_type_s;
+    const internalWallTypes = {
+        none: none, 
+        type_p: inner_wall_type_p, 
+        type_s: inner_wall_type_s
+    };
+    const wooden = parseFloat(qs('#cfg_floorWooden').value) || defaults.floor.wooden;
+    const tile = parseFloat(qs('#cfg_floorTile').value) || defaults.floor.tile;
+    const floorTypes = {
+        none: none,
+        wooden: wooden,
+        tile: tile
+    };
     const freeKm = parseFloat(qs('#cfg_freeKm').value) || defaults.deliveryFreeKm;
     const rateKm = parseFloat(qs('#cfg_ratePerKm').value) || defaults.deliveryRatePerKm;
     const vatPct = parseFloat(qs('#cfg_vat').value) || defaults.vatPct;
@@ -425,14 +446,14 @@ function compute() {
     // Calculation of non extra
     const base = a * baseRate + fixedCharge;
     const cladCost = cladSize * cladRate;
-    const bathCost = bathTypeOne * defaults.bathTypeOneCharge + bathTypeTwo * defaults.bathTypeTwoCharge ; // FIX THIS
-    const eleCost = eSwitch * defaults.switch + dSocket * defaults.doubleSocket;
-    const innerDoorCost = innerDoor * defaults.innerDoorChar;
-    const innerWallCost = defaults.innerWallType[innerWallType] * innerWallQuan;
+    const bathCost = bathTypeOne * bathTypeOneCharge + bathTypeTwo * bathTypeTwoCharge ;
+    const eleCost = eSwitch * switchCharge + dSocket * doubleSocket;
+    const innerDoorCost = innerDoor * innerDoorCharge;
+    const innerWallCost = internalWallTypes[innerWallType] * innerWallQuan;
     const windowCost = getWinData();
     const exDoorCost = getEXDoorData();
     const skylightCost = getSkylightData();
-    const floorCost = defaults.floor[floorType] * floorSize; //floor type * floor size
+    const floorCost = floorTypes[floorType] * floorSize;
     const deliveryExtraKm = Math.max(0, distance - freeKm);
     const deliverCost = deliveryExtraKm * rateKm;
 
@@ -1027,14 +1048,15 @@ function initDefaults() {
     qs('#cfg_cladRate').value = defaults.cladRate;
     qs('#cfg_bathTypeOneCharge').value = defaults.bathTypeOneCharge;
     qs('#cfg_bathTypeTwoCharge').value = defaults.bathTypeTwoCharge;
+    qs('#cfg_switchCharge').value = defaults.switch;
+    qs('#cfg_socketCharge').value = defaults.doubleSocket;
+    qs('#cfg_internalDoorCharge').value = defaults.innerDoorChar;
     qs('#cfg_windowCharge').value = defaults.windowCharge;
     qs('#cfg_windowRate').value = defaults.windowRate;
     qs('#cfg_EXDoorCharge').value = defaults.exDoorCharge;
     qs('#cfg_EXDoorRate').value = defaults.exDoorRate;
     qs('#cfg_skylightsCharge').value = defaults.skylightCharge;
-    qs('#cfg_skylightsRate').value = defaults.skylightRate;
-    qs('#cfg_switchCharge').value = defaults.switch;
-    qs('#cfg_socketChartge').value = defaults.doubleSocket;
+    qs('#cfg_skylightsRate').value = defaults.skylightRate;    
     qs('#cfg_innerWallPanel').value = defaults.innerWallType.inner_wall_type_p;
     qs('#cfg_innerWallSnP').value = defaults.innerWallType.inner_wall_type_s;
     qs('#cfg_floorWooden').value = defaults.floor.wooden;
@@ -1043,7 +1065,9 @@ function initDefaults() {
     qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
     qs('#cfg_vat').value = 13.5;
     qs('#cfg_discount').value = defaults.discountPct;
-    console.log(defaults.innerWallType.inner_wall_type_p);
+    qs('#cfg_extra_espInsulation').value = defaults.ex_ESPInstRate;
+    qs('#cfg_extra_renderFinish').value = defaults.ex_renderRate;
+    qs('#cfg_extra_steelDoor').value = defaults.ex_steelDoorCharge;
 }
 
 function copyLink() {
@@ -1131,8 +1155,6 @@ if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>{
     buildPrintQuote();
     window.print();
 });
-
-
 
 // build the print quote just-in-time
 window.addEventListener('beforeprint', buildPrintQuote);
