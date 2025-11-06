@@ -581,7 +581,15 @@ function updateUrlParams() {
     [
         ['cfg_baseRate','baseRatePerM2'],
         ['cfg_fixedCharge','fixedCharge'],
+        ['cfg_height', 'height'],
         ['cfg_cladRate','cladRate'],
+        ['cfg_bathTypeOneCharge','bathTypeOneCharge'],
+        ['cfg_bathTypeTwoCharge','bathTypeTwoCharge'],
+        ['cfg_switchCharge','switchCharge'],
+        ['cfg_socketCharge','socketCharge'],
+        ['cfg_internalDoorCharge','internalDoorCharge'],
+        ['cfg_innerWallPanel','innerWallPanel'],
+        ['cfg_innerWallSnP','innerWallSnP'],
         ['cfg_windowCharge','windowCharge'],
         ['cfg_windowRate','windowRate'],
         ['cfg_EXDoorCharge','exDoorCharge'],
@@ -931,7 +939,7 @@ function persistToLocalStorage() {
     localStorage.setItem('gr_calc', JSON.stringify(data));
 }
 
-function loadFromLocalStorage() {
+/*function loadFromLocalStorage() {
     try {
         const data = JSON.parse(localStorage.getItem('gr_calc') || '{}');
 
@@ -979,7 +987,7 @@ function loadFromLocalStorage() {
     } catch (err) {
         console.error('Error loading localStorage:', err);
     }
-}
+}*/
 
 function buildPrintQuote() {
     // Helpers
