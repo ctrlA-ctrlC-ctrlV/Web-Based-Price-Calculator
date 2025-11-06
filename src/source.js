@@ -801,7 +801,66 @@ function loadFromUrlParams() {
     }
 
     // extras: parse as "eps, render, steelDoor-[qty], [other]-[other cost], ..." (if item exist)
+    
     if (params.has('extras')) {
+        const tokens = (() => {
+            const all = params.getAll('extras');
+            if (all.length <= 1) return (params.get('extras') || '').split(',');
+            return all;
+        })()
+            .map(s => s.trim())
+            .filter(Boolean);
+
+        const list = qs('#extrasList');
+        if (!list) {
+            console.warn('[load:url] #extrasList not found; extras skipped');
+        } else {
+            list.innerHTML = '';
+
+            tokens.forEach(token => {
+
+                // simple toggles
+                if (token === 'eps' || token === 'render') {
+                    addExtra(token);
+                    return;
+                }
+
+                // steelDoor-<qty>
+                if (token.startsWith('steelDoor-')) {
+                    const qty = parseInt(token.slice('steelDoor-'.length), 10);
+                    const safeQty = Number.isFinite(qty) && qty > 0 ? qty : 1;
+                    const row = addExtra('steelDoor');
+                    
+                    row?.querySelector?.('[data-field="qty"]')?.setAttribute('value', String(safeQty));                                
+                    const qtyEl = row?.querySelector?.('[data-field="qty"]');
+                    if (qtyEl) { qtyEl.value = String(safeQty); qtyEl.dispatchEvent(new Event('input')); }
+                    
+                    return;
+                }
+
+                // <name>-<cost> where name may contain '-'
+                const lastDash = token.lastIndexOf('-');
+                if (lastDash > -1) {
+                    const name = token.slice(0, lastDash).trim();
+                    const costNum = parseFloat(token.slice(lastDash + 1).trim());
+                    const cost = Number.isFinite(costNum) ? costNum : 0;
+                    const row = addExtra('other');
+                    const nameEl = row?.querySelector?.('[data-field="name"]');
+                    const costEl = row?.querySelector?.('[data-field="cost"]');
+                    if (nameEl) { nameEl.value = name; nameEl.dispatchEvent(new Event('input')); }
+                    if (costEl) { costEl.value = String(cost); costEl.dispatchEvent(new Event('input')); }
+                    return;
+                }
+
+                // fallback → treat as "other" with 0 cost
+                const row = addExtra('other');
+                const nameEl = row?.querySelector?.('[data-field="name"]');
+                if (nameEl) { nameEl.value = token; nameEl.dispatchEvent(new Event('input')); }
+            });
+        }
+    }
+
+    /*if (params.has('extras')) {
         const tokens = (() => {
             const all = params.getAll('extras');
             if (all.length <= 1) return (params.get('extras') || '').split(',');
@@ -861,7 +920,7 @@ function loadFromUrlParams() {
                 if (nameEl) { nameEl.value = token; nameEl.dispatchEvent(new Event('input')); }
             });
         }
-    }
+    }*/
 }
 
 function persistToLocalStorage() {
