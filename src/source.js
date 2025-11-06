@@ -20,7 +20,7 @@ const defaults = {
     floor: { none: 0, wooden: 40, tile: 60},
     deliveryFreeKm: 30,
     deliveryRatePerKm: 2.2,    // €/km beyond free radius
-    ex_ESPInstRate: 40,
+    ex_EPSInstRate: 40,
     ex_renderRate: 120,
     ex_steelDoorCharge: 500,
     vatPct: 0,
@@ -349,7 +349,7 @@ function getExtras() {
     if (kind === 'eps' || kind === 'render') {
       const len = perimeterM2(); // locked to perimeter
       const rate = (kind === 'eps')
-        ? (parseFloat(qs('#cfg_extra_espInsulation').value) || parseFloat(defaults.ex_ESPInstRate)) //LOCATOR
+        ? (parseFloat(qs('#cfg_extra_epsInsulation').value) || parseFloat(defaults.ex_EPSInstRate)) //LOCATOR
         : (parseFloat(qs('#cfg_extra_renderFinish').value) || parseFloat(defaults.ex_renderRate)); //LOCATOR
       const cost = len * rate;
       total += cost;
@@ -564,7 +564,7 @@ function updateUrlParams() {
         'distance',
         'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
         'clientName','clientAddress','clientPhone','clientEmail','quoteDate','quoteId','notes',
-        'discountPct'
+        'discountPct',
     ].forEach(id => {
         const el = qs('#' + id);
         if (!el) return;
@@ -632,16 +632,40 @@ function updateUrlParams() {
     if (skylightlist) {
         const parts = [];
         [...skylightlist.children].forEach(row => {
-        const wEl = row.querySelector('[data-field="width"]');
-        const hEl = row.querySelector('[data-field="height"]');
-        const w = parseFloat(wEl?.value) || 0;
-        const h = parseFloat(hEl?.value) || 0;
-        if (w > 0 && h > 0) parts.push(`${w}x${h}`);
+            const wEl = row.querySelector('[data-field="width"]');
+            const hEl = row.querySelector('[data-field="height"]');
+            const w = parseFloat(wEl?.value) || 0;
+            const h = parseFloat(hEl?.value) || 0;
+            if (w > 0 && h > 0) parts.push(`${w}x${h}`);
         });
         if (parts.length) params.set('skylights', parts.join(','));
         else params.delete('skylights');
     }
 
+    // EXTRAS: serialize as "eps, render, steelDoor-[qty], [other]-[other cost], ..." (if item exist)
+    const extrasList = qs('#extrasList');
+    if (extrasList) {
+        const lines = [];
+        [...extrasList.children].forEach(row => {
+            const kind = row.dataset.kind;
+            if (kind === 'eps'){
+                lines.push('eps');
+            } else if (kind === 'render') {
+                lines.push('render');
+            } else if (kind === 'steelDoor') {
+                const qty = qs('[data-field="qty"]', row)?.value || 0;
+                lines.push(`steelDoor-${qty}`);
+            } else if (kind === 'other') {
+                const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
+                const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
+                lines.push(`${name}-${cost}`)
+            }
+        });
+        if(lines.length) params.set('extras', lines.join(','));
+        else params.delete("extras")
+    } else {
+        return {lines: []};
+    }
 
     const newUrl = location.pathname + '?' + params.toString();
     history.replaceState(null, '', newUrl);
@@ -1065,7 +1089,7 @@ function initDefaults() {
     qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
     qs('#cfg_vat').value = 13.5;
     qs('#cfg_discount').value = defaults.discountPct;
-    qs('#cfg_extra_espInsulation').value = defaults.ex_ESPInstRate;
+    qs('#cfg_extra_epsInsulation').value = defaults.ex_EPSInstRate;
     qs('#cfg_extra_renderFinish').value = defaults.ex_renderRate;
     qs('#cfg_extra_steelDoor').value = defaults.ex_steelDoorCharge;
 }
