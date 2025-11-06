@@ -1022,18 +1022,28 @@ function initDefaults() {
     qs('#currency').value = defaults.currency;
     // Config defaults
     qs('#cfg_baseRate').value = defaults.baseRatePerM2;
-    qs('#cfg_cladRate').value = defaults.cladRate;
     qs('#cfg_fixedCharge').value = defaults.fixedCharge;
+    qs('#cfg_height').value = defaults.height;
+    qs('#cfg_cladRate').value = defaults.cladRate;
+    qs('#cfg_bathTypeOneCharge').value = defaults.bathTypeOneCharge;
+    qs('#cfg_bathTypeTwoCharge').value = defaults.bathTypeTwoCharge;
     qs('#cfg_windowCharge').value = defaults.windowCharge;
     qs('#cfg_windowRate').value = defaults.windowRate;
     qs('#cfg_EXDoorCharge').value = defaults.exDoorCharge;
     qs('#cfg_EXDoorRate').value = defaults.exDoorRate;
     qs('#cfg_skylightsCharge').value = defaults.skylightCharge;
     qs('#cfg_skylightsRate').value = defaults.skylightRate;
+    qs('#cfg_switchCharge').value = defaults.switch;
+    qs('#cfg_socketChartge').value = defaults.doubleSocket;
+    qs('#cfg_innerWallPanel').value = defaults.innerWallType.inner_wall_type_p;
+    qs('#cfg_innerWallSnP').value = defaults.innerWallType.inner_wall_type_s;
+    qs('#cfg_floorWooden').value = defaults.floor.wooden;
+    qs('#cfg_floorTile').value = defaults.floor.tile;
     qs('#cfg_freeKm').value = defaults.deliveryFreeKm;
     qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
     qs('#cfg_vat').value = 13.5;
     qs('#cfg_discount').value = defaults.discountPct;
+    console.log(defaults.innerWallType.inner_wall_type_p);
 }
 
 function copyLink() {
