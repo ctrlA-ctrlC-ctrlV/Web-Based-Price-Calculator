@@ -277,7 +277,7 @@ function addExtra(kind) {
   const list = qs('#extrasList');
   if (!list) return;
 
-  // only-one kinds
+  // only one of ...
   const singletons = new Set(['eps', 'render', 'steelDoor']);
   if (singletons.has(kind)) {
     const existing = extraRow(kind);
@@ -792,6 +792,34 @@ function loadFromUrlParams() {
                     } else {
                         console.warn('[load:url] addSkylight() not available yet');
                     }
+                }
+            });
+        }
+    }
+
+    // extras: parse as "eps, render, steelDoor-[qty], [other]-[other cost], ..." (if item exist)
+    if (params.has('extras')) {
+        const str = params.get("extras") || '';
+        const items = str.split(',').map(s => s.trim()).filter(Boolean);
+
+        const list = qs('#extrasList');
+        if (!list) {
+            console.warn('[load:url] #extrasList not found; extras skipped');
+        } else {
+            list.innerHTML = '';    // clear existing rows
+            items.forEach(item => {
+                const kind = item.dataset.kind;
+                if (kind === 'eps'){
+                    addExtra(kind);
+                } else if (kind === 'render') {
+                    addExtra(kind);
+                } else if (kind.has('steelDoor')) {
+                    //const qty = qs('[data-field="qty"]', row)?.value || 0;
+                    //lines.push(`steelDoor-${qty}`);
+                } else if (kind.has('other')) {
+                    //const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
+                    //const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
+                    //lines.push(`${name}-${cost}`)
                 }
             });
         }
