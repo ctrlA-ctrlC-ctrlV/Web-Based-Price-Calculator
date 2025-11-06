@@ -939,7 +939,7 @@ function persistToLocalStorage() {
     localStorage.setItem('gr_calc', JSON.stringify(data));
 }
 
-/*function loadFromLocalStorage() {
+function loadFromLocalStorage() {
     try {
         const data = JSON.parse(localStorage.getItem('gr_calc') || '{}');
 
@@ -987,7 +987,15 @@ function persistToLocalStorage() {
     } catch (err) {
         console.error('Error loading localStorage:', err);
     }
-}*/
+
+    if (typeof compute === 'function') {
+    try {
+        compute();
+    } catch (err) {
+        console.error('[load:url] compute() failed:', err);
+    }
+}
+}
 
 function buildPrintQuote() {
     // Helpers
@@ -1259,7 +1267,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
     initExtrasUi();
     const loadedFromUrl = loadFromUrlParams();
-    //loadFromLocalStorage(); 
+    loadFromLocalStorage(); 
     ensureAtLeastOneWindowRow();
     ensureAtLeastOneEXDoorRow();
     ensureAtLeastOneSkylightRow();           
