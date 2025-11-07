@@ -166,6 +166,9 @@
         <label class="block">[Extras] Steel Door(s)
           <input type="number" step="0.5" id="cfg_extra_steelDoor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">[Extras] Concrete Founcation
+          <input type="number" step="0.5" id="cfg_extra_concretefundationRate" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
       </div>
     </details>
 
@@ -397,6 +400,7 @@
                     <option value="eps">100mm EPS insulation (perimeter)</option>
                     <option value="render">Render finish (perimeter)</option>
                     <option value="steelDoor">Steel door(s)</option>
+                    <option value="concretefundation">Concrete Foundation</option>
                     <option value="other">Other…</option>
                   </select>
                   <button id="addExtraBtn"
@@ -413,12 +417,12 @@
                 <div class="grid grid-cols-12 gap-3 p-3 bg-white rounded-2xl border border-slate-200" data-type="perimeter">
                   <div class="col-span-5">
                     <div class="text-sm font-medium" data-label=""></div>
-                    <div class="text-xs text-slate-500">Length (m) based on outer wall</div>
+                    <div class="text-xs text-slate-500">Arean (m²) based on outer wall</div>
                   </div>
                   <div class="col-span-5 flex items-end">
                     <div class="w-full">
-                      <label class="text-sm font-medium">Length (m)
-                        <input type="number" step="0.01" min="0" data-field="length"
+                      <label class="text-sm font-medium">Area (m²)
+                        <input type="number" step="0.01" min="0" data-field="area"
                           class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" disabled />
                       </label>
                     </div>
@@ -430,6 +434,7 @@
                 </div>
               </template>
 
+              <!--Steel Door Template--> 
               <template id="tpl-extra-steel">
                 <div class="grid grid-cols-12 gap-3 p-3 bg-white rounded-2xl border border-slate-200" data-type="steelDoor">
                   <div class="col-span-5">
@@ -439,6 +444,26 @@
                   <div class="col-span-5">
                     <label class="text-sm font-medium">Qty
                       <input type="number" step="1" min="0" data-field="qty"
+                        class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+                    </label>
+                  </div>
+                  <div class="col-span-2 flex items-end">
+                    <button class="no-print w-full px-3 py-2 rounded-xl border border-red-300 text-red-700 hover:bg-red-50"
+                      data-action="remove">Del</button>
+                  </div>
+                </div>
+              </template>
+
+              <!--Concrete Foundation Template--> 
+              <template id="tpl-extra-concreteFoundation">
+                <div class="grid grid-cols-12 gap-3 p-3 bg-white rounded-2xl border border-slate-200" data-type="concretefundation">
+                  <div class="col-span-5">
+                    <div class="text-sm font-medium">Concrete Founcation</div>
+                    <div class="text-xs text-slate-500">Enter the area (m²)</div>
+                  </div>
+                  <div class="col-span-5">
+                    <label class="text-sm font-medium">Area (m²)
+                      <input type="number" step="1" min="0" data-field="area"
                         class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
                     </label>
                   </div>
@@ -470,21 +495,6 @@
                 </div>
               </template>
             </section>
-
-            <!--Extras-->
-            <!--<section class="col-span-2"> 
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-medium">Extras</h3>
-            </div>
-            <label class="block col-span-2">100mm EPS insulation sqm
-                <input type="number" step="1" id="ex_EPSInsulation" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-            </label>
-            <label class="block col-span-2">Render finish sqm
-                <input type="number" step="1" id="ex_renderFinish" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-            </label>
-            <label class="block col-span-2">Extra steel door
-                <input type="number" step="1" id="ex_steelDoor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-            </label>-->
         </div>
       </section>
 

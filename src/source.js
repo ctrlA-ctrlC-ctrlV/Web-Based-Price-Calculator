@@ -23,7 +23,8 @@ const defaults = {
     ex_EPSInstRate: 40,
     ex_renderRate: 120,
     ex_steelDoorCharge: 500,
-    vatPct: 0,
+    ex_concretefundationRate: 200,
+    vatPct: 13.5,
     discountPct: 0
 };
 
@@ -253,17 +254,17 @@ function addSkylight(prefill = { width: '', height: '' }) {
 // ------------------------------- Start of Extras Module -------------------------------
 // --- helpers
 function extraRow(kind) {
-  return [...(qs('#extrasList')?.children || [])].find(n => n.dataset.kind === kind) || null;
+    return [...(qs('#extrasList')?.children || [])].find(n => n.dataset.kind === kind) || null;
 }
 function setOptionDisabled(kind, disabled) {
-  const opt = qs(`#extraPicker option[value="${kind}"]`);
-  if (opt) opt.disabled = !!disabled;
+    const opt = qs(`#extraPicker option[value="${kind}"]`);
+    if (opt) opt.disabled = !!disabled;
 }
 function flashRow(el) {
-  if (!el) return;
-  el.classList.add('ring-2','ring-sky-400');
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  setTimeout(() => el.classList.remove('ring-2','ring-sky-400'), 900);
+    if (!el) return;
+    el.classList.add('ring-2','ring-sky-400');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => el.classList.remove('ring-2','ring-sky-400'), 900);
 }
 
 function perimeterM2() {
@@ -274,103 +275,118 @@ function perimeterM2() {
 }
 
 function addExtra(kind) {
-  const list = qs('#extrasList');
-  if (!list) return;
+    const list = qs('#extrasList');
+    if (!list) return;
 
-  // only one of ...
-  const singletons = new Set(['eps', 'render', 'steelDoor']);
-  if (singletons.has(kind)) {
-    const existing = extraRow(kind);
-    if (existing) { flashRow(existing); return; }
-  }
+    // insure there is only one of ...
+    const singletons = new Set(['eps', 'render', 'steelDoor', 'concretefundation']);
+    if (singletons.has(kind)) {
+        const existing = extraRow(kind);
+        if (existing) { flashRow(existing); return; }
+    }
 
-  let node = null;
+    let node = null;
 
-  if (kind === 'eps' || kind === 'render') {
-    const tpl = qs('#tpl-extra-perimeter');
-    node = tpl.content.firstElementChild.cloneNode(true);
-    node.dataset.kind = kind;
-    qs('[data-label]', node).textContent =
-      kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
+    if (kind === 'eps' || kind === 'render') {
+        const tpl = qs('#tpl-extra-perimeter');
+        node = tpl.content.firstElementChild.cloneNode(true);
+        node.dataset.kind = kind;
+        qs('[data-label]', node).textContent =
+        kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
 
-    const lenEl = qs('[data-field="length"]', node);
-    const updateLen = () => { lenEl.value = perimeterM2().toFixed(2); compute(); };
-    updateLen();
-    ['input','change'].forEach(ev => {
-      qs('#width')?.addEventListener(ev, updateLen);
-      qs('#depth')?.addEventListener(ev, updateLen);
+        const areaEl = qs('[data-field="area"]', node);
+        const updateLen = () => { areaEl.value = perimeterM2().toFixed(2); compute(); };
+        updateLen();
+        ['input','change'].forEach(ev => {
+            qs('#width')?.addEventListener(ev, updateLen);
+            qs('#depth')?.addEventListener(ev, updateLen);
+        });
+    }
+
+    if (kind === 'steelDoor') {
+        const tpl = qs('#tpl-extra-steel');
+        node = tpl.content.firstElementChild.cloneNode(true);
+        node.dataset.kind = 'steelDoor';
+        const qtyEl = qs('[data-field="qty"]', node);
+        ['input','change'].forEach(ev => qtyEl.addEventListener(ev, compute));
+    }
+
+    if (kind === 'concretefundation') {
+        const tpl = qs('#tpl-extra-concreteFoundation')
+        node = tpl.content.firstElementChild.cloneNode(true);
+        node.dataset.kind = 'concretefundation';
+        const areaEl = qs('[data-field="area"]');
+        ['input','change'].forEach(ev => areaEl.addEventListener(ev, compute));
+    }
+
+    if (kind === 'other') {
+        const tpl = qs('#tpl-extra-other');
+        node = tpl.content.firstElementChild.cloneNode(true);
+        node.dataset.kind = 'other';
+        const nameEl = qs('[data-field="name"]', node);
+        const costEl = qs('[data-field="cost"]', node);
+        ['input','change'].forEach(ev => {
+            nameEl.addEventListener(ev, compute);
+            costEl.addEventListener(ev, compute);
+        });
+    }
+
+    if (!node) return;
+
+    // common remove handler + re-enable option for singletons
+    qs('[data-action="remove"]', node).addEventListener('click', () => {
+        const k = node.dataset.kind;
+        node.remove();
+        if (singletons.has(k)) setOptionDisabled(k, false);
+        compute();   
     });
-  }
 
-  if (kind === 'steelDoor') {
-    const tpl = qs('#tpl-extra-steel');
-    node = tpl.content.firstElementChild.cloneNode(true);
-    node.dataset.kind = 'steelDoor';
-    const qtyEl = qs('[data-field="qty"]', node);
-    ['input','change'].forEach(ev => qtyEl.addEventListener(ev, compute));
-  }
+    list.appendChild(node);
+    if (singletons.has(kind)) setOptionDisabled(kind, true);
+    compute();
 
-  if (kind === 'other') {
-    const tpl = qs('#tpl-extra-other');
-    node = tpl.content.firstElementChild.cloneNode(true);
-    node.dataset.kind = 'other';
-    const nameEl = qs('[data-field="name"]', node);
-    const costEl = qs('[data-field="cost"]', node);
-    ['input','change'].forEach(ev => {
-      nameEl.addEventListener(ev, compute);
-      costEl.addEventListener(ev, compute);
-    });
-  }
-
-  if (!node) return;
-
-  // common remove handler + re-enable option for singletons
-  qs('[data-action="remove"]', node).addEventListener('click', () => {
-    const k = node.dataset.kind;
-    node.remove();
-    if (singletons.has(k)) setOptionDisabled(k, false);
-    compute();   
-  });
-
-  list.appendChild(node);
-  if (singletons.has(kind)) setOptionDisabled(kind, true);
-  compute();
-
-  return node;
+    return node;
 }
 
 function getExtras() {
-  const list = qs('#extrasList');
-  if (!list) return { cost: 0, lines: [] };
+    const list = qs('#extrasList');
+    if (!list) return { cost: 0, lines: [] };
 
-  let total = 0;
-  const lines = [];
+    let total = 0;
+    const lines = [];
 
-  [...list.children].forEach(row => {
-    const kind = row.dataset.kind;
-    if (kind === 'eps' || kind === 'render') {
-      const len = perimeterM2(); // locked to perimeter
-      const rate = (kind === 'eps')
-        ? (parseFloat(qs('#cfg_extra_epsInsulation').value) || parseFloat(defaults.ex_EPSInstRate)) //LOCATOR
-        : (parseFloat(qs('#cfg_extra_renderFinish').value) || parseFloat(defaults.ex_renderRate)); //LOCATOR
-      const cost = len * rate;
-      total += cost;
-      lines.push({ label: `${kind === 'eps' ? '100mm EPS insulation' : 'Render finish'} (${len.toFixed(2)} m perimeter)`, amount: cost });
-    } else if (kind === 'steelDoor') {
-      const qty = qs('[data-field="qty"]', row)?.value || 0;
-      const unit = parseFloat(qs('#cfg_extra_steelDoor').value) || parseFloat(defaults.ex_steelDoorCharge); //LOCATOR
-      const cost = qty * unit;
-      total += cost;
-      lines.push({ label: `Steel door(s) × ${qty}`, amount: cost });
-    } else if (kind === 'other') {
-      const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
-      const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
-      total += cost;
-      lines.push({ label: name, amount: cost });
-    }
-  });
+    [...list.children].forEach(row => {
+        const kind = row.dataset.kind;
+        if (kind === 'eps' || kind === 'render') {
+            const len = perimeterM2(); // locked to perimeter
+            const rate = (kind === 'eps')
+                ? (parseFloat(qs('#cfg_extra_epsInsulation').value) || parseFloat(defaults.ex_EPSInstRate))
+                : (parseFloat(qs('#cfg_extra_renderFinish').value) || parseFloat(defaults.ex_renderRate));
+            const cost = len * rate;
+            total += cost;
+            lines.push({ label: `${kind === 'eps' ? '100mm EPS insulation' : 'Render finish'} (${len.toFixed(2)} m perimeter)`, amount: cost });
+        } else if (kind === 'steelDoor') {
+            const qty = qs('[data-field="qty"]', row)?.value || 0;
+            const unit = parseFloat(qs('#cfg_extra_steelDoor').value) || parseFloat(defaults.ex_steelDoorCharge);
+            const cost = qty * unit;
+            total += cost;
+            lines.push({ label: `Steel door(s) × ${qty}`, amount: cost });
+        } else if (kind === 'concretefundation') {
+            const area = qs('[data-field="area"]', row)?.value || 0;
+            const unit = parseFloat(qs('#cfg_extra_concretefundationRate').value) || parseFloat(defaults.ex_concretefundationRate);
+            const cost = area * unit;
+            console.log(cost);
+            total += cost;
+            lines.push({ label: `Concrete Founcation × ${area}`, amount: cost });
+        } else if (kind === 'other') {
+            const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
+            const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
+            total += cost;
+            lines.push({ label: name, amount: cost });
+        }
+    });
 
-  return { cost: total, lines };
+    return { cost: total, lines };
 }
 
 // Wire the UI controls (once DOM is ready in boot)
@@ -1174,11 +1190,12 @@ function initDefaults() {
     qs('#cfg_floorTile').value = defaults.floor.tile;
     qs('#cfg_freeKm').value = defaults.deliveryFreeKm;
     qs('#cfg_ratePerKm').value = defaults.deliveryRatePerKm;
-    qs('#cfg_vat').value = 13.5;
+    qs('#cfg_vat').value = defaults.vatPct;
     qs('#cfg_discount').value = defaults.discountPct;
     qs('#cfg_extra_epsInsulation').value = defaults.ex_EPSInstRate;
     qs('#cfg_extra_renderFinish').value = defaults.ex_renderRate;
     qs('#cfg_extra_steelDoor').value = defaults.ex_steelDoorCharge;
+    qs('#cfg_extra_concretefundationRate').value = defaults.ex_concretefundationRate;
 }
 
 function copyLink() {
@@ -1219,7 +1236,8 @@ function updateCladSize(){
     const width = parseFloat(qs('#width').value) || 0;
     const depth = parseFloat(qs('#depth').value) || 0;
     const height = parseFloat(qs('#cfg_height').value) || defaults.height;
-    qs('#cladding').value = width > 0 && depth > 0 ? ((width+depth)*2*height) : 0;
+    const totArea = parseFloat((width+depth)*2*height).toFixed(2)
+    qs('#cladding').value = width > 0 && depth > 0 ? (totArea) : 0;
 }
 
 function ensureAtLeastOneWindowRow() {
