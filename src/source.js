@@ -23,7 +23,7 @@ const defaults = {
     ex_EPSInstRate: 40,
     ex_renderRate: 120,
     ex_steelDoorCharge: 500,
-    ex_concretefoundationRate: 200,
+    ex_concreteFoundationRate: 200,
     vatPct: 13.5,
     discountPct: 0
 };
@@ -279,7 +279,7 @@ function addExtra(kind) {
     if (!list) return;
 
     // insure there is only one of ...
-    const singletons = new Set(['eps', 'render', 'steelDoor', 'concretefundation']);
+    const singletons = new Set(['eps', 'render', 'steelDoor', 'concreteFoundation']);
     if (singletons.has(kind)) {
         const existing = extraRow(kind);
         if (existing) { flashRow(existing); return; }
@@ -311,10 +311,10 @@ function addExtra(kind) {
         ['input','change'].forEach(ev => qtyEl.addEventListener(ev, compute));
     }
 
-    if (kind === 'concretefundation') {
+    if (kind === 'concreteFoundation') {
         const tpl = qs('#tpl-extra-concreteFoundation')
         node = tpl.content.firstElementChild.cloneNode(true);
-        node.dataset.kind = 'concretefundation';
+        node.dataset.kind = 'concreteFoundation';
         const areaEl = qs('[data-field="area"]', node);
         ['input','change'].forEach(ev => areaEl.addEventListener(ev, compute));
     }
@@ -371,9 +371,9 @@ function getExtras() {
             const cost = qty * unit;
             total += cost;
             lines.push({ label: `Steel door(s) × ${qty}`, amount: cost });
-        } else if (kind === 'concretefoundation') {
+        } else if (kind === 'concreteFoundation') {
             const area = qs('[data-field="area"]', row)?.value || 0;
-            const unit = parseFloat(qs('#cfg_extra_concretefoundationRate').value) || parseFloat(defaults.ex_concretefoundationRate);
+            const unit = parseFloat(qs('#cfg_extra_concreteFoundationRate').value) || parseFloat(defaults.ex_concretefoundationRate);
             const cost = area * unit;
             total += cost;
             lines.push({ label: `Concrete Foundation × ${area}m²`, amount: cost });
@@ -619,6 +619,7 @@ function updateUrlParams() {
         ['cfg_extra_epsInsulation', 'extra_epsInsulation'],
         ['cfg_extra_renderFinish', 'extra_renderFinish'],
         ['cfg_extra_steelDoor', 'extra_steelDoor'],
+        ['cfg_extra_concreteFoundationRate', 'extra_concreteFoundationRate'],
     ].forEach(([id,key]) => {
         const el = qs('#' + id);
         if (!el) return;
@@ -684,6 +685,9 @@ function updateUrlParams() {
             } else if (kind === 'steelDoor') {
                 const qty = qs('[data-field="qty"]', row)?.value || 0;
                 lines.push(`steelDoor-${qty}`);
+            } else if (kind === 'concreteFoundation') {
+                const area = qs('[data-field="area"]', row)?.value || 0;
+                lines.push(`concreteFoundation-${area}`);
             } else if (kind === 'other') {
                 const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
                 const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
@@ -761,6 +765,7 @@ function loadFromUrlParams() {
         cfg_extra_epsInsulation : 'extra_epsInsulation',
         cfg_extra_renderFinish : 'extra_renderFinish',
         cfg_extra_steelDoor : 'extra_steelDoor',
+        cfg_extra_concreteFoundationRate: 'extra_concreteFoundationRate',
     };
     Object.entries(cfgMap).forEach(([id,key]) => setIf(id,key));
 
@@ -873,6 +878,19 @@ function loadFromUrlParams() {
                     row?.querySelector?.('[data-field="qty"]')?.setAttribute('value', String(safeQty));                                
                     const qtyEl = row?.querySelector?.('[data-field="qty"]');
                     if (qtyEl) { qtyEl.value = String(safeQty); qtyEl.dispatchEvent(new Event('input')); }
+                    
+                    return;
+                }
+
+                // concreteFoundation-<area>
+                if (token.startsWith('concreteFoundation-')) {
+                    const area = parseInt(token.slice('concreteFoundation-'.length), 10);
+                    const safeQty = Number.isFinite(area) && area > 0 ? area : 1;
+                    const row = addExtra('concreteFoundation');
+                    
+                    row?.querySelector?.('[data-field="area"]')?.setAttribute('value', String(safeQty));                                
+                    const areaEl = row?.querySelector?.('[data-field="area"]');
+                    if (areaEl) { areaEl.value = String(safeQty); areaEl.dispatchEvent(new Event('input')); }
                     
                     return;
                 }
@@ -1194,7 +1212,7 @@ function initDefaults() {
     qs('#cfg_extra_epsInsulation').value = defaults.ex_EPSInstRate;
     qs('#cfg_extra_renderFinish').value = defaults.ex_renderRate;
     qs('#cfg_extra_steelDoor').value = defaults.ex_steelDoorCharge;
-    qs('#cfg_extra_concretefoundationRate').value = defaults.ex_concretefoundationRate;
+    qs('#cfg_extra_concreteFoundationRate').value = defaults.ex_concreteFoundationRate;
 }
 
 function copyLink() {
