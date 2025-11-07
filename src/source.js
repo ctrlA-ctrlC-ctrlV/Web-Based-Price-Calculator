@@ -452,7 +452,6 @@ function compute() {
     const eleCost = eSwitch * switchCharge + dSocket * doubleSocket;
     const innerDoorCost = innerDoor * innerDoorCharge;
     const innerWallCost = internalWallTypes[innerWallType] * innerWallQuan;
-    console.log(`TEST: ${innerWallCost}`);
     const windowCost = getWinData();
     const exDoorCost = getEXDoorData();
     const skylightCost = getSkylightData();
@@ -565,7 +564,6 @@ function updateUrlParams() {
         'inner_door','inner_wall_type','wall_quan',
         'floor_type','floor_size',
         'distance',
-        'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
         'clientName','clientAddress','clientPhone','clientEmail','quoteDate','quoteId','notes',
         'discountPct',
     ].forEach(id => {
@@ -597,10 +595,15 @@ function updateUrlParams() {
         ['cfg_EXDoorRate','exDoorRate'],
         ['cfg_skylightsCharge','skylightCharge'],
         ['cfg_skylightsRate','skylightRate'],
+        ['cfg_floorWooden', 'floorWooden'],
+        ['cfg_floorTile', 'floorTile'],
         ['cfg_freeKm','freeKm'],
         ['cfg_ratePerKm','rateKm'],
         ['cfg_vat','vat'],
         ['cfg_discount','disc'],
+        ['cfg_extra_epsInsulation', 'extra_epsInsulation'],
+        ['cfg_extra_renderFinish', 'extra_renderFinish'],
+        ['cfg_extra_steelDoor', 'extra_steelDoor'],
     ].forEach(([id,key]) => {
         const el = qs('#' + id);
         if (!el) return;
@@ -708,7 +711,6 @@ function loadFromUrlParams() {
         'inner_door','inner_wall_type','wall_quan',
         'floor_type','floor_size',
         'distance',
-        'ex_EPSInsulation','ex_renderFinish','ex_steelDoor',
         'clientName','clientAddress','clientPhone','clientEmail','quoteDate','quoteId','notes',
         'discountPct'
     ].forEach(id => setIf(id));
@@ -720,17 +722,30 @@ function loadFromUrlParams() {
     const cfgMap = {
         cfg_baseRate: 'baseRatePerM2',
         cfg_fixedCharge: 'fixedCharge',
+        cfg_height : 'height',
         cfg_cladRate: 'cladRate',
+        cfg_bathTypeOneCharge : 'bathTypeOneCharge',
+        cfg_bathTypeTwoCharge : 'bathTypeTwoCharge',
+        cfg_switchCharge : 'switchCharge',
+        cfg_socketCharge : 'socketCharge',
+        cfg_internalDoorCharge : 'internalDoorCharge',
+        cfg_innerWallPanel : 'innerWallPanel',
+        cfg_innerWallSnP : 'innerWallSnP',
         cfg_windowCharge: 'windowCharge',
         cfg_windowRate: 'windowRate',
         cfg_EXDoorCharge: 'exDoorCharge',
         cfg_EXDoorRate: 'exDoorRate',
         cfg_skylightsCharge: 'skylightCharge',
         cfg_skylightsRate: 'skylightRate',
+        cfg_floorWooden : 'floorWooden',
+        cfg_floorTile : 'floorTile',
         cfg_freeKm: 'freeKm',
         cfg_ratePerKm: 'rateKm',
         cfg_vat: 'vat',
         cfg_discount: 'disc',
+        cfg_extra_epsInsulation : 'extra_epsInsulation',
+        cfg_extra_renderFinish : 'extra_renderFinish',
+        cfg_extra_steelDoor : 'extra_steelDoor',
     };
     Object.entries(cfgMap).forEach(([id,key]) => setIf(id,key));
 
