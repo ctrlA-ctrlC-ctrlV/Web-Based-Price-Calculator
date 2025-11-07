@@ -23,7 +23,7 @@ const defaults = {
     ex_EPSInstRate: 40,
     ex_renderRate: 120,
     ex_steelDoorCharge: 500,
-    ex_concretefundationRate: 200,
+    ex_concretefoundationRate: 200,
     vatPct: 13.5,
     discountPct: 0
 };
@@ -315,7 +315,7 @@ function addExtra(kind) {
         const tpl = qs('#tpl-extra-concreteFoundation')
         node = tpl.content.firstElementChild.cloneNode(true);
         node.dataset.kind = 'concretefundation';
-        const areaEl = qs('[data-field="area"]');
+        const areaEl = qs('[data-field="area"]', node);
         ['input','change'].forEach(ev => areaEl.addEventListener(ev, compute));
     }
 
@@ -371,13 +371,12 @@ function getExtras() {
             const cost = qty * unit;
             total += cost;
             lines.push({ label: `Steel door(s) × ${qty}`, amount: cost });
-        } else if (kind === 'concretefundation') {
+        } else if (kind === 'concretefoundation') {
             const area = qs('[data-field="area"]', row)?.value || 0;
-            const unit = parseFloat(qs('#cfg_extra_concretefundationRate').value) || parseFloat(defaults.ex_concretefundationRate);
+            const unit = parseFloat(qs('#cfg_extra_concretefoundationRate').value) || parseFloat(defaults.ex_concretefoundationRate);
             const cost = area * unit;
-            console.log(cost);
             total += cost;
-            lines.push({ label: `Concrete Founcation × ${area}`, amount: cost });
+            lines.push({ label: `Concrete Foundation × ${area}m²`, amount: cost });
         } else if (kind === 'other') {
             const name = (qs('[data-field="name"]', row)?.value || 'Other').trim();
             const cost = parseFloat(qs('[data-field="cost"]', row)?.value) || 0;
@@ -1195,7 +1194,7 @@ function initDefaults() {
     qs('#cfg_extra_epsInsulation').value = defaults.ex_EPSInstRate;
     qs('#cfg_extra_renderFinish').value = defaults.ex_renderRate;
     qs('#cfg_extra_steelDoor').value = defaults.ex_steelDoorCharge;
-    qs('#cfg_extra_concretefundationRate').value = defaults.ex_concretefundationRate;
+    qs('#cfg_extra_concretefoundationRate').value = defaults.ex_concretefoundationRate;
 }
 
 function copyLink() {
