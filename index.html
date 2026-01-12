@@ -584,6 +584,88 @@
       </section>
     </main>
 
+    
+    <details class="mt-4 no-print">
+      <summary class="cursor-pointer text-sm text-slate-600">cost config (internal): tweak default rates</summary>
+      <div class="grid md:grid-cols-3 gap-4 mt-3 text-sm">
+        <label class="block">OSB width (m)
+          <input type="number" step="1" id="cfg_osbWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">OSB height (m)
+          <input type="number" step="1" id="cfg_osbHeight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per OSB (€)
+          <input type="number" step="1" id="cfg_costPerOsb" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cladding block width (m)
+          <input type="number" step="1" id="cfg_claddingBlockWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cladding block height (m)
+          <input type="number" step="1" id="cfg_claddingBlockHeight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Cladding block (€)
+          <input type="number" step="1" id="cfg_costPerCladdingBlock" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Toilet(€)
+          <input type="number" step="1" id="cfg_costPerToilet" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Sink (€)
+          <input type="number" step="1" id="cfg_costPerSink" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Under Sink Heater (€)
+          <input type="number" step="1" id="cfg_costPerunderSinkHeater" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Shower (€)
+          <input type="number" step="1" id="cfg_costPerShower" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Electric Boilert (€)
+          <input type="number" step="1" id="cfg_costPerElecBoiler" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Light Switch (€)
+          <input type="number" step="1" id="cfg_costPerLightSwitch" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Double Socket (€)
+          <input type="number" step="1" id="cfg_costPerDoubleSocket" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Plasterboard Width (€/m²)
+          <input type="number" step="1" id="cfg_plasterboardWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Plasterboard Height (€/m²)
+          <input type="number" step="1" id="cfg_plasterboardHeight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Plasterboard (€/m²)
+          <input type="number" step="1" id="cfg_costPerPlasterboard" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Wall Panel Width (€/m²)
+          <input type="number" step="1" id="cfg_wallPanelWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Wall Panel Height (€/m²)
+          <input type="number" step="1" id="cfg_wallPanelHeight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Wall Panel (€/m²)
+          <input type="number" step="1" id="cfg_costPerWallPanel" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Wood Floor (€/m²)
+          <input type="number" step="1" id="cfg_costPerWoodFloor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Tile Floor (€/m²)
+          <input type="number" step="1" id="cfg_costPerTileFloor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">EPS Cost (€/m²)
+          <input type="number" step="1" id="cfg_costPerEps" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Render Cost (25kg)
+          <input type="number" step="1" id="cfg_costPerRenderUnit" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Render Cover (m² per 25kg)
+          <input type="number" step="1" id="cfg_coverPerRenderUnit" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Concret Foundation (€/m²)
+          <input type="number" step="1" id="cfg_costPerConcretFoundation" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+      </div>
+    </details>
+
     <footer class="mt-8 text-center text-xs text-slate-500">
       <p class="print-block hidden">Generated by the Garden Room Price Calculator</p>
       <p class="no-print">© 2025 SDeal • Created by Zhaoxiang Qiu</p>
