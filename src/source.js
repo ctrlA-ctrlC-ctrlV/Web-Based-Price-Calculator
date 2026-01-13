@@ -1219,7 +1219,7 @@ function initDefaults() {
     qs('#width').value = 4;
     qs('#depth').value = 3;
     qs('#currency').value = defaults.currency;
-    // Config defaults
+    // Config defaults pricing
     qs('#cfg_baseRate').value = defaults.baseRatePerM2;
     qs('#cfg_fixedCharge').value = defaults.fixedCharge;
     qs('#cfg_height').value = defaults.height;
@@ -1247,6 +1247,35 @@ function initDefaults() {
     qs('#cfg_extra_renderFinish').value = defaults.ex_renderRate;
     qs('#cfg_extra_steelDoor').value = defaults.ex_steelDoorCharge;
     qs('#cfg_extra_concreteFoundationRate').value = defaults.ex_concreteFoundationRate;
+    
+    //  Config defaults cost
+    qs('#cfg_osbWidth').value = defaults.osbWidth;
+    qs('#cfg_osbHeight').value = defaults.osbHeight;
+    qs('#cfg_costPerOsb').value = defaults.costPerOsb;
+    qs('#cfg_claddingBlockWidth').value = defaults.claddingBlockWidth;
+    qs('#cfg_claddingBlockHeight').value = defaults.claddingBlockHeight;
+    qs('#cfg_costPerCladdingBlock').value = defaults.costPerCladdingBlock;
+    qs('#cfg_costPerToilet').value = defaults.costPerToilet;
+    qs('#cfg_costPerSink').value = defaults.costPerSink;
+    qs('#cfg_costPerunderSinkHeater').value = defaults.costPerunderSinkHeater;
+    qs('#cfg_costPerShower').value = defaults.costPerShower;
+    qs('#cfg_costPerElecBoiler').value = defaults.costPerElecBoiler;
+    qs('#cfg_costPerLightSwitch').value = defaults.costPerLightSwitch;
+    qs('#cfg_costPerDoubleSocket').value = defaults.costPerDoubleSocket;
+    qs('#cfg_plasterboardWidth').value = defaults.plasterboardWidth;
+    qs('#cfg_plasterboardHeight').value = defaults.plasterboardHeight;
+    qs('#cfg_costPerPlasterboard').value = defaults.costPerPlasterboard;
+    qs('#cfg_wallPanelWidth').value = defaults.wallPanelWidth;
+    qs('#cfg_wallPanelHeight').value = defaults.wallPanelHeight;
+    qs('#cfg_costPerWallPanel').value = defaults.costPerWallPanel;
+    qs('#cfg_costPerWoodFloor').value = defaults.costPerWoodFloor;
+    qs('#cfg_costPerTileFloor').value = defaults.costPerTileFloor;
+    qs('#cfg_epsWidth').value = defaults.epsWidth;
+    qs('#cfg_epsHeight').value = defaults.epsHeight;
+    qs('#cfg_costPerEps').value = defaults.costPerEps;
+    qs('#cfg_costPerRenderUnit').value = defaults.costPerRenderUnit;
+    qs('#cfg_coverPerRenderUnit').value = defaults.coverPerRenderUnit;
+    qs('#cfg_costPerConcretFoundation').value = defaults.costPerConcretFoundation;
 }
 
 function copyLink() {
