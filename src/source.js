@@ -1,6 +1,9 @@
 // --- Configurable pricing defaults ---
 const defaults = {
     currency: 'EUR',
+    /**
+     * Pricing Defaults 
+     */
     baseRatePerM2: 1200,       // base build €/m²
     fixedCharge: 6000,
     height: 2.4,
@@ -25,7 +28,38 @@ const defaults = {
     ex_steelDoorCharge: 500,
     ex_concreteFoundationRate: 200,
     vatPct: 13.5,
-    discountPct: 0
+    discountPct: 0,
+
+    /** 
+     * Cost Defaults 
+     */
+    osbWidth: 1.22,                     //m
+    osbHeight: 2.44,                    //m
+    costPerOsb: 18.11,                  //€/board
+    claddingBlockWidth: 2.9,            //m
+    claddingBlockHeight: 0.222,         //m
+    costPerCladdingBlock: 31.43,        //€/board
+    costPerToilet: 104.95,              //€
+    costPerSink: 96,                    //€
+    costPerunderSinkHeater: 160,        //€
+    costPerShower: 294.95,              //€
+    costPerElecBoiler: 191.17,          //€
+    costPerLightSwitch: 1.65,           //€
+    costPerDoubleSocket: 3.55,          //€
+    plasterboardWidth: 1.22,            //m
+    plasterboardHeight: 2.44,           //m
+    costPerPlasterboard: 20.5,          //€/board
+    wallPanelWidth: 2.7,                //m
+    wallPanelHeight: 0.25,              //m
+    costPerWallPanel: 77,               //€/board
+    costPerWoodFloor: 55,               //€/m²
+    costPerTileFloor: 37.1,             //€/m²
+    epsWidth: 0.6,                      //m
+    epsHeight: 1.22,                    //m
+    costPerEps: 1.82,                   //€/board
+    costPerRenderUnit: 20.74,           //€
+    coverPerRenderUnit: 0.85,           //m²
+    costPerConcretFoundation: 233.33,   //€/m²
 };
 
 // --- Helpers ---
