@@ -624,23 +624,20 @@ function renderSummary(model) {
  * 
  * @param { number } width 
  * @param { number } height 
- * @param { number } waste_width 
- * @param { number } wasted_height 
  * @param { number } unit_cost 
+ * @param { number } waste_percentage  
  * @returns 
  */
 function wasteCostCalc(
     width, 
     height, 
-    waste_width, 
-    wasted_height, 
-    unit_cost ) {
+    unit_cost,
+    waste_percentage ) {
         
     const total_area = width * height;
-    const waste_percentage = (waste_width * wasted_height) / total_area;
 
     const norminal_cost = unit_cost/total_area;
-    const actual_cost = norminal_cost * waste_percentage;
+    const actual_cost = norminal_cost * (1 + waste_percentage * .01);
     
     return ({norminal_cost, actual_cost});
 }
@@ -670,11 +667,7 @@ function calcCostBreakdown() {
     const clad_cost = parseFloat(qs('#cfg_costPerCladdingBlock').value) || defaults.costPerCladdingBlock;
     const clad_waste = parseFloat(qs('#cfg_wastePercentageCladdingBlock').value) || defaults.wastePercentageCladdingBlock;
 
-
-    const clad_area = clad_width * clad_height;
-    const cladCostPerM2 = clad_cost/clad_area;
-
-    //const cladWasteCosts = wasteCostCalc(clad_width, clad_height, );
+    const cladWasteCosts = wasteCostCalc(clad_width, clad_height, clad_cost, clad_waste);
 
     //console.log(obsCostPerM2);
 
@@ -684,7 +677,8 @@ function calcCostBreakdown() {
         { label: "Interanl Wall Area", amount:`${inner_area.toFixed(2)}m²` },
         { label: "Total Surface Area", amount:`${total_wall_area.toFixed(2)}m²` },
         { label: "OSB Cost Per m²", amount:`${osbCostPerM2.toFixed(2)} €/m²` },
-        { label: "Cladding Cost Per m²", amount:`${cladCostPerM2.toFixed(2)} €/m²` },
+        { label: "Cladding Norminal Cost", amount:`${cladWasteCosts.norminal_cost.toFixed(2)} €/m²` },
+        { label: "Cladding Actual Cost", amount:`${cladWasteCosts.actual_cost.toFixed(2)} €/m²` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
