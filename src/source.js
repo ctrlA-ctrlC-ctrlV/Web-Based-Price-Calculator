@@ -737,9 +737,7 @@ function calcCostBreakdown() {
     const epsWasteCosts = wasteCostCalc(eps_area, eps_cost, eps_waste);
 
     // Concrete Foundation Per m² Cost
-    /*
-    const  = parseFloat(qs('#').value) || defaults.;
-    */
+    const costPerConcretFoundation = parseFloat(qs('#cfg_costPerConcretFoundation').value) || defaults.costPerConcretFoundation;
 
     //const  = parseFloat(qs('#').value) || defaults.;
     //console.log(obsCostPerM2);
@@ -770,7 +768,7 @@ function calcCostBreakdown() {
         { label: "Wood Floor Actual Cost", amount:`${tileFloorActualCost.toFixed(2)} €/m²` },
         { label: "EPS Norminal Cost", amount:`${epsWasteCosts.norminal_cost.toFixed(2)} €/m²` },
         { label: "EPS Actual Cost", amount:`${epsWasteCosts.actual_cost.toFixed(2)} €/m²` },
-        //{ label: "", amount:`${.toFixed(2)}m²` },
+        { label: "Concrete Foundation Cost", amount:`€${costPerConcretFoundation.toFixed(2)}` },
     ];
 
     return(costBreakdownList);
