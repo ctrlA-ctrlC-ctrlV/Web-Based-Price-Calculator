@@ -673,26 +673,37 @@ function calcCostBreakdown() {
     const toiletUnitCost = parseFloat(qs('#cfg_costPerToilet').value) || defaults.costPerToilet;
 
     // Sink Unit Cost
+    const sinkUnitCost = parseFloat(qs('#cfg_costPerSink').value) || defaults.costPerSink;
 
     // Undersink Heater Unit Cost
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Shower Unit Cost
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Electric Boiler Unit Cost
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Light Switch Unit Cost
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Double Socket Unit Cost
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Plasterboard Per m² Calculation
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Wall Panel Per m² Calculation
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Wood Floor Per m² Cost
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Tile Floor Per m² Cost
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // EPS Per m² Calculation
+    //const  = parseFloat(qs('#').value) || defaults.;
 
     // Concrete Foundation Per m² Cost
 
@@ -708,6 +719,7 @@ function calcCostBreakdown() {
         { label: "Cladding Norminal Cost", amount:`${cladWasteCosts.norminal_cost.toFixed(2)} €/m²` },
         { label: "Cladding Actual Cost", amount:`${cladWasteCosts.actual_cost.toFixed(2)} €/m²` },
         { label: "Toilet Unite Cost", amount:`€${toiletUnitCost.toFixed(2)}` },
+        { label: "Sink Unite Cost", amount:`€${sinkUnitCost.toFixed(2)}` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
