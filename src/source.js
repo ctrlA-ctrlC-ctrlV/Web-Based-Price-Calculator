@@ -49,18 +49,24 @@ const defaults = {
     costPerLightSwitch: 1.65,               //€
     costPerDoubleSocket: 3.55,              //€
     plasterboardWidth: 1.22,                //m
-    plasterboardHeight: 2.44,               //m
+    plasterboardHeight: 2.44,               //m    
     costPerPlasterboard: 20.5,              //€/board
+    wastePercentagePlasterboard: 5,         //%
     wallPanelWidth: 2.7,                    //m
     wallPanelHeight: 0.25,                  //m
     costPerWallPanel: 77,                   //€/board
+    wastePercentageWallPanel: 5,            //%
     costPerWoodFloor: 55,                   //€/m²
+    wastePercentageWoodFloor: 5,            //%
     costPerTileFloor: 37.1,                 //€/m²
+    wastePercentageTileFloor: 5,            //%
     epsWidth: 0.6,                          //m
     epsHeight: 1.22,                        //m
     costPerEps: 1.82,                       //€/board
+    wastePercentageEps: 5,                  //%
     costPerRenderUnit: 20.74,               //€
     coverPerRenderUnit: 0.85,               //m²
+    wastePercentageRender: 5,               //%
     costPerConcretFoundation: 233.33,       //€/m²
 };
 
@@ -1430,16 +1436,22 @@ function initDefaults() {
     qs('#cfg_plasterboardWidth').value = defaults.plasterboardWidth;
     qs('#cfg_plasterboardHeight').value = defaults.plasterboardHeight;
     qs('#cfg_costPerPlasterboard').value = defaults.costPerPlasterboard;
+    qs('#cfg_wastePercentagePlasterboard').value = defaults.wastePercentagePlasterboard;
     qs('#cfg_wallPanelWidth').value = defaults.wallPanelWidth;
     qs('#cfg_wallPanelHeight').value = defaults.wallPanelHeight;
     qs('#cfg_costPerWallPanel').value = defaults.costPerWallPanel;
+    qs('#cfg_wastePercentageWallPanel').value = defaults.wastePercentageWallPanel;
     qs('#cfg_costPerWoodFloor').value = defaults.costPerWoodFloor;
+    qs('#cfg_wastePercentageWoodFloor').value = defaults.wastePercentageWoodFloor;
     qs('#cfg_costPerTileFloor').value = defaults.costPerTileFloor;
+    qs('#cfg_wastePercentageTileFloor').value = defaults.wastePercentageTileFloor;
     qs('#cfg_epsWidth').value = defaults.epsWidth;
     qs('#cfg_epsHeight').value = defaults.epsHeight;
     qs('#cfg_costPerEps').value = defaults.costPerEps;
-    qs('#cfg_costPerRenderUnit').value = defaults.costPerRenderUnit;
+    qs('#cfg_wastePercentageEps').value = defaults.wastePercentageEps;
     qs('#cfg_coverPerRenderUnit').value = defaults.coverPerRenderUnit;
+    qs('#cfg_costPerRenderUnit').value = defaults.costPerRenderUnit;    
+    qs('#cfg_wastePercentageRender').value = defaults.wastePercentageRender;
     qs('#cfg_costPerConcretFoundation').value = defaults.costPerConcretFoundation;
 }
 
