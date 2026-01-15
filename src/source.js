@@ -685,7 +685,7 @@ function calcCostBreakdown() {
     const elecBoilerUnitCost = parseFloat(qs('#cfg_costPerElecBoiler').value) || defaults.costPerElecBoiler;
 
     // Light Switch Unit Cost
-    //const  = parseFloat(qs('#').value) || defaults.;
+    const switchUnitCost = parseFloat(qs('#cfg_costPerLightSwitch').value) || defaults.costPerLightSwitch;
 
     // Double Socket Unit Cost
     //const  = parseFloat(qs('#').value) || defaults.;
@@ -723,6 +723,7 @@ function calcCostBreakdown() {
         { label: "Undersink Heater Unite Cost", amount:`€${ushUnitCost.toFixed(2)}` },
         { label: "Shower Unite Cost", amount:`€${showerUnitCost.toFixed(2)}` },
         { label: "Electric Boiler Unite Cost", amount:`€${elecBoilerUnitCost.toFixed(2)}` },
+        { label: "Light Switch Unite Cost", amount:`€${switchUnitCost.toFixed(2)}` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
