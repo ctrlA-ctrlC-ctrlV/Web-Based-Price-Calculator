@@ -728,15 +728,18 @@ function calcCostBreakdown() {
     const tileFloorActualCost = tileFloorNominalCost * (1 + tileFloor_waste * .01);
 
     // EPS Per m² Calculation
-    // const eps_width = parseFloat(qs('#cfg_epsWidth').value) || defaults.epsWidth;
-    // const eps_height = parseFloat(qs('#cfg_epsHeight').value) || defaults.epsHeight;
-    // const eps_cost = parseFloat(qs('#cfg_costPerEps').value) || defaults.costPerEps;
-    // const eps_waste = parseFloat(qs('#cfg_wastePercentageEps').value) || defaults.wastePercentageEps;
+    const eps_width = parseFloat(qs('#cfg_epsWidth').value) || defaults.epsWidth;
+    const eps_height = parseFloat(qs('#cfg_epsHeight').value) || defaults.epsHeight;
+    const eps_cost = parseFloat(qs('#cfg_costPerEps').value) || defaults.costPerEps;
+    const eps_waste = parseFloat(qs('#cfg_wastePercentageEps').value) || defaults.wastePercentageEps;
 
-    // const eps_area = eps_width * eps_height;
-    // const epsWasteCosts = wasteCostCalc(eps_area, eps_cost, eps_waste);
+    const eps_area = eps_width * eps_height;
+    const epsWasteCosts = wasteCostCalc(eps_area, eps_cost, eps_waste);
 
     // Concrete Foundation Per m² Cost
+    /*
+    const  = parseFloat(qs('#').value) || defaults.;
+    */
 
     //const  = parseFloat(qs('#').value) || defaults.;
     //console.log(obsCostPerM2);
