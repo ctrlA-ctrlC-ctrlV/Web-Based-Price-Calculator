@@ -715,13 +715,16 @@ function calcCostBreakdown() {
     
 
     // Wood Floor Per m² Cost
-    //const woodFloorNominalCost = parseFloat(qs('#cfg_costPerWoodFloor').value) || defaults.costPerWoodFloor;
-    //const woodFloor_waste = parseFloat(qs('#cfg_wastePercentageWoodFloor').value) || defaults.wastePercentageWoodFloor;
+    const woodFloorNominalCost = parseFloat(qs('#cfg_costPerWoodFloor').value) || defaults.costPerWoodFloor;
+    const woodFloor_waste = parseFloat(qs('#cfg_wastePercentageWoodFloor').value) || defaults.wastePercentageWoodFloor;
 
-    //const woodFloorActualCost = woodFloorNominalCost * (1 + woodFloor_waste * .01);
+    const woodFloorActualCost = woodFloorNominalCost * (1 + woodFloor_waste * .01);
+
 
     // Tile Floor Per m² Cost
-    //const  = parseFloat(qs('#').value) || defaults.;
+    /*
+    this
+    */
 
     // EPS Per m² Calculation
     /**
