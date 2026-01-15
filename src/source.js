@@ -640,21 +640,17 @@ function calcCostBreakdown() {
     // Cladding Per m² Calculation
 
     //console.log(obsCostPerM2);
-
-    const costBreakdownList = {
-        base_area,
-        //{ label:"Base Area", amount: base_area },
-        //outer_area,
-        //inner_area,
-        //total_wall_area,
-        //obsCostPerM2,
-    };
+    
+    const costBreakdownList = [
+        { label: "Base Area", amount: `${base_area.toFixed(2)}m²` },
+        { label: "Outer Surface Area", amount:`${outer_area.toFixed(2)}m²` },
+    ];
 
     return(costBreakdownList);
 }
 
 function renderCostBreakdown() {
-    const value_list = calcCostBreakdown();
+    const value_list = Array.isArray(calcCostBreakdown()) ? calcCostBreakdown() : [];
 
     const c = qs("#cost_breakdown");
     c.innerHTML = '';
@@ -662,14 +658,14 @@ function renderCostBreakdown() {
     const grid = document.createElement('div');
     grid.className = "flex flex-wrap gap-4 items-start";
 
-    const itemClass = "rounded-2xl shadow p-4 text-center bg-white flex-initial";
+    const itemClass = "rounded-2xl shadow p-4 text-center bg-white flex-initial";    
 
-    
-    const base_area = document.createElement('div');
-    base_area.className = itemClass;
-    base_area.innerHTML = `Base Area<br/><span class="text-xl font-medium mt-2 block">${(value_list.base_area || 0).toFixed(2)}m²</span>`;
-
-    grid.appendChild(base_area);
+    value_list.forEach(value => {
+        const row  = document.createElement('div');
+        row.className = itemClass;
+        row.innerHTML = `${value.label}<br/><span class="text-xl font-medium mt-2 block">${value.amount}</span>`;
+        grid.appendChild(row);
+    });
 
     c.appendChild(grid);
 }
