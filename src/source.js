@@ -618,7 +618,7 @@ function renderSummary(model) {
     let obs_count = wall_area / obs_area;
  */
 
-function calcCostValue(a) {
+function calcCostBreakdown(a) {
     const w = parseFloat(qs('#width').value) || 0;
     const d = parseFloat(qs('#depth').value) || 0;
     const h = parseFloat(qs('#cfg_height').value) || defaults.height;
@@ -641,7 +641,7 @@ function calcCostValue(a) {
 
     //console.log(obsCostPerM2);
 
-    const costValueList = {
+    const costBreakdownList = {
         base_area,
         //{ label:"Base Area", amount: base_area },
         //outer_area,
@@ -650,11 +650,11 @@ function calcCostValue(a) {
         //obsCostPerM2,
     };
 
-    return(costValueList);
+    return(costBreakdownList);
 }
 
 function renderCostBreakdown(model) {
-    const value_list = calcCostValue();
+    const value_list = calcCostBreakdown();
 
     const c = qs("#cost_breakdown");
     c.innerHTML = '';
