@@ -705,18 +705,20 @@ function calcCostBreakdown() {
     const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
 
     // Wall Panel Per m² Calculation
-    /**
-    const pBoard_width = parseFloat(qs('#cfg_plasterboardWidth').value) || defaults.plasterboardWidth;
-    const pBoard_height = parseFloat(qs('#cfg_plasterboardHeight').value) || defaults.plasterboardHeight;
-    const pBoard_cost = parseFloat(qs('#cfg_costPerPlasterboard').value) || defaults.costPerPlasterboard;
-    const pBoard_waste = parseFloat(qs('#cfg_wastePercentagePlasterboard').value) || defaults.wastePercentagePlasterboard;
+    const wPanel_width = parseFloat(qs('#cfg_wallPanelWidth').value) || defaults.wallPanelWidth;
+    const wPanel_height = parseFloat(qs('#cfg_wallPanelHeight').value) || defaults.wallPanelHeight;
+    const wPanel_cost = parseFloat(qs('#cfg_costPerWallPanel').value) || defaults.costPerWallPanel;
+    const wPanel_waste = parseFloat(qs('#cfg_wastePercentageWallPanel').value) || defaults.wastePercentageWallPanel;
 
-    const pBoard_area = pBoard_width * pBoard_height;
-    const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
-     */
+    const wPanel_area = wPanel_width * wPanel_height;
+    const wPanelWasteCosts = wasteCostCalc(wPanel_area, wPanel_cost, wPanel_waste);
+    
 
     // Wood Floor Per m² Cost
-    //const  = parseFloat(qs('#').value) || defaults.;
+    //const woodFloorNominalCost = parseFloat(qs('#cfg_costPerWoodFloor').value) || defaults.costPerWoodFloor;
+    //const woodFloor_waste = parseFloat(qs('#cfg_wastePercentageWoodFloor').value) || defaults.wastePercentageWoodFloor;
+
+    //const woodFloorActualCost = woodFloorNominalCost * (1 + woodFloor_waste * .01);
 
     // Tile Floor Per m² Cost
     //const  = parseFloat(qs('#').value) || defaults.;
@@ -755,6 +757,10 @@ function calcCostBreakdown() {
         { label: "Double Socket Unite Cost", amount:`€${dSocketUnitCost.toFixed(2)}` },
         { label: "Plasterboard Norminal Cost", amount:`${pBoardWasteCosts.norminal_cost.toFixed(2)} €/m²` },
         { label: "Plasterboard Actual Cost", amount:`${pBoardWasteCosts.actual_cost.toFixed(2)} €/m²` },
+        { label: "Wall Panel Norminal Cost", amount:`${wPanelWasteCosts.norminal_cost.toFixed(2)} €/m²` },
+        { label: "Wall Panel Actual Cost", amount:`${wPanelWasteCosts.actual_cost.toFixed(2)} €/m²` },
+        { label: "Wood Floor Norminal Cost", amount:`${woodFloorNominalCost.toFixed(2)} €/m²` },
+        { label: "Wood Floor Actual Cost", amount:`${woodFloorActualCost.toFixed(2)} €/m²` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
