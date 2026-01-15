@@ -696,10 +696,24 @@ function calcCostBreakdown() {
     const dSocketUnitCost = parseFloat(qs('#cfg_costPerDoubleSocket').value) || defaults.costPerDoubleSocket;
 
     // Plasterboard Per m² Calculation
-    //const  = parseFloat(qs('#').value) || defaults.;
+    const pBoard_width = parseFloat(qs('#cfg_plasterboardWidth').value) || defaults.plasterboardWidth;
+    const pBoard_height = parseFloat(qs('#cfg_plasterboardHeight').value) || defaults.plasterboardHeight;
+    const pBoard_cost = parseFloat(qs('#cfg_costPerPlasterboard').value) || defaults.costPerPlasterboard;
+    const pBoard_waste = parseFloat(qs('#cfg_wastePercentagePlasterboard').value) || defaults.wastePercentagePlasterboard;
+
+    const pBoard_area = pBoard_width * pBoard_height;
+    const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
 
     // Wall Panel Per m² Calculation
-    //const  = parseFloat(qs('#').value) || defaults.;
+    /**
+    const pBoard_width = parseFloat(qs('#cfg_plasterboardWidth').value) || defaults.plasterboardWidth;
+    const pBoard_height = parseFloat(qs('#cfg_plasterboardHeight').value) || defaults.plasterboardHeight;
+    const pBoard_cost = parseFloat(qs('#cfg_costPerPlasterboard').value) || defaults.costPerPlasterboard;
+    const pBoard_waste = parseFloat(qs('#cfg_wastePercentagePlasterboard').value) || defaults.wastePercentagePlasterboard;
+
+    const pBoard_area = pBoard_width * pBoard_height;
+    const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
+     */
 
     // Wood Floor Per m² Cost
     //const  = parseFloat(qs('#').value) || defaults.;
@@ -708,7 +722,15 @@ function calcCostBreakdown() {
     //const  = parseFloat(qs('#').value) || defaults.;
 
     // EPS Per m² Calculation
-    //const  = parseFloat(qs('#').value) || defaults.;
+    /**
+    const pBoard_width = parseFloat(qs('#cfg_plasterboardWidth').value) || defaults.plasterboardWidth;
+    const pBoard_height = parseFloat(qs('#cfg_plasterboardHeight').value) || defaults.plasterboardHeight;
+    const pBoard_cost = parseFloat(qs('#cfg_costPerPlasterboard').value) || defaults.costPerPlasterboard;
+    const pBoard_waste = parseFloat(qs('#cfg_wastePercentagePlasterboard').value) || defaults.wastePercentagePlasterboard;
+
+    const pBoard_area = pBoard_width * pBoard_height;
+    const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
+     */
 
     // Concrete Foundation Per m² Cost
 
@@ -731,6 +753,8 @@ function calcCostBreakdown() {
         { label: "Electric Boiler Unite Cost", amount:`€${elecBoilerUnitCost.toFixed(2)}` },
         { label: "Light Switch Unite Cost", amount:`€${switchUnitCost.toFixed(2)}` },
         { label: "Double Socket Unite Cost", amount:`€${dSocketUnitCost.toFixed(2)}` },
+        { label: "Plasterboard Norminal Cost", amount:`${pBoardWasteCosts.norminal_cost.toFixed(2)} €/m²` },
+        { label: "Plasterboard Actual Cost", amount:`${pBoardWasteCosts.actual_cost.toFixed(2)} €/m²` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
