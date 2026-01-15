@@ -617,12 +617,24 @@ function renderSummary(model) {
     let obs_area = obs_width * obs_height;
     let obs_count = wall_area / obs_area;
  */
+
+/**
+ * Calculating what is the cost of a matrial with wast includded
+ * 
+ * @param { number } width 
+ * @param { number } height 
+ * @param { number } waste_width 
+ * @param { number } wasted_height 
+ * @param { number } unit_cost 
+ * @returns 
+ */
 function wasteCostCalc(
     width, 
     height, 
     waste_width, 
     wasted_height, 
     unit_cost ) {
+        
     const total_area = width * height;
     const waste_percentage = (waste_width * wasted_height) / total_area;
 
