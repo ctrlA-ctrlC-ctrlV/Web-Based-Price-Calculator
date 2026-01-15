@@ -722,20 +722,19 @@ function calcCostBreakdown() {
 
 
     // Tile Floor Per m² Cost
-    /*
-    this
-    */
+    const tileFloorNominalCost = parseFloat(qs('#cfg_costPerTileFloor').value) || defaults.costPerTileFloor;
+    const tileFloor_waste = parseFloat(qs('#cfg_wastePercentageTileFloor').value) || defaults.wastePercentageTileFloor;
+
+    const tileFloorActualCost = tileFloorNominalCost * (1 + tileFloor_waste * .01);
 
     // EPS Per m² Calculation
-    /**
-    const pBoard_width = parseFloat(qs('#cfg_plasterboardWidth').value) || defaults.plasterboardWidth;
-    const pBoard_height = parseFloat(qs('#cfg_plasterboardHeight').value) || defaults.plasterboardHeight;
-    const pBoard_cost = parseFloat(qs('#cfg_costPerPlasterboard').value) || defaults.costPerPlasterboard;
-    const pBoard_waste = parseFloat(qs('#cfg_wastePercentagePlasterboard').value) || defaults.wastePercentagePlasterboard;
+    // const eps_width = parseFloat(qs('#cfg_epsWidth').value) || defaults.epsWidth;
+    // const eps_height = parseFloat(qs('#cfg_epsHeight').value) || defaults.epsHeight;
+    // const eps_cost = parseFloat(qs('#cfg_costPerEps').value) || defaults.costPerEps;
+    // const eps_waste = parseFloat(qs('#cfg_wastePercentageEps').value) || defaults.wastePercentageEps;
 
-    const pBoard_area = pBoard_width * pBoard_height;
-    const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
-     */
+    // const eps_area = eps_width * eps_height;
+    // const epsWasteCosts = wasteCostCalc(eps_area, eps_cost, eps_waste);
 
     // Concrete Foundation Per m² Cost
 
@@ -764,6 +763,10 @@ function calcCostBreakdown() {
         { label: "Wall Panel Actual Cost", amount:`${wPanelWasteCosts.actual_cost.toFixed(2)} €/m²` },
         { label: "Wood Floor Norminal Cost", amount:`${woodFloorNominalCost.toFixed(2)} €/m²` },
         { label: "Wood Floor Actual Cost", amount:`${woodFloorActualCost.toFixed(2)} €/m²` },
+        { label: "Wood Floor Norminal Cost", amount:`${tileFloorNominalCost.toFixed(2)} €/m²` },
+        { label: "Wood Floor Actual Cost", amount:`${tileFloorActualCost.toFixed(2)} €/m²` },
+        { label: "EPS Norminal Cost", amount:`${epsWasteCosts.norminal_cost.toFixed(2)} €/m²` },
+        { label: "EPS Actual Cost", amount:`${epsWasteCosts.actual_cost.toFixed(2)} €/m²` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
