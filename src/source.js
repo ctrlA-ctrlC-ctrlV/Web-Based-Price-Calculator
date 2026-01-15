@@ -634,16 +634,21 @@ function calcCostBreakdown() {
     const osb_height = parseFloat(qs('#cfg_osbHeight').value) || defaults.osbWidth;
     const osb_cost = parseFloat(qs('#cfg_costPerOsb').value) || defaults.costPerOsb;
 
-    let osb_area = osb_width * osb_height;
-    let obsCostPerM2 = osb_cost/osb_area;
+    const osb_area = osb_width * osb_height;
+    const osbCostPerM2 = osb_cost/osb_area;
 
     // Cladding Per m² Calculation
+    //onst 
 
     //console.log(obsCostPerM2);
-    
+
     const costBreakdownList = [
         { label: "Base Area", amount: `${base_area.toFixed(2)}m²` },
         { label: "Outer Surface Area", amount:`${outer_area.toFixed(2)}m²` },
+        { label: "Interanl Wall Area", amount:`${inner_area.toFixed(2)}m²` },
+        { label: "Total Surface Area", amount:`${total_wall_area.toFixed(2)}m²` },
+        { label: "OSB Cost Per m²", amount:`${osbCostPerM2.toFixed(2)} €/m²` },
+        //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
     return(costBreakdownList);
