@@ -74,6 +74,28 @@ const defaults = {
 const qs = (sel, root = document) => root.querySelector(sel);
 const isClientMode = () => new URLSearchParams(location.search).get('mode') === 'client';
 
+class Table {
+    constructor(data = []) {
+        // Create an index for fast lookups
+        this.rows = new Map(data.map(row => [row.name, row]));
+    }
+
+    // SELECT * FROM table WHERE name = 'x'
+    selectByName(name) {
+        return this.rows.get(name) || null;
+    }
+
+    // INSERT INTO table
+    insert(row) {
+        this.rows.set(row.name, row);
+    }
+    
+    // SELECT *
+    getAll() {
+        return Array.from(this.rows.values());
+    }
+}
+
 const fmtCurrency = (v) => {
     const cur = qs('#currency').value;
     const sym = cur === 'GBP' ? '£' : '€';
@@ -552,12 +574,13 @@ function compute() {
     extraLines.forEach(l => lines.push(l));
 
     renderSummary({ a, lines, subtotal, discountPct: appliedDiscountPct, discountAmt, net, vatPct, vat, total });
-    //calcCostValue();
-    renderCostBreakdown();
+    
     const pTotalEl = qs('#p_totalValue');
     if (pTotalEl) {
         pTotalEl.textContent = fmtCurrency(total);
     }
+    renderCostBreakdown();
+    projectCostCompute();
     updateUrlParams();
     persistToLocalStorage();    
 }
@@ -605,26 +628,6 @@ function renderSummary(model) {
     s.appendChild(vat);
     s.appendChild(total);
 }
-
-/**
- * const w = parseFloat(qs('#width').value) || 0;
-    const d = parseFloat(qs('#depth').value) || 0;
-    const h = parseFloat(qs('#cfg_height').value) || defaults.height;
-    const i = parseFloat(qs('#wall_quan').value) || 0;
-
-    const base_area = Math.max(0, w * d);
-    const outer_area = Math.max(0, 2 * h * (w + d));
-    const inner_area = Math.max(0, i * h);
-    const wall_area = outer_area + inner_area;
-
-    //OSB Calculation
-    const obs_width = parseFloat(qs('#cfg_osbWidth').value) || defaults.osbWidth;
-    const obs_height = parseFloat(qs('#cfg_osbHeight').value) || defaults.osbWidth;
-    const obs_cost = parseFloat(qs('#cfg_costPerOsb').value) || defaults.costPerOsb;
-
-    let obs_area = obs_width * obs_height;
-    let obs_count = wall_area / obs_area;
- */
 
 /**
  * Calculating what is the cost of a matrial with wast includded
@@ -740,7 +743,7 @@ function calcCostBreakdown() {
     const costPerConcretFoundation = parseFloat(qs('#cfg_costPerConcretFoundation').value) || defaults.costPerConcretFoundation;
 
     const costBreakdownList = [
-        { name: "baseArea",                     label: "Base Area",                   amount: base_area.toFixed(2),                       unit: "m²" },
+        { name: "base_area",                     label: "Base Area",                   amount: base_area.toFixed(2),                       unit: "m²" },
         { name: "outer_area",                   label: "Outer Surface Area",          amount: outer_area.toFixed(2),                       unit: "m²" },
         { name: "inner_area",                   label: "Interanl Wall Area",          amount: inner_area.toFixed(2),                       unit: "m²" },
         { name: "total_wall_area",              label: "Total Surface Area",          amount: total_wall_area.toFixed(2),                  unit: "m²" },
@@ -801,6 +804,18 @@ function renderCostBreakdown() {
 }
 
 function projectCostCompute() {
+    // const valueTable = new Table (calcCostBreakdown())
+
+    // const row = valueTable.selectByName("base_area");
+
+    // console.log(row);
+    const value_list = Array.isArray(calcCostBreakdown()) ? calcCostBreakdown() : [];
+
+    const ValueTable = new Map(value_list.map(item => [item.name, item]));
+
+    const baseArea = ValueTable.get("base_area");
+
+    console.log(baseArea);
 
 }
 
