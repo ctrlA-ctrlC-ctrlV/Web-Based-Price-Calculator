@@ -36,6 +36,7 @@ const defaults = {
     osbWidth: 1.22,                         //m
     osbHeight: 2.44,                        //m
     costPerOsb: 18.11,                      //€/board
+    wastePercentageOsb: 0,                  //%
     claddingBlockWidth: 2.9,                //m
     claddingBlockHeight: 0.222,             //m
     costPerCladdingBlock: 31.43,            //€/board
@@ -688,7 +689,7 @@ function calcCostBreakdown() {
     const switchUnitCost = parseFloat(qs('#cfg_costPerLightSwitch').value) || defaults.costPerLightSwitch;
 
     // Double Socket Unit Cost
-    //const  = parseFloat(qs('#').value) || defaults.;
+    const dSocketUnitCost = parseFloat(qs('#cfg_costPerDoubleSocket').value) || defaults.costPerDoubleSocket;
 
     // Plasterboard Per m² Calculation
     //const  = parseFloat(qs('#').value) || defaults.;
@@ -724,6 +725,7 @@ function calcCostBreakdown() {
         { label: "Shower Unite Cost", amount:`€${showerUnitCost.toFixed(2)}` },
         { label: "Electric Boiler Unite Cost", amount:`€${elecBoilerUnitCost.toFixed(2)}` },
         { label: "Light Switch Unite Cost", amount:`€${switchUnitCost.toFixed(2)}` },
+        { label: "Double Socket Unite Cost", amount:`€${dSocketUnitCost.toFixed(2)}` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
@@ -1410,6 +1412,7 @@ function initDefaults() {
     qs('#cfg_osbWidth').value = defaults.osbWidth;
     qs('#cfg_osbHeight').value = defaults.osbHeight;
     qs('#cfg_costPerOsb').value = defaults.costPerOsb;
+    qs('#cfg_wastePercentageOsb').value = defaults.wastePercentageOsb;
     qs('#cfg_claddingBlockWidth').value = defaults.claddingBlockWidth;
     qs('#cfg_claddingBlockHeight').value = defaults.claddingBlockHeight;
     qs('#cfg_costPerCladdingBlock').value = defaults.costPerCladdingBlock;
