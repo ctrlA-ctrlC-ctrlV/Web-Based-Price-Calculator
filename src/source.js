@@ -545,7 +545,7 @@ function compute() {
 
     renderSummary({ a, lines, subtotal, discountPct: appliedDiscountPct, discountAmt, net, vatPct, vat, total });
     //calcCostValue();
-    renderCostBreakdown({a, lines});
+    renderCostBreakdown();
     const pTotalEl = qs('#p_totalValue');
     if (pTotalEl) {
         pTotalEl.textContent = fmtCurrency(total);
@@ -618,7 +618,7 @@ function renderSummary(model) {
     let obs_count = wall_area / obs_area;
  */
 
-function calcCostBreakdown(a) {
+function calcCostBreakdown() {
     const w = parseFloat(qs('#width').value) || 0;
     const d = parseFloat(qs('#depth').value) || 0;
     const h = parseFloat(qs('#cfg_height').value) || defaults.height;
@@ -653,28 +653,23 @@ function calcCostBreakdown(a) {
     return(costBreakdownList);
 }
 
-function renderCostBreakdown(model) {
+function renderCostBreakdown() {
     const value_list = calcCostBreakdown();
 
     const c = qs("#cost_breakdown");
     c.innerHTML = '';
 
-    const lines = Array.isArray(model.lines) ? model.lines : [];
     const grid = document.createElement('div');
     grid.className = "flex flex-wrap gap-4 items-start";
 
     const itemClass = "rounded-2xl shadow p-4 text-center bg-white flex-initial";
 
+    
     const base_area = document.createElement('div');
     base_area.className = itemClass;
     base_area.innerHTML = `Base Area<br/><span class="text-xl font-medium mt-2 block">${(value_list.base_area || 0).toFixed(2)}m²</span>`;
 
-    const area = document.createElement('div');
-    area.className = itemClass;
-    area.innerHTML = `Total Building Area<br/><span class="text-xl font-medium mt-2 block">${(model.a || 0).toFixed(2)}m²</span>`;
-
     grid.appendChild(base_area);
-    grid.appendChild(area);
 
     c.appendChild(grid);
 }
