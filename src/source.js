@@ -689,17 +689,20 @@ function renderCostBreakdown() {
     const value_list = Array.isArray(calcCostBreakdown()) ? calcCostBreakdown() : [];
 
     const c = qs("#cost_breakdown");
+    if (!c) return;
     c.innerHTML = '';
 
     const grid = document.createElement('div');
-    grid.className = "flex flex-wrap gap-4 items-start";
+    grid.className = "flex flex-wrap gap-4 items-start max-w-full w-full min-w-0";    
+    grid.style.flexWrap = "wrap";   // Force wrap explicitly because the utility class might be missing in production CSS
 
-    const itemClass = "rounded-2xl shadow p-4 text-center bg-white flex-initial";    
+    const itemClass = "rounded-2xl shadow p-4 text-center bg-white";    
 
     value_list.forEach(value => {
         const row  = document.createElement('div');
         row.className = itemClass;
         row.innerHTML = `${value.label}<br/><span class="text-xl font-medium mt-2 block">${value.amount}</span>`;
+
         grid.appendChild(row);
     });
 
