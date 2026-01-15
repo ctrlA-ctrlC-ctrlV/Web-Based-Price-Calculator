@@ -544,6 +544,8 @@ function compute() {
     extraLines.forEach(l => lines.push(l));
 
     renderSummary({ a, lines, subtotal, discountPct: appliedDiscountPct, discountAmt, net, vatPct, vat, total });
+    //calcCostValue();
+    renderCostBreakdown({a, lines});
     const pTotalEl = qs('#p_totalValue');
     if (pTotalEl) {
         pTotalEl.textContent = fmtCurrency(total);
@@ -594,6 +596,87 @@ function renderSummary(model) {
     s.appendChild(net);
     s.appendChild(vat);
     s.appendChild(total);
+}
+
+/**
+ * const w = parseFloat(qs('#width').value) || 0;
+    const d = parseFloat(qs('#depth').value) || 0;
+    const h = parseFloat(qs('#cfg_height').value) || defaults.height;
+    const i = parseFloat(qs('#wall_quan').value) || 0;
+
+    const base_area = Math.max(0, w * d);
+    const outer_area = Math.max(0, 2 * h * (w + d));
+    const inner_area = Math.max(0, i * h);
+    const wall_area = outer_area + inner_area;
+
+    //OSB Calculation
+    const obs_width = parseFloat(qs('#cfg_osbWidth').value) || defaults.osbWidth;
+    const obs_height = parseFloat(qs('#cfg_osbHeight').value) || defaults.osbWidth;
+    const obs_cost = parseFloat(qs('#cfg_costPerOsb').value) || defaults.costPerOsb;
+
+    let obs_area = obs_width * obs_height;
+    let obs_count = wall_area / obs_area;
+ */
+
+function calcCostValue(a) {
+    const w = parseFloat(qs('#width').value) || 0;
+    const d = parseFloat(qs('#depth').value) || 0;
+    const h = parseFloat(qs('#cfg_height').value) || defaults.height;
+    const i = parseFloat(qs('#wall_quan').value) || 0;
+
+    const base_area = Math.max(0, w * d);
+    const outer_area = Math.max(0, 2 * h * (w + d));
+    const inner_area = Math.max(0, i * h);
+    const total_wall_area = outer_area + inner_area;
+
+    // OSB Per m² Calculation
+    const osb_width = parseFloat(qs('#cfg_osbWidth').value) || defaults.osbWidth;
+    const osb_height = parseFloat(qs('#cfg_osbHeight').value) || defaults.osbWidth;
+    const osb_cost = parseFloat(qs('#cfg_costPerOsb').value) || defaults.costPerOsb;
+
+    let osb_area = osb_width * osb_height;
+    let obsCostPerM2 = osb_cost/osb_area;
+
+    // Cladding Per m² Calculation
+
+    //console.log(obsCostPerM2);
+
+    const costValueList = {
+        base_area,
+        //{ label:"Base Area", amount: base_area },
+        //outer_area,
+        //inner_area,
+        //total_wall_area,
+        //obsCostPerM2,
+    };
+
+    return(costValueList);
+}
+
+function renderCostBreakdown(model) {
+    const value_list = calcCostValue();
+
+    const c = qs("#cost_breakdown");
+    c.innerHTML = '';
+
+    const lines = Array.isArray(model.lines) ? model.lines : [];
+    const grid = document.createElement('div');
+    grid.className = "flex flex-wrap gap-4 items-start";
+
+    const itemClass = "rounded-2xl shadow p-4 text-center bg-white flex-initial";
+
+    const base_area = document.createElement('div');
+    base_area.className = itemClass;
+    base_area.innerHTML = `Base Area<br/><span class="text-xl font-medium mt-2 block">${(value_list.base_area || 0).toFixed(2)}m²</span>`;
+
+    const area = document.createElement('div');
+    area.className = itemClass;
+    area.innerHTML = `Total Building Area<br/><span class="text-xl font-medium mt-2 block">${(model.a || 0).toFixed(2)}m²</span>`;
+
+    grid.appendChild(base_area);
+    grid.appendChild(area);
+
+    c.appendChild(grid);
 }
 
 function updateUrlParams() {
