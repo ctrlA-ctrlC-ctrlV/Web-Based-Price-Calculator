@@ -786,7 +786,7 @@ function renderCostBreakdown() {
     value_list.forEach(value => {
         const row  = document.createElement('div');
         row.className = itemClass;
-        row.innerHTML = `${value.label}<br/><span class="text-xl font-medium mt-2 block">${value.amount}</span>`;
+        row.innerHTML = `${value.label || 'N/A'}<br/><span class="text-xl font-medium mt-2 block">${value.amount || 'N/A'}</span>`;
 
         grid.appendChild(row);
     });
