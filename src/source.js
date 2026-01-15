@@ -33,33 +33,34 @@ const defaults = {
     /** 
      * Cost Defaults 
      */
-    osbWidth: 1.22,                     //m
-    osbHeight: 2.44,                    //m
-    costPerOsb: 18.11,                  //€/board
-    claddingBlockWidth: 2.9,            //m
-    claddingBlockHeight: 0.222,         //m
-    costPerCladdingBlock: 31.43,        //€/board
-    costPerToilet: 104.95,              //€
-    costPerSink: 96,                    //€
-    costPerunderSinkHeater: 160,        //€
-    costPerShower: 294.95,              //€
-    costPerElecBoiler: 191.17,          //€
-    costPerLightSwitch: 1.65,           //€
-    costPerDoubleSocket: 3.55,          //€
-    plasterboardWidth: 1.22,            //m
-    plasterboardHeight: 2.44,           //m
-    costPerPlasterboard: 20.5,          //€/board
-    wallPanelWidth: 2.7,                //m
-    wallPanelHeight: 0.25,              //m
-    costPerWallPanel: 77,               //€/board
-    costPerWoodFloor: 55,               //€/m²
-    costPerTileFloor: 37.1,             //€/m²
-    epsWidth: 0.6,                      //m
-    epsHeight: 1.22,                    //m
-    costPerEps: 1.82,                   //€/board
-    costPerRenderUnit: 20.74,           //€
-    coverPerRenderUnit: 0.85,           //m²
-    costPerConcretFoundation: 233.33,   //€/m²
+    osbWidth: 1.22,                         //m
+    osbHeight: 2.44,                        //m
+    costPerOsb: 18.11,                      //€/board
+    claddingBlockWidth: 2.9,                //m
+    claddingBlockHeight: 0.222,             //m
+    costPerCladdingBlock: 31.43,            //€/board
+    wastePercentageCladdingBlock: 17.24,    //%
+    costPerToilet: 104.95,                  //€
+    costPerSink: 96,                        //€
+    costPerunderSinkHeater: 160,            //€
+    costPerShower: 294.95,                  //€
+    costPerElecBoiler: 191.17,              //€
+    costPerLightSwitch: 1.65,               //€
+    costPerDoubleSocket: 3.55,              //€
+    plasterboardWidth: 1.22,                //m
+    plasterboardHeight: 2.44,               //m
+    costPerPlasterboard: 20.5,              //€/board
+    wallPanelWidth: 2.7,                    //m
+    wallPanelHeight: 0.25,                  //m
+    costPerWallPanel: 77,                   //€/board
+    costPerWoodFloor: 55,                   //€/m²
+    costPerTileFloor: 37.1,                 //€/m²
+    epsWidth: 0.6,                          //m
+    epsHeight: 1.22,                        //m
+    costPerEps: 1.82,                       //€/board
+    costPerRenderUnit: 20.74,               //€
+    coverPerRenderUnit: 0.85,               //m²
+    costPerConcretFoundation: 233.33,       //€/m²
 };
 
 // --- Helpers ---
@@ -667,9 +668,13 @@ function calcCostBreakdown() {
     const clad_width = parseFloat(qs('#cfg_claddingBlockWidth').value) || defaults.claddingBlockWidth;
     const clad_height = parseFloat(qs('#cfg_claddingBlockHeight').value) || defaults.claddingBlockHeight;
     const clad_cost = parseFloat(qs('#cfg_costPerCladdingBlock').value) || defaults.costPerCladdingBlock;
+    const clad_waste = parseFloat(qs('#cfg_wastePercentageCladdingBlock').value) || defaults.wastePercentageCladdingBlock;
+
 
     const clad_area = clad_width * clad_height;
     const cladCostPerM2 = clad_cost/clad_area;
+
+    //const cladWasteCosts = wasteCostCalc(clad_width, clad_height, );
 
     //console.log(obsCostPerM2);
 
@@ -1366,6 +1371,7 @@ function initDefaults() {
     qs('#cfg_claddingBlockWidth').value = defaults.claddingBlockWidth;
     qs('#cfg_claddingBlockHeight').value = defaults.claddingBlockHeight;
     qs('#cfg_costPerCladdingBlock').value = defaults.costPerCladdingBlock;
+    qs('#cfg_wastePercentageCladdingBlock').value = defaults.wastePercentageCladdingBlock;
     qs('#cfg_costPerToilet').value = defaults.costPerToilet;
     qs('#cfg_costPerSink').value = defaults.costPerSink;
     qs('#cfg_costPerunderSinkHeater').value = defaults.costPerunderSinkHeater;
