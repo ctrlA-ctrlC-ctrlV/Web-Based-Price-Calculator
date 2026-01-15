@@ -676,7 +676,7 @@ function calcCostBreakdown() {
     const sinkUnitCost = parseFloat(qs('#cfg_costPerSink').value) || defaults.costPerSink;
 
     // Undersink Heater Unit Cost
-    //const  = parseFloat(qs('#').value) || defaults.;
+    const ushUnitCost = parseFloat(qs('#cfg_costPerunderSinkHeater').value) || defaults.costPerunderSinkHeater;
 
     // Shower Unit Cost
     //const  = parseFloat(qs('#').value) || defaults.;
@@ -720,6 +720,7 @@ function calcCostBreakdown() {
         { label: "Cladding Actual Cost", amount:`${cladWasteCosts.actual_cost.toFixed(2)} €/m²` },
         { label: "Toilet Unite Cost", amount:`€${toiletUnitCost.toFixed(2)}` },
         { label: "Sink Unite Cost", amount:`€${sinkUnitCost.toFixed(2)}` },
+        { label: "Undersink Heater Unite Cost", amount:`€${ushUnitCost.toFixed(2)}` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
