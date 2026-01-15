@@ -629,19 +629,15 @@ function renderSummary(model) {
 /**
  * Calculating what is the cost of a matrial with wast includded
  * 
- * @param { number } width 
- * @param { number } height 
+ * @param { number } total_area 
  * @param { number } unit_cost 
  * @param { number } waste_percentage  
  * @returns 
  */
 function wasteCostCalc(
-    width, 
-    height, 
+    total_area, 
     unit_cost,
     waste_percentage ) {
-        
-    const total_area = width * height;
 
     const norminal_cost = unit_cost/total_area;
     const actual_cost = norminal_cost * (1 + waste_percentage * .01);
@@ -667,8 +663,7 @@ function calcCostBreakdown() {
     const osb_waste = parseFloat(qs('#cfg_wastePercentageOsb').value) || defaults.wastePercentageOsb;
 
     const osb_area = osb_width * osb_height;
-    const osbCostPerM2 = osb_cost/osb_area;
-    const osbWastCosts = wasteCostCalc(osb_width, osb_height, osb_cost, osb_waste);
+    const osbWastCosts = wasteCostCalc(osb_area, osb_cost, osb_waste);
 
     // Cladding Per m² Calculation
     const clad_width = parseFloat(qs('#cfg_claddingBlockWidth').value) || defaults.claddingBlockWidth;
@@ -676,7 +671,8 @@ function calcCostBreakdown() {
     const clad_cost = parseFloat(qs('#cfg_costPerCladdingBlock').value) || defaults.costPerCladdingBlock;
     const clad_waste = parseFloat(qs('#cfg_wastePercentageCladdingBlock').value) || defaults.wastePercentageCladdingBlock;
 
-    const cladWasteCosts = wasteCostCalc(clad_width, clad_height, clad_cost, clad_waste);
+    const clad_area = clad_width * clad_height;
+    const cladWasteCosts = wasteCostCalc(clad_area, clad_cost, clad_waste);
 
     // Toilet Unit Cost
     const toiletUnitCost = parseFloat(qs('#cfg_costPerToilet').value) || defaults.costPerToilet;
