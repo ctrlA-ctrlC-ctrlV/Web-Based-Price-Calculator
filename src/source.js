@@ -617,6 +617,20 @@ function renderSummary(model) {
     let obs_area = obs_width * obs_height;
     let obs_count = wall_area / obs_area;
  */
+function wasteCostCalc(
+    width, 
+    height, 
+    waste_width, 
+    wasted_height, 
+    unit_cost ) {
+    const total_area = width * height;
+    const waste_percentage = (waste_width * wasted_height) / total_area;
+
+    const norminal_cost = unit_cost/total_area;
+    const actual_cost = norminal_cost * waste_percentage;
+    
+    return ({norminal_cost, actual_cost});
+}
 
 function calcCostBreakdown() {
     const w = parseFloat(qs('#width').value) || 0;
