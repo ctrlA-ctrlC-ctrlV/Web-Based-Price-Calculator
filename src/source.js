@@ -669,6 +669,34 @@ function calcCostBreakdown() {
 
     const cladWasteCosts = wasteCostCalc(clad_width, clad_height, clad_cost, clad_waste);
 
+    // Toilet Unit Cost
+    const toiletUnitCost = parseFloat(qs('#cfg_costPerToilet').value) || defaults.costPerToilet;
+
+    // Sink Unit Cost
+
+    // Undersink Heater Unit Cost
+
+    // Shower Unit Cost
+
+    // Electric Boiler Unit Cost
+
+    // Light Switch Unit Cost
+
+    // Double Socket Unit Cost
+
+    // Plasterboard Per m² Calculation
+
+    // Wall Panel Per m² Calculation
+
+    // Wood Floor Per m² Cost
+
+    // Tile Floor Per m² Cost
+
+    // EPS Per m² Calculation
+
+    // Concrete Foundation Per m² Cost
+
+    //const  = parseFloat(qs('#').value) || defaults.;
     //console.log(obsCostPerM2);
 
     const costBreakdownList = [
@@ -679,6 +707,7 @@ function calcCostBreakdown() {
         { label: "OSB Cost Per m²", amount:`${osbCostPerM2.toFixed(2)} €/m²` },
         { label: "Cladding Norminal Cost", amount:`${cladWasteCosts.norminal_cost.toFixed(2)} €/m²` },
         { label: "Cladding Actual Cost", amount:`${cladWasteCosts.actual_cost.toFixed(2)} €/m²` },
+        { label: "Toilet Unite Cost", amount:`€${toiletUnitCost.toFixed(2)}` },
         //{ label: "", amount:`${.toFixed(2)}m²` },
     ];
 
