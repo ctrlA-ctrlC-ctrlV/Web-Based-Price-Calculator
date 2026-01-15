@@ -739,9 +739,6 @@ function calcCostBreakdown() {
     // Concrete Foundation Per m² Cost
     const costPerConcretFoundation = parseFloat(qs('#cfg_costPerConcretFoundation').value) || defaults.costPerConcretFoundation;
 
-    //const  = parseFloat(qs('#').value) || defaults.;
-    //console.log(obsCostPerM2);
-
     const costBreakdownList = [
         { label: "Base Area", amount: `${base_area.toFixed(2)}m²` },
         { label: "Outer Surface Area", amount:`${outer_area.toFixed(2)}m²` },
@@ -796,6 +793,10 @@ function renderCostBreakdown() {
     });
 
     c.appendChild(grid);
+}
+
+function projectCostCompute() {
+    
 }
 
 function updateUrlParams() {
