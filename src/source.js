@@ -658,9 +658,11 @@ function calcCostBreakdown() {
     const osb_width = parseFloat(qs('#cfg_osbWidth').value) || defaults.osbWidth;
     const osb_height = parseFloat(qs('#cfg_osbHeight').value) || defaults.osbWidth;
     const osb_cost = parseFloat(qs('#cfg_costPerOsb').value) || defaults.costPerOsb;
+    const osb_waste = parseFloat(qs('#cfg_wastePercentageOsb').value) || defaults.wastePercentageOsb;
 
     const osb_area = osb_width * osb_height;
     const osbCostPerM2 = osb_cost/osb_area;
+    const osbWastCosts = wasteCostCalc(osb_width, osb_height, osb_cost, osb_waste);
 
     // Cladding Per m² Calculation
     const clad_width = parseFloat(qs('#cfg_claddingBlockWidth').value) || defaults.claddingBlockWidth;
@@ -716,7 +718,8 @@ function calcCostBreakdown() {
         { label: "Outer Surface Area", amount:`${outer_area.toFixed(2)}m²` },
         { label: "Interanl Wall Area", amount:`${inner_area.toFixed(2)}m²` },
         { label: "Total Surface Area", amount:`${total_wall_area.toFixed(2)}m²` },
-        { label: "OSB Cost Per m²", amount:`${osbCostPerM2.toFixed(2)} €/m²` },
+        { label: "OSB Norminal Cost", amount:`${osbWastCosts.norminal_cost.toFixed(2)} €/m²` },
+        { label: "OSB Actual Cost", amount:`${osbWastCosts.actual_cost.toFixed(2)} €/m²` },
         { label: "Cladding Norminal Cost", amount:`${cladWasteCosts.norminal_cost.toFixed(2)} €/m²` },
         { label: "Cladding Actual Cost", amount:`${cladWasteCosts.actual_cost.toFixed(2)} €/m²` },
         { label: "Toilet Unite Cost", amount:`€${toiletUnitCost.toFixed(2)}` },
