@@ -597,14 +597,20 @@
         <label class="block">Cost per OSB (€/board)
           <input type="number" step="1" id="cfg_costPerOsb" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">OSB Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageOsb" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
         <label class="block">Cladding block width (m)
           <input type="number" step="1" id="cfg_claddingBlockWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
         <label class="block">Cladding block height (m)
           <input type="number" step="1" id="cfg_claddingBlockHeight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-        </label>
+        </label>        
         <label class="block">Cost per Cladding block (€/board)
           <input type="number" step="1" id="cfg_costPerCladdingBlock" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cladding block Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageCladdingBlock" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
         <label class="block">Cost per Toilet(€)
           <input type="number" step="1" id="cfg_costPerToilet" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
@@ -636,6 +642,9 @@
         <label class="block">Cost per Plasterboard (€/board)
           <input type="number" step="1" id="cfg_costPerPlasterboard" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">Plasterboard Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentagePlasterboard" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
         <label class="block">Wall Panel Width (m)
           <input type="number" step="1" id="cfg_wallPanelWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
@@ -645,11 +654,20 @@
         <label class="block">Cost per Wall Panel (€/board)
           <input type="number" step="1" id="cfg_costPerWallPanel" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">Wall Panel Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageWallPanel" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
         <label class="block">Cost per m² - Wood Floor (€/m²)
           <input type="number" step="1" id="cfg_costPerWoodFloor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">Wood Floor Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageWoodFloor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
         <label class="block">Cost per m² - Tile Floor (€/m²)
           <input type="number" step="1" id="cfg_costPerTileFloor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Tile Floor Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageTileFloor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
         <label class="block">EPS Width (m)
           <input type="number" step="1" id="cfg_epsWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
@@ -660,17 +678,38 @@
         <label class="block">EPS Cost (m)
           <input type="number" step="1" id="cfg_costPerEps" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
-        <label class="block">Render Cost Per 25kg
-          <input type="number" step="1" id="cfg_costPerRenderUnit" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        <label class="block">EPS Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageEps" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
         <label class="block">Render Cover (m² per 25kg)
           <input type="number" step="1" id="cfg_coverPerRenderUnit" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Render Cost Per 25kg
+          <input type="number" step="1" id="cfg_costPerRenderUnit" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>        
+        <label class="block">Render Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageRender" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
         <label class="block">Cost per m² - Concret Foundation (€/m²)
           <input type="number" step="1" id="cfg_costPerConcretFoundation" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
       </div>
     </details>
+
+    <main class="mt-6 grid md:grid-cols-2 gap-6">      
+      <section class="bg-white rounded-2xl shadow p-4 md:p-6">
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Cost Breakdown</h2>
+        </div>
+        <div id="cost_breakdown" class="space-y-3"></div>   
+      </section>
+
+      <section class="bg-white rounded-2xl shadow p-4 md:p-6">
+        <h2 class="text-xl font-semibold mb-4">Project Cost Summary</h2>
+        <div id="project_cost_summary" class="space-y-3"></div>
+      </section>
+      
+    </main>    
 
     <footer class="mt-8 text-center text-xs text-slate-500">
       <p class="print-block hidden">Generated by the Garden Room Price Calculator</p>
