@@ -259,70 +259,6 @@ class CostTable {
     }
 }
 
-/*class Table {
-    constructor(data = []) {
-        // Create an index for fast lookups
-        this.rows = new Map(data.map(row => [row.name, row]));
-    }
-
-    /**
-     * SELECT y FROM TABLE WHERE name = 'x'
-     * @param {string} name 
-     * @param {string} columnName 
-     * @returns 
-     *
-    findCellByName(name, columnName) {
-        const row = this.rows.get(name);
-
-        if(!row) {
-            console.warn(`Row with name "${name}" not found.`);
-            return null;
-        } else if (!row[columnName]) {
-            console.warn(`Cell in Row "${name}" with name "${row[columnName]}" not found.`);
-            return null;
-        }
-
-        return row[columnName];
-    }
-
-    /**
-     * SELECT * FROM table WHERE name = 'x'
-     * @param {string} name 
-     * @returns 
-     *
-    findRowByName(name) {
-        return this.rows.get(name) || null;
-    }
-
-    /**
-     * 
-     * @param {string} name 
-     * @param {string} newCellName 
-     * @param {*} newCellValue 
-     * @returns 
-     *
-    setCellByName(name, newCellName, newCellValue) {
-        const row = this.rows.get(name);
-
-        if(!row) {
-            console.warn(`Row with name "${name}" not found.`);
-            return null;
-        }
-
-        row[newCellName] = newCellValue;
-    }
-
-    // INSERT INTO table
-    insertRow(row) {
-        this.rows.set(row.name, row);
-    }
-    
-    // SELECT *
-    getAll() {
-        return Array.from(this.rows.values());
-    }
-}*/
-
 const fmtCurrency = (v) => {
     const cur = qs('#currency').value;
     const sym = cur === 'GBP' ? '£' : '€';
@@ -1137,9 +1073,15 @@ function projectCostCompute() {
     projectCostTable.createRow("plasterboard_total_Cost", "Plasterboard Total Cost", plasterboard_total_Cost.toFixed(2), "€");
 
     // Calculating Wall Panel Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+        const wall_panne_length = table.getCellByName("inner_area", "amount");
+        const wall_panel_actual_cost = table.getCellByName("wall_panel_actual_cost", "amount");
+        const wall_panel_total_cost = wall_panel_actual_cost * wall_panne_length;
+        projectCostTable.createRow("wall_panel_total_cost", "Wall Panel Total Cost", wall_panel_total_cost.toFixed(2), "€");
+    }
 
     // Calculating Wood Floor Cost
+    const floor_type = qs('#floor_type').value;
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
     
     // Calculating Tile Floor Cost 
