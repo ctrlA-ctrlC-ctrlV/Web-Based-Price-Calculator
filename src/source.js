@@ -1080,12 +1080,21 @@ function projectCostCompute() {
         projectCostTable.createRow("wall_panel_total_cost", "Wall Panel Total Cost", wall_panel_total_cost.toFixed(2), "€");
     }
 
-    // Calculating Wood Floor Cost
-    const floor_type = qs('#floor_type').value;
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
     
-    // Calculating Tile Floor Cost 
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const floor_type = qs('#floor_type').value;
+    if (floor_type === "wooden") {
+        // Calculating Wood Floor Cost
+        const floor_size = qs('#floor_size').value || 0;
+        const wood_floor_actual_cost = table.getCellByName("wood_floor_actual_cost", "amount");
+        const wood_floor_total_cost = wood_floor_actual_cost * floor_size;
+        projectCostTable.createRow("wood_floor_total_cost", "Wood Floor Total Cost", wood_floor_total_cost.toFixed(2), "€");
+    } else if (floor_type === "tile") {
+        // Calculating Tile Floor Cost 
+        const floor_size = qs('#floor_size').value || 0;
+        const tile_floor_actual_cost = table.getCellByName("tile_floor_actual_cost", "amount");
+        const tile_floor_total_cost = tile_floor_actual_cost * floor_size;
+        projectCostTable.createRow("tile_floor_total_cost", "Tile Floor Total Cost", tile_floor_total_cost.toFixed(2), "€");
+    }
 
     // Calculating EPS Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
