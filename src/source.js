@@ -1108,7 +1108,10 @@ function projectCostCompute() {
     projectCostTable.createRow("undersink_heater_total_cost", "Under Sink Heater Total Cost", undersink_heater_total_cost.toFixed(2), "€");
 
     // Calculating Shower Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const shower_amt = bath2_amt;
+    const shower_cost = table.getCellByName("shower_cost", "amount");
+    const shower_total_cost = shower_cost * shower_amt;
+    projectCostTable.createRow("shower_total_cost", "Shower Total Cost", shower_total_cost.toFixed(2), "€");
 
     // Calculating Electric Boiler Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
