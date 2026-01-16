@@ -74,6 +74,46 @@ const defaults = {
 const qs = (sel, root = document) => root.querySelector(sel);
 const isClientMode = () => new URLSearchParams(location.search).get('mode') === 'client';
 
+class costTableRow {
+    /**
+     * 
+     * @param {string} name 
+     * @param {string} label 
+     * @param {number} amount 
+     * @param {string} unit 
+     */
+    constructor (name, label, amount, unit){
+        this.data = {
+            name: name,
+            label: label,
+            amount: amount,
+            unit: unit
+        };
+    }
+
+    /**
+     * 
+     * @param {string} columnName 
+     * @returns 
+     */
+    getCell(columnName) {
+        if (this.data[columnName] === undefined) {
+            console.warn(`Cell with name "${columnName}" not found.`); 
+            return null;
+        }
+        return this.data[columnName];
+    }
+    
+    /**
+     * 
+     * @param {string} newCellName 
+     * @param {*} newCellValue 
+     */
+    setCell(newCellName, newCellValue) {
+        this.data[newCellName] = newCellValue;
+    }
+}
+
 class Table {
     constructor(data = []) {
         // Create an index for fast lookups
