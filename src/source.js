@@ -74,7 +74,7 @@ const defaults = {
 const qs = (sel, root = document) => root.querySelector(sel);
 const isClientMode = () => new URLSearchParams(location.search).get('mode') === 'client';
 
-class costTableRow {
+class CostTableRow {
     /**
      * 
      * @param {string} name 
@@ -91,10 +91,15 @@ class costTableRow {
         };
     }
 
+    // Helper allow 'row.name' instead of row.data.name'
+    get name() {
+        return this.data.name;
+    }
+
     /**
      * 
      * @param {string} columnName 
-     * @returns 
+     * @returns {string|undefined}
      */
     getCell(columnName) {
         if (this.data[columnName] === undefined) {
@@ -109,8 +114,132 @@ class costTableRow {
      * @param {string} newCellName 
      * @param {*} newCellValue 
      */
-    setCell(newCellName, newCellValue) {
-        this.data[newCellName] = newCellValue;
+    setCell(cellName, cellValue) {
+        if (cellName === 'name') {
+            console.error("Cannot change unique row ID ('name') via setCell.");
+            return;
+        }
+
+        this.data[cellName] = cellValue;
+    }
+
+    /**
+     * 
+     * @param {string} name 
+     * @param {string} newName 
+     */
+    changeName(name, newName) {
+        this.data[name] = newName;
+    }
+}
+
+class CostTable {
+    constructor(/*dataArray*/) {
+        /** @type {CostTableRow []} */
+        this.rows = [];
+        // Use the insertRow method to populate
+        //dataArray.forEach(row => this.setRow(row));
+    }
+
+    /**
+     * 
+     * @param {CostTableRow} row 
+     * @returns 
+     */
+    addRow(row) {
+        if (!(row instanceof CostTableRow)) {
+            console.error("Invalid input: Must be an instance of CostTableRow.");
+            return;
+        }
+        
+        if (this.getRowByName(row.name)) {
+            console.warn(`Row with name "${row.name}" already exists. Skipped.`);
+            return;
+        }
+        this.rows.push(row)
+    }
+
+    /**
+     * Create a row and add the row to table
+     * @param {string} name 
+     * @param {string} label 
+     * @param {number} amount 
+     * @param {string} unit 
+     * @returns {CostTableRow}
+     */
+    createRow(name, label, amount, unit) {
+        const newRow = new CostTableRow(name, label, amount, unit);
+        this.addRow(newRow);
+        return newRow;
+    }
+
+    /**
+     * Find a row by its unique name
+     * @param {string} name 
+     * @returns {CostTableRow|undefined}
+     */
+    getRowByName(name) {
+        return this.rows.find(row => row.name === name);
+    }
+
+    /**
+     * 
+     * @param {string} name 
+     * @param {string} columnName 
+     * @returns 
+     */
+    getCellByName(name, columnName) {
+        if (!this.getRowByName(name)) {
+            console.warn(`Row with name "${name}" doesn't exists. Skipped.`);
+            return;
+        }
+
+        if (!this.getRowByName(name).getCell(columnName)) {
+            console.warn(`Cell name "${row.name}" not found in row "${this.getRowByName(name)}". Skipped.`);
+            return;
+        }
+
+        return this.getRowByName(name).getCell(columnName);
+    }
+
+    /**
+     * 
+     * @param {string} name 
+     * @param {string} columnName 
+     * @param {*} newValue 
+     * @returns 
+     */
+    setCellByName(name, columnName, newValue){
+        if (!this.getRowByName(name)) {
+            console.warn(`Row with name "${name}" doesn't exists. Skipped.`);
+            return;
+        }
+        this.getRowByName(name).setCell(columnName, newValue);
+    }
+
+    /**
+     * Removes a row by its unique name
+     * @param {string} name 
+     */
+    removeRow(name) {
+        const initialLength = this.rows.length;
+        this.rows = this.rows.filter(row => row.name !== name);
+
+        if (this.rows.length === initialLength) {
+            console.warn(`Attempted to delet "${name}", but it wasn't found.`);
+        }
+    }
+
+    computTotal() {
+        return this.rows.reduce((total, row) => {
+            const val = Number(row.getCell('amount')) || 0;
+            return total + val;
+        }, 0);
+    }
+    
+    // SELECT *
+    getAll() {
+        return this.rows;
     }
 }
 
