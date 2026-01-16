@@ -808,6 +808,7 @@ function compute() {
     }
     renderCostBreakdown();
     projectCostCompute();
+    renderProjectCost()
     updateUrlParams();
     persistToLocalStorage();    
 }
@@ -1067,6 +1068,7 @@ function renderCostBreakdown() {
     c.appendChild(grid);
 }
 
+/** @returns { CostTable } */
 function projectCostCompute() {
     /** @type {CostTable []}*/
     const table = calcCostBreakdown();
@@ -1083,7 +1085,7 @@ function projectCostCompute() {
     const outer_area = table.getCellByName("outer_area", "amount");
     const clad_actual_cost = table.getCellByName("clad_actual_cost", "amount");
     const clad_total_Cost = outer_area * clad_actual_cost;
-    projectCostTable.createRow("clad_total_Cost", "OSB Total Cost", clad_total_Cost.toFixed(2), "€");
+    projectCostTable.createRow("clad_total_Cost", "Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
 
     // Calculating Toilet Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
@@ -1128,6 +1130,34 @@ function projectCostCompute() {
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // console.log(`osb_total_Cost = ${osb_total_Cost}`);
+    return projectCostTable;
+}
+
+function renderProjectCost() {
+    /**@type { CostTable } */
+    const table = projectCostCompute();
+
+    const p = qs("#project_cost_summary");
+    if(!p) return;
+    p.innerHTML = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'divide-y divide-slate-200 rounded-xl border border-slate-200 overflow-hidden';
+
+    const itemClassWhite = 'flex item-center justify-between px-4 py-3 bg-white';
+
+    //grid.className = 'divide-y divide-slate-200 rounded-xl border border-slate-200 overflow-hidden';
+    //row.className = 'flex items-center justify-between px-4 py-3 bg-white';
+    //row.innerHTML = `<span class="text-sm">${line.label}</span><span class="font-medium">${fmtCurrency(line.amount || 0)}</span>`;
+
+    table.getAll().forEach(row => {
+        const container = document.createElement('div');
+        container.className = itemClassWhite;
+        container.innerHTML = `<span class="text-sm">${row.label}</span><span class="font-medium">${fmtCurrency(row.amount || 0)}</span>`;
+        grid.appendChild(container);
+    });
+
+    p.appendChild(grid);
 }
 
 function updateUrlParams() {
