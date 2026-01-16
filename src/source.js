@@ -1144,7 +1144,7 @@ function renderProjectCost() {
     const grid = document.createElement('div');
     grid.className = 'divide-y divide-slate-200 rounded-xl border border-slate-200 overflow-hidden';
 
-    const itemClassWhite = 'flex item-center justify-between px-4 py-3 bg-white';
+    const itemClass = 'flex item-center justify-between px-4 py-3 bg-white';
 
     //grid.className = 'divide-y divide-slate-200 rounded-xl border border-slate-200 overflow-hidden';
     //row.className = 'flex items-center justify-between px-4 py-3 bg-white';
@@ -1152,7 +1152,7 @@ function renderProjectCost() {
 
     table.getAll().forEach(row => {
         const container = document.createElement('div');
-        container.className = itemClassWhite;
+        container.className = itemClass;
         container.innerHTML = `<span class="text-sm">${row.label}</span><span class="font-medium">${fmtCurrency(row.amount || 0)}</span>`;
         grid.appendChild(container);
     });
