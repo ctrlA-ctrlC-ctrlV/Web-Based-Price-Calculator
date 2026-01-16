@@ -1127,6 +1127,7 @@ function projectCostCompute() {
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Total Cost
+    console.log(projectCostTable.computTotal());
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // console.log(`osb_total_Cost = ${osb_total_Cost}`);
@@ -1146,18 +1147,20 @@ function renderProjectCost() {
 
     const itemClass = 'flex item-center justify-between px-4 py-3 bg-white';
 
-    //grid.className = 'divide-y divide-slate-200 rounded-xl border border-slate-200 overflow-hidden';
-    //row.className = 'flex items-center justify-between px-4 py-3 bg-white';
-    //row.innerHTML = `<span class="text-sm">${line.label}</span><span class="font-medium">${fmtCurrency(line.amount || 0)}</span>`;
-
     table.getAll().forEach(row => {
         const container = document.createElement('div');
         container.className = itemClass;
         container.innerHTML = `<span class="text-sm">${row.label}</span><span class="font-medium">${fmtCurrency(row.amount || 0)}</span>`;
         grid.appendChild(container);
     });
+    
+    totalCost = table.computTotal();
+    const total = document.createElement('div');
+    total.className = 'flex items-center justify-between px-4 py-4 bg-slate-900 text-white';
+    total.innerHTML = `<span class="text-base font-semibold tracking-wide">Total Cost</span><span class="text-lg font-bold">${fmtCurrency(totalCost || 0)}</span>`;
 
     p.appendChild(grid);
+    p.appendChild(total);
 }
 
 function updateUrlParams() {
