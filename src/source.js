@@ -36,7 +36,7 @@ const defaults = {
     osbWidth: 1.22,                         //m
     osbHeight: 2.44,                        //m
     costPerOsb: 18.11,                      //€/board
-    wastePercentageOsb: 0,                  //%
+    wastePercentageOsb: 5,                  //%
     claddingBlockWidth: 2.9,                //m
     claddingBlockHeight: 0.222,             //m
     costPerCladdingBlock: 31.43,            //€/board
@@ -1132,7 +1132,9 @@ function projectCostCompute() {
     projectCostTable.createRow("socket_total_cost", "Socket Total Cost", socket_total_cost.toFixed(2), "€");
 
     // Calculating Plasterboard Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const plasterboard_actual_cost = table.getCellByName("plasterboard_actual_cost", "amount");
+    const plasterboard_total_Cost = total_wall_area * plasterboard_actual_cost;
+    projectCostTable.createRow("plasterboard_total_Cost", "Plasterboard Total Cost", plasterboard_total_Cost.toFixed(2), "€");
 
     // Calculating Wall Panel Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
