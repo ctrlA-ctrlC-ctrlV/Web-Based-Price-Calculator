@@ -80,8 +80,32 @@ class Table {
         this.rows = new Map(data.map(row => [row.name, row]));
     }
 
-    // SELECT * FROM table WHERE name = 'x'
-    selectByName(name) {
+    /**
+     * SELECT y FROM TABLE WHERE name = 'x'
+     * @param {string} rowName 
+     * @param {string} columnName 
+     * @returns 
+     */
+    findCellByName(rowName, columnName) {
+        const row = this.rows.get(rowName);
+
+        if(!row) {
+            console.warn(`Row with name "${rowName}" not found.`);
+            return null;
+        } else if (!row[columnName]) {
+            console.warn(`Cell in Row "${rowName}" with name "${row[columnName]}" not found.`);
+            return null;
+        }
+
+        return row[columnName];
+    }
+
+    /**
+     * SELECT * FROM table WHERE name = 'x'
+     * @param {string} name 
+     * @returns 
+     */
+    findRowByName(name) {
         return this.rows.get(name) || null;
     }
 
@@ -743,7 +767,7 @@ function calcCostBreakdown() {
     const costPerConcretFoundation = parseFloat(qs('#cfg_costPerConcretFoundation').value) || defaults.costPerConcretFoundation;
 
     const costBreakdownList = [
-        { name: "base_area",                     label: "Base Area",                   amount: base_area.toFixed(2),                       unit: "m²" },
+        { name: "base_area",                    label: "Base Area",                   amount: base_area.toFixed(2),                       unit: "m²" },
         { name: "outer_area",                   label: "Outer Surface Area",          amount: outer_area.toFixed(2),                       unit: "m²" },
         { name: "inner_area",                   label: "Interanl Wall Area",          amount: inner_area.toFixed(2),                       unit: "m²" },
         { name: "total_wall_area",              label: "Total Surface Area",          amount: total_wall_area.toFixed(2),                  unit: "m²" },
@@ -804,19 +828,46 @@ function renderCostBreakdown() {
 }
 
 function projectCostCompute() {
-    // const valueTable = new Table (calcCostBreakdown())
+    const valueTable = new Table (calcCostBreakdown())
 
-    // const row = valueTable.selectByName("base_area");
+    //const baseArea = valueTable.findRowByName("base_area");    
 
-    // console.log(row);
-    const value_list = Array.isArray(calcCostBreakdown()) ? calcCostBreakdown() : [];
+    // Calculating OSB Cost
 
-    const ValueTable = new Map(value_list.map(item => [item.name, item]));
+    // Calculating Cladding Cost
+    // const outer_area = valueTable.findCellByName("outer_area", "amount");
+    // const clad_actual_cost = valueTable.findCellByName("clad_actual_cost", "amount");
+    // const claddingCost = outer_area * clad_actual_cost;
 
-    const baseArea = ValueTable.get("base_area");
+    // Calculating Toilet Cost
 
-    console.log(baseArea);
+    // Calculating Sink Cost
 
+    // Calculating Under Sink Heater Cost
+
+    // Calculating Shower Cost
+
+    // Calculating Electric Boiler Cost
+
+    // Calculating Light Switch Cost
+
+    // Calculating Double Socket Cost
+
+    // Calculating Plasterboard Cost
+
+    // Calculating Wall Panel Cost
+
+    // Calculating Wood Floor Cost
+    
+    // Calculating Tile Floor Cost 
+
+    // Calculating EPS Cost
+
+    // Calculating Concrete Foundation Cost
+
+    // Calculating Total Cost
+
+    //console.log(`Cladding Cost = ${claddingCost}`);
 }
 
 function updateUrlParams() {
