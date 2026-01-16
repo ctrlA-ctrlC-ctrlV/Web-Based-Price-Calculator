@@ -1088,10 +1088,18 @@ function projectCostCompute() {
     projectCostTable.createRow("clad_total_Cost", "Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
 
     // Calculating Toilet Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const bath1_amt = Number(qs('#bathroom_1').value) || 0;
+    const bath2_amt = Number(qs('#bathroom_2').value) || 0;
+    const toilet_amt = bath1_amt + bath2_amt;
+    const toilet_cost = table.getCellByName("toilet_cost", "amount");
+    const toilet_total_cost = toilet_cost * toilet_amt;
+    projectCostTable.createRow("toilet_total_cost", "Toilet Total Cost", toilet_total_cost.toFixed(2), "€");
 
     // Calculating Sink Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const sink_amt = bath1_amt + bath2_amt;
+    const sink_cost = table.getCellByName("sink_cost", "amount");
+    const sink_total_cost = sink_cost * sink_amt;
+    projectCostTable.createRow("sink_total_cost", "Sink Total Cost", sink_total_cost.toFixed(2), "€");
 
     // Calculating Under Sink Heater Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
@@ -1126,10 +1134,7 @@ function projectCostCompute() {
     // Calculating Concrete Foundation Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
-    // Calculating Total Cost
-    console.log(projectCostTable.computTotal());
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
-
+    
     // console.log(`osb_total_Cost = ${osb_total_Cost}`);
     return projectCostTable;
 }
