@@ -1126,7 +1126,10 @@ function projectCostCompute() {
     projectCostTable.createRow("switch_total_cost", "Light Switch Total Cost", switch_total_cost.toFixed(2), "€");
 
     // Calculating Double Socket Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const socket_amt = Number(qs('#d_socket').value) || 0;
+    const socket_cost = table.getCellByName("socket_cost", "amount");
+    const socket_total_cost = socket_cost * socket_amt;
+    projectCostTable.createRow("socket_total_cost", "Socket Total Cost", socket_total_cost.toFixed(2), "€");
 
     // Calculating Plasterboard Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
