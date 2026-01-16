@@ -1102,7 +1102,10 @@ function projectCostCompute() {
     projectCostTable.createRow("sink_total_cost", "Sink Total Cost", sink_total_cost.toFixed(2), "€");
 
     // Calculating Under Sink Heater Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const undersink_heater_amt = bath1_amt;
+    const undersink_heater_cost = table.getCellByName("undersink_heater_cost", "amount");
+    const undersink_heater_total_cost = undersink_heater_cost * undersink_heater_amt;
+    projectCostTable.createRow("undersink_heater_total_cost", "Under Sink Heater Total Cost", undersink_heater_total_cost.toFixed(2), "€");
 
     // Calculating Shower Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
