@@ -92,8 +92,24 @@ class CostTableRow {
     }
 
     // Helper allow 'row.name' instead of row.data.name'
+    /** @returns {string}*/
     get name() {
         return this.data.name;
+    }
+
+    /** @returns {string}*/
+    get label() {
+        return this.data.label;
+    }
+
+    /** @returns {number}*/
+    get amount() {
+        return this.data.amount;
+    }
+
+    /** @returns {string}*/
+    get unit() {
+        return this.data.unit;
     }
 
     /**
@@ -243,7 +259,7 @@ class CostTable {
     }
 }
 
-class Table {
+/*class Table {
     constructor(data = []) {
         // Create an index for fast lookups
         this.rows = new Map(data.map(row => [row.name, row]));
@@ -254,7 +270,7 @@ class Table {
      * @param {string} name 
      * @param {string} columnName 
      * @returns 
-     */
+     *
     findCellByName(name, columnName) {
         const row = this.rows.get(name);
 
@@ -273,7 +289,7 @@ class Table {
      * SELECT * FROM table WHERE name = 'x'
      * @param {string} name 
      * @returns 
-     */
+     *
     findRowByName(name) {
         return this.rows.get(name) || null;
     }
@@ -284,7 +300,7 @@ class Table {
      * @param {string} newCellName 
      * @param {*} newCellValue 
      * @returns 
-     */
+     *
     setCellByName(name, newCellName, newCellValue) {
         const row = this.rows.get(name);
 
@@ -305,7 +321,7 @@ class Table {
     getAll() {
         return Array.from(this.rows.values());
     }
-}
+}*/
 
 const fmtCurrency = (v) => {
     const cur = qs('#currency').value;
@@ -858,6 +874,10 @@ function wasteCostCalc(
     return ({norminal_cost, actual_cost});
 }
 
+/**
+ * 
+ * @returns {CostTable}
+ */
 function calcCostBreakdown() {
     const costBreakDownTable = new CostTable;
     const w = parseFloat(qs('#width').value) || 0;
@@ -981,44 +1001,45 @@ function calcCostBreakdown() {
 
     // Concrete Foundation Per m² Cost
     const costPerConcretFoundation = parseFloat(qs('#cfg_costPerConcretFoundation').value) || defaults.costPerConcretFoundation;
-    costBreakDownTable.createRow("founcation_cost", "Concrete Foundation Cost", costPerConcretFoundation.toFixed(2), "€");
+    costBreakDownTable.createRow("founcation_cost", "Concrete Foundation Cost", costPerConcretFoundation.toFixed(2), "€/m²");
 
-    const costBreakdownList = [
-        { name: "base_area",                    label: "Base Area",                   amount: base_area.toFixed(2),                         unit: "m²" },
-        { name: "outer_area",                   label: "Outer Surface Area",          amount: outer_area.toFixed(2),                        unit: "m²" },
-        { name: "inner_area",                   label: "Interanl Wall Area",          amount: inner_area.toFixed(2),                        unit: "m²" },
-        { name: "total_wall_area",              label: "Total Surface Area",          amount: total_wall_area.toFixed(2),                   unit: "m²" },
-        { name: "osb_norminal_cost",            label: "OSB Norminal Cost",           amount: osbWastCosts.norminal_cost.toFixed(2),        unit: "€/m²" },
-        { name: "osb_actual_cost",              label: "OSB Actual Cost",             amount: osbWastCosts.actual_cost.toFixed(2),          unit: "€/m²" },
-        { name: "clad_norminal_cost",           label: "Cladding Norminal Cost",      amount: cladWasteCosts.norminal_cost.toFixed(2),      unit: "€/m²" },
-        { name: "clad_actual_cost",             label: "Cladding Actual Cost",        amount: cladWasteCosts.actual_cost.toFixed(2),        unit: "€/m²" },
-        { name: "toilet_cost",                  label: "Toilet Unite Cost",           amount: toiletUnitCost.toFixed(2),                    unit: "€" },
-        { name: "sink_cost",                    label: "Sink Unite Cost",             amount: sinkUnitCost.toFixed(2),                      unit: "€" },
-        { name: "undersink_heater_cost",        label: "Undersink Heater Unite Cost", amount: ushUnitCost.toFixed(2),                       unit: "€" },
-        { name: "shower_cost",                  label: "Shower Unite Cost",           amount: showerUnitCost.toFixed(2),                    unit: "€" },
-        { name: "elec_boiler_cost",             label: "Electric Boiler Unite Cost",  amount: elecBoilerUnitCost.toFixed(2),                unit: "€" },
-        { name: "switch_cost",                  label: "Light Switch Unite Cost",     amount: switchUnitCost.toFixed(2),                    unit: "€" },
-        { name: "socket_cost",                  label: "Double Socket Unite Cost",    amount: dSocketUnitCost.toFixed(2),                   unit: "€" },
-        { name: "plasterboard_norminal_cost",   label: "Plasterboard Norminal Cost",  amount: pBoardWasteCosts.norminal_cost.toFixed(2),    unit: "€/m²" },
-        { name: "plasterboard_actual_cost",     label: "Plasterboard Actual Cost",    amount: pBoardWasteCosts.actual_cost.toFixed(2),      unit: "€/m²" },
-        { name: "wall_panel_norminal_cost",     label: "Wall Panel Norminal Cost",    amount: wPanelWasteCosts.norminal_cost.toFixed(2),    unit: "€/m²" },
-        { name: "wall_panel_actual_cost",       label: "Wall Panel Actual Cost",      amount: wPanelWasteCosts.actual_cost.toFixed(2),      unit: "€/m²" },
-        { name: "wood_floor_norminal_cost",     label: "Wood Floor Norminal Cost",    amount: woodFloorNominalCost.toFixed(2),              unit: "€/m²" },
-        { name: "wood_floor_actual_cost",       label: "Wood Floor Actual Cost",      amount: woodFloorActualCost.toFixed(2),               unit: "€/m²" },
-        { name: "tile_floor_norminal_cost",     label: "Tile Floor Norminal Cost",    amount: tileFloorNominalCost.toFixed(2),              unit: "€/m²" },
-        { name: "tile_floor_actual_cost",       label: "Tile Floor Actual Cost",      amount: tileFloorActualCost.toFixed(2),               unit: "€/m²" },
-        { name: "eps_norminal_cost",            label: "EPS Norminal Cost",           amount: epsWasteCosts.norminal_cost.toFixed(2),       unit: "€/m²" },
-        { name: "eps_actual_cost",              label: "EPS Actual Cost",             amount: epsWasteCosts.actual_cost.toFixed(2),         unit: "€/m²" },
-        { name: "founcation_cost",              label: "Concrete Foundation Cost",    amount: costPerConcretFoundation.toFixed(2),          unit: "€" },
-    ];
-
-    console.log(costBreakDownTable.getAll());
-
-    return(costBreakdownList);
+    return(costBreakDownTable);
 }
 
+/*
+const costBreakdownList = [
+    { name: "base_area",                    label: "Base Area",                   amount: base_area.toFixed(2),                         unit: "m²" },
+    { name: "outer_area",                   label: "Outer Surface Area",          amount: outer_area.toFixed(2),                        unit: "m²" },
+    { name: "inner_area",                   label: "Interanl Wall Area",          amount: inner_area.toFixed(2),                        unit: "m²" },
+    { name: "total_wall_area",              label: "Total Surface Area",          amount: total_wall_area.toFixed(2),                   unit: "m²" },
+    { name: "osb_norminal_cost",            label: "OSB Norminal Cost",           amount: osbWastCosts.norminal_cost.toFixed(2),        unit: "€/m²" },
+    { name: "osb_actual_cost",              label: "OSB Actual Cost",             amount: osbWastCosts.actual_cost.toFixed(2),          unit: "€/m²" },
+    { name: "clad_norminal_cost",           label: "Cladding Norminal Cost",      amount: cladWasteCosts.norminal_cost.toFixed(2),      unit: "€/m²" },
+    { name: "clad_actual_cost",             label: "Cladding Actual Cost",        amount: cladWasteCosts.actual_cost.toFixed(2),        unit: "€/m²" },
+    { name: "toilet_cost",                  label: "Toilet Unite Cost",           amount: toiletUnitCost.toFixed(2),                    unit: "€" },
+    { name: "sink_cost",                    label: "Sink Unite Cost",             amount: sinkUnitCost.toFixed(2),                      unit: "€" },
+    { name: "undersink_heater_cost",        label: "Undersink Heater Unite Cost", amount: ushUnitCost.toFixed(2),                       unit: "€" },
+    { name: "shower_cost",                  label: "Shower Unite Cost",           amount: showerUnitCost.toFixed(2),                    unit: "€" },
+    { name: "elec_boiler_cost",             label: "Electric Boiler Unite Cost",  amount: elecBoilerUnitCost.toFixed(2),                unit: "€" },
+    { name: "switch_cost",                  label: "Light Switch Unite Cost",     amount: switchUnitCost.toFixed(2),                    unit: "€" },
+    { name: "socket_cost",                  label: "Double Socket Unite Cost",    amount: dSocketUnitCost.toFixed(2),                   unit: "€" },
+    { name: "plasterboard_norminal_cost",   label: "Plasterboard Norminal Cost",  amount: pBoardWasteCosts.norminal_cost.toFixed(2),    unit: "€/m²" },
+    { name: "plasterboard_actual_cost",     label: "Plasterboard Actual Cost",    amount: pBoardWasteCosts.actual_cost.toFixed(2),      unit: "€/m²" },
+    { name: "wall_panel_norminal_cost",     label: "Wall Panel Norminal Cost",    amount: wPanelWasteCosts.norminal_cost.toFixed(2),    unit: "€/m²" },
+    { name: "wall_panel_actual_cost",       label: "Wall Panel Actual Cost",      amount: wPanelWasteCosts.actual_cost.toFixed(2),      unit: "€/m²" },
+    { name: "wood_floor_norminal_cost",     label: "Wood Floor Norminal Cost",    amount: woodFloorNominalCost.toFixed(2),              unit: "€/m²" },
+    { name: "wood_floor_actual_cost",       label: "Wood Floor Actual Cost",      amount: woodFloorActualCost.toFixed(2),               unit: "€/m²" },
+    { name: "tile_floor_norminal_cost",     label: "Tile Floor Norminal Cost",    amount: tileFloorNominalCost.toFixed(2),              unit: "€/m²" },
+    { name: "tile_floor_actual_cost",       label: "Tile Floor Actual Cost",      amount: tileFloorActualCost.toFixed(2),               unit: "€/m²" },
+    { name: "eps_norminal_cost",            label: "EPS Norminal Cost",           amount: epsWasteCosts.norminal_cost.toFixed(2),       unit: "€/m²" },
+    { name: "eps_actual_cost",              label: "EPS Actual Cost",             amount: epsWasteCosts.actual_cost.toFixed(2),         unit: "€/m²" },
+    { name: "founcation_cost",              label: "Concrete Foundation Cost",    amount: costPerConcretFoundation.toFixed(2),          unit: "€/m²" },
+];
+*/
+
 function renderCostBreakdown() {
-    const value_list = Array.isArray(calcCostBreakdown()) ? calcCostBreakdown() : [];
+    /** @type {CostTable []}*/
+    const table = calcCostBreakdown();
 
     const c = qs("#cost_breakdown");
     if (!c) return;
@@ -1030,29 +1051,29 @@ function renderCostBreakdown() {
 
     const itemClass = "rounded-2xl shadow p-4 text-center bg-white";    
 
-    value_list.forEach(value => {
-        const row  = document.createElement('div');
-        row.className = itemClass;
-        row.innerHTML = `
-            ${value.label}
-            <br/>
-            <span class="text-xl font-medium mt-2 block">
-                ${value.amount} ${value.unit}
-            </span>
+    table.getAll().forEach(row => {        
+        const container  = document.createElement('div');
+        container.className = itemClass;
+        container.innerHTML = `
+             ${row.label}
+             <br/>
+             <span class="text-xl font-medium mt-2 block">
+                 ${row.amount} ${row.unit}
+             </span>
         `;
-        grid.appendChild(row);
+        grid.appendChild(container);
     });
 
     c.appendChild(grid);
 }
 
 function projectCostCompute() {
-    const valueTable = new Table (calcCostBreakdown())   
+    // const valueTable = new Table (calcCostBreakdown())   
 
     // Calculating OSB Cost
-    const total_wall_area = valueTable.findCellByName("total_wall_area", "amount");
-    const osb_actual_cost = valueTable.findCellByName("osb_actual_cost", "amount");
-    const osb_total_Cost = total_wall_area * osb_actual_cost;
+    // const total_wall_area = valueTable.findCellByName("total_wall_area", "amount");
+    // const osb_actual_cost = valueTable.findCellByName("osb_actual_cost", "amount");
+    // const osb_total_Cost = total_wall_area * osb_actual_cost;
     //valueTable.insertRow()
 
     // Calculating Cladding Cost
@@ -1088,7 +1109,7 @@ function projectCostCompute() {
 
     // Calculating Total Cost
 
-    console.log(`osb_total_Cost = ${osb_total_Cost}`);
+    // console.log(`osb_total_Cost = ${osb_total_Cost}`);
 }
 
 function updateUrlParams() {
