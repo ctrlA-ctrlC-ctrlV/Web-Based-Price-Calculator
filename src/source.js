@@ -1068,46 +1068,64 @@ function renderCostBreakdown() {
 }
 
 function projectCostCompute() {
-    // const valueTable = new Table (calcCostBreakdown())   
+    /** @type {CostTable []}*/
+    const table = calcCostBreakdown();
+
+    const projectCostTable = new CostTable;
 
     // Calculating OSB Cost
-    // const total_wall_area = valueTable.findCellByName("total_wall_area", "amount");
-    // const osb_actual_cost = valueTable.findCellByName("osb_actual_cost", "amount");
-    // const osb_total_Cost = total_wall_area * osb_actual_cost;
-    //valueTable.insertRow()
+    const total_wall_area = table.getCellByName("total_wall_area", "amount");
+    const osb_actual_cost = table.getCellByName("osb_actual_cost", "amount");
+    const osb_total_Cost = total_wall_area * osb_actual_cost;
+    projectCostTable.createRow("osb_total_Cost", "OSB Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Cladding Cost
-    // const outer_area = valueTable.findCellByName("outer_area", "amount");
-    // const clad_actual_cost = valueTable.findCellByName("clad_actual_cost", "amount");
-    // const claddingCost = outer_area * clad_actual_cost;
+    const outer_area = table.getCellByName("outer_area", "amount");
+    const clad_actual_cost = table.getCellByName("clad_actual_cost", "amount");
+    const clad_total_Cost = outer_area * clad_actual_cost;
+    projectCostTable.createRow("clad_total_Cost", "OSB Total Cost", clad_total_Cost.toFixed(2), "€");
 
     // Calculating Toilet Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Sink Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Under Sink Heater Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Shower Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Electric Boiler Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Light Switch Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Double Socket Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Plasterboard Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Wall Panel Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Wood Floor Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
     
     // Calculating Tile Floor Cost 
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating EPS Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Concrete Foundation Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Total Cost
+    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // console.log(`osb_total_Cost = ${osb_total_Cost}`);
 }
