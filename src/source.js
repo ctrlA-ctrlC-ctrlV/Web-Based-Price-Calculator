@@ -1114,10 +1114,16 @@ function projectCostCompute() {
     projectCostTable.createRow("shower_total_cost", "Shower Total Cost", shower_total_cost.toFixed(2), "€");
 
     // Calculating Electric Boiler Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const elec_boiler_amt = bath2_amt;
+    const elec_boiler_cost = table.getCellByName("elec_boiler_cost", "amount");
+    const elec_boiler_total_cost = elec_boiler_cost * elec_boiler_amt;
+    projectCostTable.createRow("elec_boiler_total_cost", "Electric Boiler Total Cost", elec_boiler_total_cost.toFixed(2), "€");
 
     // Calculating Light Switch Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    const switch_amt = Number(qs('#switch').value) || 0;
+    const switch_cost = table.getCellByName("switch_cost", "amount");
+    const switch_total_cost = switch_cost * switch_amt;
+    projectCostTable.createRow("switch_total_cost", "Light Switch Total Cost", switch_total_cost.toFixed(2), "€");
 
     // Calculating Double Socket Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
