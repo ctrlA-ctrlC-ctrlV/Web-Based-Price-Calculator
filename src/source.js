@@ -1209,11 +1209,12 @@ function shoppingListCompute(){
 
     // Calculating Under Sink Heater Cost
     const numOfUndersink_heater = bath1_amt;
-    shopping_list.Undersink_heater = numOfUndersink_heater;
+    shopping_list.Undersink_Heater = numOfUndersink_heater;
     
 
     // Calculating Shower Cost
-    // shopping_list.Toilet = numOfToilet;
+    const numOfShower = bath2_amt;
+    shopping_list.Shower = numOfShower;
     
 
     // Calculating Electric Boiler Cost
