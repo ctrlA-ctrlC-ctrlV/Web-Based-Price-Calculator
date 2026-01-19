@@ -48,14 +48,17 @@ const defaults = {
     costPerElecBoiler: 191.17,              //€
     costPerLightSwitch: 1.65,               //€
     costPerDoubleSocket: 3.55,              //€
-    plasterboardWidth: 1.22,                //m
-    plasterboardHeight: 2.44,               //m    
-    costPerPlasterboard: 20.5,              //€/board
-    wastePercentagePlasterboard: 5,         //%
     wallPanelWidth: 2.7,                    //m
     wallPanelHeight: 0.25,                  //m
     costPerWallPanel: 77,                   //€/board
     wastePercentageWallPanel: 5,            //%
+    coverPerSkimUnit: 4,                    //m²
+    costPerSkimUnit: 25.45,                 //€/unit
+    wastePercentageSkim: 5,                 //%
+    plasterboardWidth: 1.22,                //m
+    plasterboardHeight: 2.44,               //m    
+    costPerPlasterboard: 20.5,              //€/board
+    wastePercentagePlasterboard: 5,         //%
     costPerWoodFloor: 55,                   //€/m²
     wastePercentageWoodFloor: 5,            //%
     costPerTileFloor: 37.1,                 //€/m²
@@ -1084,8 +1087,7 @@ function projectCostCompute() {
     const socket_total_cost = socket_cost * socket_amt;
     projectCostTable.createRow("socket_total_cost", "Socket Total Cost", socket_total_cost.toFixed(2), "€");
 
-    // Calculating Wall Panel Cos
-    console.log(qs('#inner_wall_type').value);
+    // Calculating Wall Panel Cost
     if (qs('#inner_wall_type').value === "inner_wall_type_s") {
         // Calculating Plasterboard Cost
         const plasterboard_actual_cost = table.getCellByName("plasterboard_actual_cost", "amount");
@@ -1229,13 +1231,14 @@ function shoppingListCompute(){
     const numOfSocket = Number(qs('#d_socket').value) || 0;
     shopping_list.Socket = numOfSocket;
 
-    // Calculating Number of Wall Panel Unites
+    
     if (qs('#inner_wall_type').value === "inner_wall_type_s") {
         // Calculating Number of Plasterboard Unites
         const plasterboard_cover_area = costBreakDownTable.getCellByName("plasterboard_size", "amount");
         const numOfPlasterboard = Math.ceil(total_area / plasterboard_cover_area);
         shopping_list.Plasterboard = numOfPlasterboard;
     } else if (qs('#inner_wall_type').value === "inner_wall_type_p") {
+        // Calculating Number of Wall Panel Unites
         const wall_panel_size = costBreakDownTable.getCellByName("wall_panel_size", "amount");
         const numOfWallPanel = Math.ceil(total_area / wall_panel_size);
         shopping_list.Wall_Panel = numOfWallPanel;
@@ -1972,14 +1975,17 @@ function initDefaults() {
     qs('#cfg_costPerElecBoiler').value = defaults.costPerElecBoiler;
     qs('#cfg_costPerLightSwitch').value = defaults.costPerLightSwitch;
     qs('#cfg_costPerDoubleSocket').value = defaults.costPerDoubleSocket;
-    qs('#cfg_plasterboardWidth').value = defaults.plasterboardWidth;
-    qs('#cfg_plasterboardHeight').value = defaults.plasterboardHeight;
-    qs('#cfg_costPerPlasterboard').value = defaults.costPerPlasterboard;
-    qs('#cfg_wastePercentagePlasterboard').value = defaults.wastePercentagePlasterboard;
     qs('#cfg_wallPanelWidth').value = defaults.wallPanelWidth;
     qs('#cfg_wallPanelHeight').value = defaults.wallPanelHeight;
     qs('#cfg_costPerWallPanel').value = defaults.costPerWallPanel;
     qs('#cfg_wastePercentageWallPanel').value = defaults.wastePercentageWallPanel;
+    qs('#cfg_coverPerSkimUnit').value = defaults.coverPerSkimUnit;
+    qs('#cfg_costPerSkimUnit').value = defaults.costPerSkimUnit;
+    qs('#cfg_wastePercentageSkim').value = defaults.wastePercentageSkim;
+    qs('#cfg_plasterboardWidth').value = defaults.plasterboardWidth;
+    qs('#cfg_plasterboardHeight').value = defaults.plasterboardHeight;
+    qs('#cfg_costPerPlasterboard').value = defaults.costPerPlasterboard;
+    qs('#cfg_wastePercentagePlasterboard').value = defaults.wastePercentagePlasterboard;    
     qs('#cfg_costPerWoodFloor').value = defaults.costPerWoodFloor;
     qs('#cfg_wastePercentageWoodFloor').value = defaults.wastePercentageWoodFloor;
     qs('#cfg_costPerTileFloor').value = defaults.costPerTileFloor;
