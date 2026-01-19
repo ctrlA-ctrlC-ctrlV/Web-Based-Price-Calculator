@@ -1218,23 +1218,28 @@ function shoppingListCompute(){
     
 
     // Calculating Electric Boiler Cost
-    // shopping_list.Toilet = numOfToilet;
+    const numOfElecShower = bath2_amt;
+    shopping_list.Electric_Shower = numOfElecShower;
     
 
     // Calculating Light Switch Cost
-    // shopping_list.Toilet = numOfToilet;
+    const numOfSwitch = Number(qs('#switch').value) || 0;
+    shopping_list.Light_Switch = numOfSwitch;
     
 
     // Calculating Double Socket Cost
+    // const numOf = ;
     // shopping_list.Toilet = numOfToilet;
     
 
     // Calculating Plasterboard Cost
+    // const numOf = ;
     // shopping_list.Toilet = numOfToilet;
     
 
     // Calculating Wall Panel Cost
     /*if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+        // const numOf = ;
         // shopping_list.Toilet = numOfToilet;
     }*/
 
@@ -1242,9 +1247,11 @@ function shoppingListCompute(){
     /*const floor_type = qs('#floor_type').value;
     if (floor_type === "wooden") {
         // Wood Floor Cost
+        // const numOf = ;
         // shopping_list.Toilet = numOfToilet;
     } else if (floor_type === "tile") {
         // Tile Floor Cost 
+        // const numOf = ;
         // shopping_list.Toilet = numOfToilet;
     }*/
 
@@ -1257,20 +1264,23 @@ function shoppingListCompute(){
            
             if(kind === 'eps') {
                 // EPS cost
+                // const numOf = ;
                 // shopping_list.Toilet = numOfToilet;
             } else if (kind === 'render'){
                 // Render cost
+                // const numOf = ;
                 // shopping_list.Toilet = numOfToilet;
             } else if (kind === 'concreteFoundation') {
                 // Concrete Foundation Cost
+                // const numOf = ;
                 // shopping_list.Toilet = numOfToilet;
             }
         });
     }*/
 
-    Object.entries(shopping_list).forEach(([key, value]) => {
-        console.log(`Number of ${key}= ${value}`);
-    })
+    // Object.entries(shopping_list).forEach(([key, value]) => {
+    //     console.log(`Number of ${key}= ${value}`);
+    // })
 
     return shopping_list;
 }
