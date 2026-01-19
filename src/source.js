@@ -1027,9 +1027,9 @@ function projectCostCompute() {
     projectCostTable.createRow("osb_total_Cost", "OSB Total Cost", osb_total_Cost.toFixed(2), "€");
 
     // Calculating Cladding Cost
-    const outer_area = table.getCellByName("outer_area", "amount");
+    const clad_area = Number(qs('#cladding').value || 0);
     const clad_actual_cost = table.getCellByName("clad_actual_cost", "amount");
-    const clad_total_Cost = outer_area * clad_actual_cost;
+    const clad_total_Cost = clad_area * clad_actual_cost;
     projectCostTable.createRow("clad_total_Cost", "Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
 
     // Calculating Toilet Cost
