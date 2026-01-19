@@ -1233,8 +1233,9 @@ function shoppingListCompute(){
     
 
     // Calculating Plasterboard Cost
-    // const numOf = ;
-    // shopping_list.Toilet = numOfToilet;
+    const plasterboard_cover_area = costBreakDownTable.getCellByName("plasterboard_size", "amount");
+    const numOfPlasterboard = Math.ceil(total_area / plasterboard_cover_area);
+    shopping_list.Plasterboard = numOfPlasterboard;
     
 
     // Calculating Wall Panel Cost
