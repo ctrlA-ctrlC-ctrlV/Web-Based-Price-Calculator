@@ -744,7 +744,6 @@ function compute() {
     }
     renderCostBreakdown();
     renderProjectCost();
-    //shoppingListCompute();
     renderShoppingList();
     updateUrlParams();
     persistToLocalStorage();    
@@ -835,7 +834,7 @@ function calcCostBreakdown() {
 
     const total_wall_area = outer_area + inner_area;
     costBreakDownTable.createRow("total_wall_area", "Total Surface Area", total_wall_area.toFixed(2), "m²");
-    console.log(base_area, outer_area, i)
+    
     // OSB Per m² Calculation
     const osb_width = parseFloat(qs('#cfg_osbWidth').value) || defaults.osbWidth;
     const osb_height = parseFloat(qs('#cfg_osbHeight').value) || defaults.osbWidth;
@@ -911,8 +910,7 @@ function calcCostBreakdown() {
     const wPanelWasteCosts = wasteCostCalc(wPanel_area, wPanel_cost, wPanel_waste);
     costBreakDownTable.createRow("wall_panel_size", "OSB Cover Area", wPanelWasteCosts.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("wall_panel_norminal_cost", "Wall Panel Norminal Cost", wPanelWasteCosts.norminal_cost.toFixed(2), "€/m²");    
-    costBreakDownTable.createRow("wall_panel_actual_cost", "Wall Panel Actual Cost", wPanelWasteCosts.actual_cost.toFixed(2), "€/m²");
-    
+    costBreakDownTable.createRow("wall_panel_actual_cost", "Wall Panel Actual Cost", wPanelWasteCosts.actual_cost.toFixed(2), "€/m²");    
 
     // Wood Floor Per m² Cost
     const woodFloorNominalCost = parseFloat(qs('#cfg_costPerWoodFloor').value) || defaults.costPerWoodFloor;
@@ -921,7 +919,6 @@ function calcCostBreakdown() {
     const woodFloorActualCost = woodFloorNominalCost * (1 + woodFloor_waste * .01);
     costBreakDownTable.createRow("wood_floor_norminal_cost", "Wood Floor Norminal Cost", woodFloorNominalCost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("wood_floor_actual_cost", "Wood Floor Actual Cost", woodFloorActualCost.toFixed(2), "€/m²");
-
 
     // Tile Floor Per m² Cost
     const tileFloorNominalCost = parseFloat(qs('#cfg_costPerTileFloor').value) || defaults.costPerTileFloor;
@@ -1087,13 +1084,15 @@ function projectCostCompute() {
     const socket_total_cost = socket_cost * socket_amt;
     projectCostTable.createRow("socket_total_cost", "Socket Total Cost", socket_total_cost.toFixed(2), "€");
 
-    // Calculating Plasterboard Cost
-    const plasterboard_actual_cost = table.getCellByName("plasterboard_actual_cost", "amount");
-    const plasterboard_total_Cost = total_wall_area * plasterboard_actual_cost;
-    projectCostTable.createRow("plasterboard_total_Cost", "Plasterboard Total Cost", plasterboard_total_Cost.toFixed(2), "€");
-
-    // Calculating Wall Panel Cost
-    if (qs('#inner_wall_type').value === "inner_wall_type_p") {
+    // Calculating Wall Panel Cos
+    console.log(qs('#inner_wall_type').value);
+    if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+        // Calculating Plasterboard Cost
+        const plasterboard_actual_cost = table.getCellByName("plasterboard_actual_cost", "amount");
+        const plasterboard_total_Cost = total_wall_area * plasterboard_actual_cost;
+        projectCostTable.createRow("plasterboard_total_Cost", "Plasterboard Total Cost", plasterboard_total_Cost.toFixed(2), "€");
+    } else if (qs('#inner_wall_type').value === "inner_wall_type_p") {
+        // Calculating Wall Panel Cost
         const wall_panne_length = table.getCellByName("inner_area", "amount");
         const wall_panel_actual_cost = table.getCellByName("wall_panel_actual_cost", "amount");
         const wall_panel_total_cost = wall_panel_actual_cost * wall_panne_length;
@@ -1181,71 +1180,68 @@ function renderProjectCost() {
 function shoppingListCompute(){
     /** @type {CostTable} */
     const costBreakDownTable = calcCostBreakdown();
-    const projectCostTable = projectCostCompute();
 
     const shopping_list = new Object;
 
-    // Calculating OSB Cost
+    // Calculating Number of OSB Unites
     const total_area = costBreakDownTable.getCellByName("total_wall_area", "amount");
     const osb_cover_area = costBreakDownTable.getCellByName("osb_size", "amount");
     const numOfOSB = Math.ceil(total_area / osb_cover_area);
     shopping_list.OSB = numOfOSB;
 
-    // Calculating Cladding Cost
+    // Calculating Number of Cladding Unites
     const outer_area = costBreakDownTable.getCellByName("outer_area", "amount");
     const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
     const numOfClad = Math.ceil(outer_area / clad_cover_area);
     shopping_list.Cladding = numOfClad;
 
-    // Calculating Toilet Cost
+    // Calculating Number of Toilet Unites
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
     const bath2_amt = Number(qs('#bathroom_2').value) || 0;
     const numOfToilet = bath1_amt + bath2_amt;    
     shopping_list.Toilet = numOfToilet;
 
-    // Calculating Sink Cost
+    // Calculating Number of Sink Unites
     const numOfSink = numOfToilet;
     shopping_list.Sink = numOfSink;
 
-    // Calculating Under Sink Heater Cost
+    // Calculating Number of Under Sink Heater Unites
     const numOfUndersink_heater = bath1_amt;
     shopping_list.Undersink_Heater = numOfUndersink_heater;
     
 
-    // Calculating Shower Cost
+    // Calculating Number of Shower Unites
     const numOfShower = bath2_amt;
     shopping_list.Shower = numOfShower;
     
 
-    // Calculating Electric Boiler Cost
+    // Calculating Number of Electric Boiler Unites
     const numOfElecShower = bath2_amt;
     shopping_list.Electric_Shower = numOfElecShower;
     
 
-    // Calculating Light Switch Cost
+    // Calculating Number of Light Switch Unites
     const numOfSwitch = Number(qs('#switch').value) || 0;
     shopping_list.Light_Switch = numOfSwitch;
     
 
-    // Calculating Double Socket Cost
+    // Calculating Number of Double Socket Unites
     const numOfSocket = Number(qs('#d_socket').value) || 0;
     shopping_list.Socket = numOfSocket;
-    
 
-    // Calculating Plasterboard Cost
-    const plasterboard_cover_area = costBreakDownTable.getCellByName("plasterboard_size", "amount");
-    const numOfPlasterboard = Math.ceil(total_area / plasterboard_cover_area);
-    shopping_list.Plasterboard = numOfPlasterboard;
-    
-
-    // Calculating Wall Panel Cost
-    if (qs('#inner_wall_type').value === "inner_wall_type_p") {
+    // Calculating Number of Wall Panel Unites
+    if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+        // Calculating Number of Plasterboard Unites
+        const plasterboard_cover_area = costBreakDownTable.getCellByName("plasterboard_size", "amount");
+        const numOfPlasterboard = Math.ceil(total_area / plasterboard_cover_area);
+        shopping_list.Plasterboard = numOfPlasterboard;
+    } else if (qs('#inner_wall_type').value === "inner_wall_type_p") {
         const wall_panel_size = costBreakDownTable.getCellByName("wall_panel_size", "amount");
         const numOfWallPanel = Math.ceil(total_area / wall_panel_size);
         shopping_list.Wall_Panel = numOfWallPanel;
     }
 
-    // Calculating Floor Costs
+    // Calculating Number of Floor Unites
     const floor_type = qs('#floor_type').value;
     if (floor_type === "wooden") {
         // Number of Wood Floor Unites, each unit cover 1m²
@@ -1257,7 +1253,7 @@ function shoppingListCompute(){
         shopping_list.Tile_Floor = numOfTileFloor;
     }
 
-    // Calculating Extra Costs
+    // Calculating Number of Extra
     const list = qs('#extrasList');
     if (!list) { }
     else {
@@ -1265,26 +1261,22 @@ function shoppingListCompute(){
             const kind = row.dataset.kind;
            
             if(kind === 'eps') {
-                // EPS cost
+                // Number of EPS Unites
                 const eps_cover_area = costBreakDownTable.getCellByName("eps_size", "amount");
                 const numOfEps = Math.ceil(outer_area / eps_cover_area);
                 shopping_list.EPS = numOfEps;
             } else if (kind === 'render'){
-                // Render cost
+                // Number of Render Unites
                 const render_cover_area = costBreakDownTable.getCellByName("render_size", "amount");
                 const numOfRender = Math.ceil(outer_area / render_cover_area);
                 shopping_list.Render = numOfRender;
             } else if (kind === 'concreteFoundation') {
-                // Concrete Foundation Cost
+                // Number of Concrete Foundation
                 const foundation_area = qs('[data-field="area"]', row)?.value || 0;
                 shopping_list.Concrete_Foundation = foundation_area;
             }
         });
     }
-
-    // Object.entries(shopping_list).forEach(([key, value]) => {
-    //     console.log(`Number of ${key}= ${value}`);
-    // })
 
     return shopping_list;
 }
