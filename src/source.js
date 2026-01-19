@@ -835,7 +835,7 @@ function calcCostBreakdown() {
 
     const total_wall_area = outer_area + inner_area;
     costBreakDownTable.createRow("total_wall_area", "Total Surface Area", total_wall_area.toFixed(2), "m²");
-    
+    console.log(base_area, outer_area, i)
     // OSB Per m² Calculation
     const osb_width = parseFloat(qs('#cfg_osbWidth').value) || defaults.osbWidth;
     const osb_height = parseFloat(qs('#cfg_osbHeight').value) || defaults.osbWidth;
@@ -909,7 +909,7 @@ function calcCostBreakdown() {
 
     const wPanel_area = wPanel_width * wPanel_height;
     const wPanelWasteCosts = wasteCostCalc(wPanel_area, wPanel_cost, wPanel_waste);
-    costBreakDownTable.createRow("Wall_Panel_size", "OSB Cover Area", wPanelWasteCosts.cover_area.toFixed(2), "m²");
+    costBreakDownTable.createRow("wall_panel_size", "OSB Cover Area", wPanelWasteCosts.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("wall_panel_norminal_cost", "Wall Panel Norminal Cost", wPanelWasteCosts.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("wall_panel_actual_cost", "Wall Panel Actual Cost", wPanelWasteCosts.actual_cost.toFixed(2), "€/m²");
     
@@ -1093,7 +1093,7 @@ function projectCostCompute() {
     projectCostTable.createRow("plasterboard_total_Cost", "Plasterboard Total Cost", plasterboard_total_Cost.toFixed(2), "€");
 
     // Calculating Wall Panel Cost
-    if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+    if (qs('#inner_wall_type').value === "inner_wall_type_p") {
         const wall_panne_length = table.getCellByName("inner_area", "amount");
         const wall_panel_actual_cost = table.getCellByName("wall_panel_actual_cost", "amount");
         const wall_panel_total_cost = wall_panel_actual_cost * wall_panne_length;
@@ -1239,10 +1239,11 @@ function shoppingListCompute(){
     
 
     // Calculating Wall Panel Cost
-    /*if (qs('#inner_wall_type').value === "inner_wall_type_s") {
-        // const numOf = ;
-        // shopping_list.Toilet = numOfToilet;
-    }*/
+    if (qs('#inner_wall_type').value === "inner_wall_type_p") {
+        const wall_panel_size = costBreakDownTable.getCellByName("wall_panel_size", "amount");
+        const numOfWallPanel = Math.ceil(total_area / wall_panel_size);
+        shopping_list.Wall_Panel = numOfWallPanel;
+    }
 
     // Calculating Floor Costs
     /*const floor_type = qs('#floor_type').value;
@@ -1295,7 +1296,7 @@ function renderShoppingList() {
     s.innerHTML = '';
 
     const grid = document.createElement('div');
-    grid.className = 'divide-y divide-slate-200 rounded-xl mt-4 border border-slate-200 overflow-hidden';
+    grid.className = 'divide-y divide-slate-200 rounded-xl border border-slate-200 overflow-hidden';
 
     const itemClass = 'flex item-center justify-between px-4 py-3 bg-white';
 
