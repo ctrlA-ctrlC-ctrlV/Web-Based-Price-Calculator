@@ -1246,16 +1246,16 @@ function shoppingListCompute(){
     }
 
     // Calculating Floor Costs
-    /*const floor_type = qs('#floor_type').value;
+    const floor_type = qs('#floor_type').value;
     if (floor_type === "wooden") {
-        // Wood Floor Cost
-        // const numOf = ;
-        // shopping_list.Toilet = numOfToilet;
+        // Number of Wood Floor Unites, each unit cover 1m²
+        const numOfWoodFloor = qs('#floor_size').value || 0;
+        shopping_list.Wood_Floor = numOfWoodFloor;
     } else if (floor_type === "tile") {
-        // Tile Floor Cost 
-        // const numOf = ;
-        // shopping_list.Toilet = numOfToilet;
-    }*/
+        // Number of Tile Floor Unites, each unit cover 1m²
+        const numOfTileFloor = qs('#floor_size').value || 0;
+        shopping_list.Tile_Floor = numOfTileFloor;
+    }
 
     // Calculating Extra Costs
     /*const list = qs('#extrasList');
