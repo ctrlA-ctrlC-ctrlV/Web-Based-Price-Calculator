@@ -1271,8 +1271,9 @@ function shoppingListCompute(){
                 shopping_list.EPS = numOfEps;
             } else if (kind === 'render'){
                 // Render cost
-                // const numOf = ;
-                // shopping_list.Toilet = numOfToilet;
+                const render_cover_area = costBreakDownTable.getCellByName("render_size", "amount");
+                const numOfRender = Math.ceil(outer_area / render_cover_area);
+                shopping_list.Render = numOfRender;
             } else if (kind === 'concreteFoundation') {
                 // Concrete Foundation Cost
                 // const numOf = ;
