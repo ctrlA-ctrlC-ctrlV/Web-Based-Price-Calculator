@@ -1228,8 +1228,8 @@ function shoppingListCompute(){
     
 
     // Calculating Double Socket Cost
-    // const numOf = ;
-    // shopping_list.Toilet = numOfToilet;
+    const numOfSocket = Number(qs('#d_socket').value) || 0;
+    shopping_list.Socket = numOfSocket;
     
 
     // Calculating Plasterboard Cost
