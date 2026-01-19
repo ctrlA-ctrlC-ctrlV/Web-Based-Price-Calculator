@@ -743,8 +743,8 @@ function compute() {
         pTotalEl.textContent = fmtCurrency(total);
     }
     renderCostBreakdown();
-    projectCostCompute();
-    renderProjectCost()
+    renderProjectCost();
+    shoppingListCompute();
     updateUrlParams();
     persistToLocalStorage();    
 }
@@ -1176,12 +1176,87 @@ function renderProjectCost() {
     p.appendChild(total);
 }
 
-// function shoppingListCompute(){
-//     const costBreakDownTable = calcCostBreakdown();
-//     const projectCostTable = projectCostCompute();
+function shoppingListCompute(){
+    const costBreakDownTable = calcCostBreakdown();
+    const projectCostTable = projectCostCompute();
 
-//     const numOfOSB = 2; // OSB area / total area;
-// }
+    // Calculating OSB Cost
+    const total_area = costBreakDownTable.getCellByName("total_wall_area", "amount");
+    const osb_cover_area = costBreakDownTable.getCellByName("osb_size", "amount");
+    const numOfOSB = Math.ceil(total_area / osb_cover_area);
+    console.log(`Number of numOfOSB = ${numOfOSB}`);
+
+    // Calculating Cladding Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+
+    // Calculating Toilet Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Sink Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Under Sink Heater Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Shower Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Electric Boiler Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Light Switch Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Double Socket Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Plasterboard Cost
+    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    
+
+    // Calculating Wall Panel Cost
+    /*if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+        // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    }*/
+
+    // Calculating Floor Costs
+    /*const floor_type = qs('#floor_type').value;
+    if (floor_type === "wooden") {
+        // Wood Floor Cost
+        // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    } else if (floor_type === "tile") {
+        // Tile Floor Cost 
+        // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    }*/
+
+    // Calculating Extra Costs
+    /*const list = qs('#extrasList');
+    if (!list) { }
+    else {
+        [...list.children].forEach(row => {
+            const kind = row.dataset.kind;
+           
+            if(kind === 'eps') {
+                // EPS cost
+                // console.log(`Number of numOfOSB = ${numOfOSB}`);
+            } else if (kind === 'render'){
+                // Render cost
+                // console.log(`Number of numOfOSB = ${numOfOSB}`);
+            } else if (kind === 'concreteFoundation') {
+                // Concrete Foundation Cost
+                // console.log(`Number of numOfOSB = ${numOfOSB}`);
+            }
+        });
+    }*/
+
+}
 
 function updateUrlParams() {
     const params = new URLSearchParams();
