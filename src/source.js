@@ -1120,6 +1120,12 @@ function projectCostCompute() {
                 const eps_actual_cost = table.getCellByName("eps_actual_cost", "amount");
                 const eps_total_cost = eps_actual_cost * insulation_area;
                 projectCostTable.createRow("eps_total_cost", "EPS Total Cost", eps_total_cost.toFixed(2), "€");
+            } else if (kind === 'render'){
+                // Render cost
+                const render_area = table.getCellByName("outer_area", "amount");
+                const render_actual_cost = table.getCellByName("render_actual_cost", "amount");
+                const render_total_cost = render_actual_cost * render_area;
+                projectCostTable.createRow("render_total_cost", "Render Total Cost", render_total_cost.toFixed(2), "€");
             }
         });
     }
