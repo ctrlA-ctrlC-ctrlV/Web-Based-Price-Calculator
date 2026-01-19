@@ -1096,8 +1096,24 @@ function projectCostCompute() {
         projectCostTable.createRow("tile_floor_total_cost", "Tile Floor Total Cost", tile_floor_total_cost.toFixed(2), "€");
     }
 
-    // Calculating EPS Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
+    // Calculating Extra Costs
+    const list = qs('#extrasList');
+    if (!list) { }
+    else {
+        const lines = [];
+
+        [...list.children].forEach(row => {
+            const kind = row.dataset.kind;
+           
+            if(kind === 'eps') {
+                // EPS cost
+                const insulation_area = table.getCellByName("outer_area", "amount");
+                const eps_actual_cost = table.getCellByName("eps_actual_cost", "amount");
+                const eps_total_cost = eps_actual_cost * insulation_area;
+                projectCostTable.createRow("eps_total_cost", "EPS Total Cost", eps_total_cost.toFixed(2), "€");
+            }
+        });
+    }
 
     // Calculating Concrete Foundation Cost
     // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
