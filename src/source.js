@@ -744,7 +744,8 @@ function compute() {
     }
     renderCostBreakdown();
     renderProjectCost();
-    shoppingListCompute();
+    //shoppingListCompute();
+    renderShoppingList();
     updateUrlParams();
     persistToLocalStorage();    
 }
@@ -1176,24 +1177,31 @@ function renderProjectCost() {
     p.appendChild(total);
 }
 
+/** @returns {Object} */
 function shoppingListCompute(){
+    /** @type {CostTable} */
     const costBreakDownTable = calcCostBreakdown();
     const projectCostTable = projectCostCompute();
+
+    const shopping_list = new Object;
 
     // Calculating OSB Cost
     const total_area = costBreakDownTable.getCellByName("total_wall_area", "amount");
     const osb_cover_area = costBreakDownTable.getCellByName("osb_size", "amount");
     const numOfOSB = Math.ceil(total_area / osb_cover_area);
+    shopping_list.OSB = numOfOSB;
 
     // Calculating Cladding Cost
     const outer_area = costBreakDownTable.getCellByName("outer_area", "amount");
     const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
     const numOfClad = Math.ceil(outer_area / clad_cover_area);
+    shopping_list.Cladding = numOfClad;
 
     // Calculating Toilet Cost
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
     const bath2_amt = Number(qs('#bathroom_2').value) || 0;
     const numOfToilet = bath1_amt + bath2_amt;    
+    shopping_list.Toilet = numOfToilet;
 
     // Calculating Sink Cost
     
@@ -1257,16 +1265,34 @@ function shoppingListCompute(){
         });
     }*/
 
-    const shopping_list = {
-        numOfOSB: numOfOSB,
-        numOfClad: numOfClad,
-        numOfToilet: numOfToilet,
-    }
-
     Object.entries(shopping_list).forEach(([key, value]) => {
         console.log(`Number of ${key}= ${value}`);
     })
 
+    return shopping_list;
+}
+
+function renderShoppingList() {
+    /** @type {Object} */
+    const shopping_list = shoppingListCompute();
+
+    const s = qs("#shopping_list_summary");
+    if(!s) return;
+    s.innerHTML = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'divide-y divide-slate-200 rounded-xl mt-4 border border-slate-200 overflow-hidden';
+
+    const itemClass = 'flex item-center justify-between px-4 py-3 bg-white';
+
+    Object.entries(shopping_list).forEach(([key, value]) => {
+        const container = document.createElement('div');
+        container.className = itemClass;
+        container.innerHTML = `<span class="text-sm">${key}</span><span class="font-medium">${value} unit(s)</span>`;
+        grid.appendChild(container);
+    });
+
+    s.appendChild(grid);
 }
 
 function updateUrlParams() {
