@@ -936,6 +936,15 @@ function calcCostBreakdown() {
     costBreakDownTable.createRow("eps_norminal_cost", "EPS Norminal Cost", epsWasteCosts.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("eps_actual_cost", "EPS Actual Cost", epsWasteCosts.actual_cost.toFixed(2), "€/m²");
 
+    // Render Per m² Calculation
+    const render_cost = parseFloat(qs('#cfg_costPerRenderUnit').value) || defaults.costPerRenderUnit;
+    const render_waste = parseFloat(qs('#cfg_wastePercentageRender').value) || defaults.wastePercentageRender;
+    const render_area = parseFloat(qs('#cfg_coverPerRenderUnit').value) || defaults.coverPerRenderUnit;
+    const renderWasteCost = wasteCostCalc(render_area, render_cost, render_waste);
+
+    costBreakDownTable.createRow("render_norminal_cost", "Render Norminal Cost", renderWasteCost.norminal_cost.toFixed(2), "€/m²");    
+    costBreakDownTable.createRow("render_actual_cost", "Render Actual Cost", renderWasteCost.actual_cost.toFixed(2), "€/m²"); 
+
     // Concrete Foundation Per m² Cost
     const costPerConcretFoundation = parseFloat(qs('#cfg_costPerConcretFoundation').value) || defaults.costPerConcretFoundation;
     costBreakDownTable.createRow("founcation_cost", "Concrete Foundation Cost", costPerConcretFoundation.toFixed(2), "€/m²");
