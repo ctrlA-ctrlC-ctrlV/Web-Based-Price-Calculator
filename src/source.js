@@ -1204,45 +1204,47 @@ function shoppingListCompute(){
     shopping_list.Toilet = numOfToilet;
 
     // Calculating Sink Cost
-    
+    const numOfSink = numOfToilet;
+    shopping_list.Sink = numOfSink;
 
     // Calculating Under Sink Heater Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    const numOfUndersink_heater = bath1_amt;
+    shopping_list.Undersink_heater = numOfUndersink_heater;
     
 
     // Calculating Shower Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    // shopping_list.Toilet = numOfToilet;
     
 
     // Calculating Electric Boiler Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    // shopping_list.Toilet = numOfToilet;
     
 
     // Calculating Light Switch Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    // shopping_list.Toilet = numOfToilet;
     
 
     // Calculating Double Socket Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    // shopping_list.Toilet = numOfToilet;
     
 
     // Calculating Plasterboard Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    // shopping_list.Toilet = numOfToilet;
     
 
     // Calculating Wall Panel Cost
     /*if (qs('#inner_wall_type').value === "inner_wall_type_s") {
-        // console.log(`Number of numOfOSB = ${numOfOSB}`);
+        // shopping_list.Toilet = numOfToilet;
     }*/
 
     // Calculating Floor Costs
     /*const floor_type = qs('#floor_type').value;
     if (floor_type === "wooden") {
         // Wood Floor Cost
-        // console.log(`Number of numOfOSB = ${numOfOSB}`);
+        // shopping_list.Toilet = numOfToilet;
     } else if (floor_type === "tile") {
         // Tile Floor Cost 
-        // console.log(`Number of numOfOSB = ${numOfOSB}`);
+        // shopping_list.Toilet = numOfToilet;
     }*/
 
     // Calculating Extra Costs
@@ -1254,13 +1256,13 @@ function shoppingListCompute(){
            
             if(kind === 'eps') {
                 // EPS cost
-                // console.log(`Number of numOfOSB = ${numOfOSB}`);
+                // shopping_list.Toilet = numOfToilet;
             } else if (kind === 'render'){
                 // Render cost
-                // console.log(`Number of numOfOSB = ${numOfOSB}`);
+                // shopping_list.Toilet = numOfToilet;
             } else if (kind === 'concreteFoundation') {
                 // Concrete Foundation Cost
-                // console.log(`Number of numOfOSB = ${numOfOSB}`);
+                // shopping_list.Toilet = numOfToilet;
             }
         });
     }*/
