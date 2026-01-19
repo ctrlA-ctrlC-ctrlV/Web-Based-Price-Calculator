@@ -1258,7 +1258,7 @@ function shoppingListCompute(){
     }
 
     // Calculating Extra Costs
-    /*const list = qs('#extrasList');
+    const list = qs('#extrasList');
     if (!list) { }
     else {
         [...list.children].forEach(row => {
@@ -1266,8 +1266,9 @@ function shoppingListCompute(){
            
             if(kind === 'eps') {
                 // EPS cost
-                // const numOf = ;
-                // shopping_list.Toilet = numOfToilet;
+                const eps_cover_area = costBreakDownTable.getCellByName("eps_size", "amount");
+                const numOfEps = Math.ceil(outer_area / eps_cover_area);
+                shopping_list.EPS = numOfEps;
             } else if (kind === 'render'){
                 // Render cost
                 // const numOf = ;
@@ -1278,7 +1279,7 @@ function shoppingListCompute(){
                 // shopping_list.Toilet = numOfToilet;
             }
         });
-    }*/
+    }
 
     // Object.entries(shopping_list).forEach(([key, value]) => {
     //     console.log(`Number of ${key}= ${value}`);
