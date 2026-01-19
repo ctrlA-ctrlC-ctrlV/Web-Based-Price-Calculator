@@ -947,7 +947,7 @@ function calcCostBreakdown() {
 
     // Concrete Foundation Per m² Cost
     const costPerConcretFoundation = parseFloat(qs('#cfg_costPerConcretFoundation').value) || defaults.costPerConcretFoundation;
-    costBreakDownTable.createRow("founcation_cost", "Concrete Foundation Cost", costPerConcretFoundation.toFixed(2), "€/m²");
+    costBreakDownTable.createRow("foundation_cost", "Concrete Foundation Cost", costPerConcretFoundation.toFixed(2), "€/m²");
 
     return(costBreakDownTable);
 }
@@ -1126,15 +1126,16 @@ function projectCostCompute() {
                 const render_actual_cost = table.getCellByName("render_actual_cost", "amount");
                 const render_total_cost = render_actual_cost * render_area;
                 projectCostTable.createRow("render_total_cost", "Render Total Cost", render_total_cost.toFixed(2), "€");
+            } else if (kind === 'concreteFoundation') {
+                // Concrete Foundation Cost
+                const foundation_area = qs('[data-field="area"]', row)?.value || 0;
+                const foundation_cost = table.getCellByName("foundation_cost", "amount");
+                const foundation_total_cost = foundation_cost * foundation_area;
+                projectCostTable.createRow("foundation_total_cost", "Concrete Foundation Total Cost", foundation_total_cost.toFixed(2), "€");
             }
         });
     }
-
-    // Calculating Concrete Foundation Cost
-    // projectCostTable.createRow("osb_total_Cost", " Total Cost", osb_total_Cost.toFixed(2), "€");
-
     
-    // console.log(`osb_total_Cost = ${osb_total_Cost}`);
     return projectCostTable;
 }
 
