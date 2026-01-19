@@ -1184,17 +1184,18 @@ function shoppingListCompute(){
     const total_area = costBreakDownTable.getCellByName("total_wall_area", "amount");
     const osb_cover_area = costBreakDownTable.getCellByName("osb_size", "amount");
     const numOfOSB = Math.ceil(total_area / osb_cover_area);
-    console.log(`Number of numOfOSB = ${numOfOSB}`);
 
     // Calculating Cladding Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
+    const outer_area = costBreakDownTable.getCellByName("outer_area", "amount");
+    const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
+    const numOfClad = Math.ceil(outer_area / clad_cover_area);
 
     // Calculating Toilet Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
-    
+    const bath1_amt = Number(qs('#bathroom_1').value) || 0;
+    const bath2_amt = Number(qs('#bathroom_2').value) || 0;
+    const numOfToilet = bath1_amt + bath2_amt;    
 
     // Calculating Sink Cost
-    // console.log(`Number of numOfOSB = ${numOfOSB}`);
     
 
     // Calculating Under Sink Heater Cost
@@ -1255,6 +1256,16 @@ function shoppingListCompute(){
             }
         });
     }*/
+
+    const shopping_list = {
+        numOfOSB: numOfOSB,
+        numOfClad: numOfClad,
+        numOfToilet: numOfToilet,
+    }
+
+    Object.entries(shopping_list).forEach(([key, value]) => {
+        console.log(`Number of ${key}= ${value}`);
+    })
 
 }
 
