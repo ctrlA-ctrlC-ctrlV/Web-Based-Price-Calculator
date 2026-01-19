@@ -997,17 +997,20 @@ function renderCostBreakdown() {
 
     const itemClass = "rounded-2xl shadow p-4 text-center bg-white";    
 
-    table.getAll().forEach(row => {        
-        const container  = document.createElement('div');
-        container.className = itemClass;
-        container.innerHTML = `
-             ${row.label}
-             <br/>
-             <span class="text-xl font-medium mt-2 block">
-                 ${row.amount} ${row.unit}
-             </span>
-        `;
-        grid.appendChild(container);
+    table.getAll().forEach(row => {    
+        const name = row.name.toLowerCase();
+        if (name.includes("cost") || name.includes("area")) {
+            const container  = document.createElement('div');
+            container.className = itemClass;
+            container.innerHTML = `
+                ${row.label}
+                <br/>
+                <span class="text-xl font-medium mt-2 block">
+                    ${row.amount} ${row.unit}
+                </span>
+            `;
+            grid.appendChild(container);
+        }
     });
 
     c.appendChild(grid);
@@ -1109,8 +1112,6 @@ function projectCostCompute() {
     const list = qs('#extrasList');
     if (!list) { }
     else {
-        const lines = [];
-
         [...list.children].forEach(row => {
             const kind = row.dataset.kind;
            
@@ -1135,7 +1136,7 @@ function projectCostCompute() {
             }
         });
     }
-    
+
     return projectCostTable;
 }
 
@@ -1167,6 +1168,13 @@ function renderProjectCost() {
     p.appendChild(grid);
     p.appendChild(total);
 }
+
+// function shoppingListCompute(){
+//     const costBreakDownTable = calcCostBreakdown();
+//     const projectCostTable = projectCostCompute();
+
+//     const numOfOSB = 2; // OSB area / total area;
+// }
 
 function updateUrlParams() {
     const params = new URLSearchParams();
