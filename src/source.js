@@ -890,19 +890,6 @@ function calcCostBreakdown() {
     const dSocketUnitCost = parseFloat(qs('#cfg_costPerDoubleSocket').value) || defaults.costPerDoubleSocket;
     costBreakDownTable.createRow("socket_cost", "Double Socket Unite Cost", dSocketUnitCost.toFixed(2), "€");
 
-    // Plasterboard Per m² Calculation
-    const pBoard_width = parseFloat(qs('#cfg_plasterboardWidth').value) || defaults.plasterboardWidth;
-    const pBoard_height = parseFloat(qs('#cfg_plasterboardHeight').value) || defaults.plasterboardHeight;
-    const pBoard_cost = parseFloat(qs('#cfg_costPerPlasterboard').value) || defaults.costPerPlasterboard;
-    const pBoard_waste = parseFloat(qs('#cfg_wastePercentagePlasterboard').value) || defaults.wastePercentagePlasterboard;
-
-    const pBoard_area = pBoard_width * pBoard_height;
-    const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
-    costBreakDownTable.createRow("plasterboard_size", "Plasterboard Cover Size", pBoardWasteCosts.cover_area.toFixed(2), "m²");
-    costBreakDownTable.createRow("plasterboard_norminal_cost", "Plasterboard Norminal Cost", pBoardWasteCosts.norminal_cost.toFixed(2), "€/m²");    
-    costBreakDownTable.createRow("plasterboard_actual_cost", "Plasterboard Actual Cost", pBoardWasteCosts.actual_cost.toFixed(2), "€/m²");
-
-
     // Wall Panel Per m² Calculation
     const wPanel_width = parseFloat(qs('#cfg_wallPanelWidth').value) || defaults.wallPanelWidth;
     const wPanel_height = parseFloat(qs('#cfg_wallPanelHeight').value) || defaults.wallPanelHeight;
@@ -915,6 +902,28 @@ function calcCostBreakdown() {
     costBreakDownTable.createRow("wall_panel_norminal_cost", "Wall Panel Norminal Cost", wPanelWasteCosts.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("wall_panel_actual_cost", "Wall Panel Actual Cost", wPanelWasteCosts.actual_cost.toFixed(2), "€/m²");    
 
+    // Skim Per m² Calculation
+    const skim_area = parseFloat(qs('#cfg_coverPerSkimUnit').value) || defaults.coverPerSkimUnit;
+    const skim_cost = parseFloat(qs('#cfg_costPerSkimUnit').value) || defaults.costPerSkimUnit;
+    const skim_waste = parseFloat(qs('#cfg_wastePercentageSkim').value) || defaults.wastePercentageSkim;
+
+    const skimWasteCosts = wasteCostCalc(skim_area, skim_cost, skim_waste);
+    costBreakDownTable.createRow("skim_size", "Skim Cover Area", skimWasteCosts.cover_area.toFixed(2), "m²");
+    costBreakDownTable.createRow("skim_norminal_cost", "Skim Norminal Cost", skimWasteCosts.norminal_cost.toFixed(2), "€/m²");    
+    costBreakDownTable.createRow("skim_actual_cost", "Skim Actual Cost", skimWasteCosts.actual_cost.toFixed(2), "€/m²");    
+
+    // Plasterboard Per m² Calculation
+    const pBoard_width = parseFloat(qs('#cfg_plasterboardWidth').value) || defaults.plasterboardWidth;
+    const pBoard_height = parseFloat(qs('#cfg_plasterboardHeight').value) || defaults.plasterboardHeight;
+    const pBoard_cost = parseFloat(qs('#cfg_costPerPlasterboard').value) || defaults.costPerPlasterboard;
+    const pBoard_waste = parseFloat(qs('#cfg_wastePercentagePlasterboard').value) || defaults.wastePercentagePlasterboard;
+
+    const pBoard_area = pBoard_width * pBoard_height;
+    const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
+    costBreakDownTable.createRow("plasterboard_size", "Plasterboard Cover Size", pBoardWasteCosts.cover_area.toFixed(2), "m²");
+    costBreakDownTable.createRow("plasterboard_norminal_cost", "Plasterboard Norminal Cost", pBoardWasteCosts.norminal_cost.toFixed(2), "€/m²");    
+    costBreakDownTable.createRow("plasterboard_actual_cost", "Plasterboard Actual Cost", pBoardWasteCosts.actual_cost.toFixed(2), "€/m²");
+    
     // Wood Floor Per m² Cost
     const woodFloorNominalCost = parseFloat(qs('#cfg_costPerWoodFloor').value) || defaults.costPerWoodFloor;
     const woodFloor_waste = parseFloat(qs('#cfg_wastePercentageWoodFloor').value) || defaults.wastePercentageWoodFloor;
@@ -1089,6 +1098,10 @@ function projectCostCompute() {
 
     // Calculating Wall Panel Cost
     if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+        const skim_actual_cost = table.getCellByName("skim_actual_cost", "amount");
+        const skim_total_cost = total_wall_area * skim_actual_cost;
+        projectCostTable.createRow("skim_total_cost", "Skim Total Cost", skim_total_cost.toFixed(2), "€");
+
         // Calculating Plasterboard Cost
         const plasterboard_actual_cost = table.getCellByName("plasterboard_actual_cost", "amount");
         const plasterboard_total_Cost = total_wall_area * plasterboard_actual_cost;
@@ -1233,6 +1246,10 @@ function shoppingListCompute(){
 
     
     if (qs('#inner_wall_type').value === "inner_wall_type_s") {
+        const skim_cover_area = costBreakDownTable.getCellByName("skim_size", "amount");
+        const numOfSkim = Math.ceil(total_area / skim_cover_area);
+        shopping_list.Skim = numOfSkim;
+
         // Calculating Number of Plasterboard Unites
         const plasterboard_cover_area = costBreakDownTable.getCellByName("plasterboard_size", "amount");
         const numOfPlasterboard = Math.ceil(total_area / plasterboard_cover_area);
