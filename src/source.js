@@ -807,8 +807,9 @@ function wasteCostCalc(
 
     const norminal_cost = unit_cost/total_area;
     const actual_cost = norminal_cost * (1 + waste_percentage * .01);
+    const cover_area = total_area * (1 - waste_percentage * .01);
     
-    return ({norminal_cost, actual_cost});
+    return ({norminal_cost, actual_cost, cover_area});
 }
 
 /**
@@ -842,6 +843,7 @@ function calcCostBreakdown() {
 
     const osb_area = osb_width * osb_height;
     const osbWastCosts = wasteCostCalc(osb_area, osb_cost, osb_waste);
+    costBreakDownTable.createRow("osb_size", "OSB Cover Size", osbWastCosts.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("osb_norminal_cost", "OSB Norminal Cost", osbWastCosts.norminal_cost.toFixed(2), "€/m²");
     costBreakDownTable.createRow("osb_actual_cost", "OSB Actual Cost", osbWastCosts.actual_cost.toFixed(2), "€/m²");
 
@@ -853,6 +855,7 @@ function calcCostBreakdown() {
 
     const clad_area = clad_width * clad_height;
     const cladWasteCosts = wasteCostCalc(clad_area, clad_cost, clad_waste);
+    costBreakDownTable.createRow("clad_size", "Cladding Cover Size", cladWasteCosts.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("clad_norminal_cost", "Cladding Norminal Cost", cladWasteCosts.norminal_cost.toFixed(2), "€/m²");
     costBreakDownTable.createRow("clad_actual_cost", "Cladding Actual Cost", cladWasteCosts.actual_cost.toFixed(2), "€/m²");
 
@@ -892,6 +895,7 @@ function calcCostBreakdown() {
 
     const pBoard_area = pBoard_width * pBoard_height;
     const pBoardWasteCosts = wasteCostCalc(pBoard_area, pBoard_cost, pBoard_waste);
+    costBreakDownTable.createRow("plasterboard_size", "Plasterboard Cover Size", pBoardWasteCosts.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("plasterboard_norminal_cost", "Plasterboard Norminal Cost", pBoardWasteCosts.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("plasterboard_actual_cost", "Plasterboard Actual Cost", pBoardWasteCosts.actual_cost.toFixed(2), "€/m²");
 
@@ -904,6 +908,7 @@ function calcCostBreakdown() {
 
     const wPanel_area = wPanel_width * wPanel_height;
     const wPanelWasteCosts = wasteCostCalc(wPanel_area, wPanel_cost, wPanel_waste);
+    costBreakDownTable.createRow("Wall_Panel_size", "OSB Cover Area", wPanelWasteCosts.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("wall_panel_norminal_cost", "Wall Panel Norminal Cost", wPanelWasteCosts.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("wall_panel_actual_cost", "Wall Panel Actual Cost", wPanelWasteCosts.actual_cost.toFixed(2), "€/m²");
     
@@ -933,6 +938,7 @@ function calcCostBreakdown() {
 
     const eps_area = eps_width * eps_height;
     const epsWasteCosts = wasteCostCalc(eps_area, eps_cost, eps_waste);
+    costBreakDownTable.createRow("eps_size", "EPS Cover Size", epsWasteCosts.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("eps_norminal_cost", "EPS Norminal Cost", epsWasteCosts.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("eps_actual_cost", "EPS Actual Cost", epsWasteCosts.actual_cost.toFixed(2), "€/m²");
 
@@ -942,6 +948,7 @@ function calcCostBreakdown() {
     const render_area = parseFloat(qs('#cfg_coverPerRenderUnit').value) || defaults.coverPerRenderUnit;
     const renderWasteCost = wasteCostCalc(render_area, render_cost, render_waste);
 
+    costBreakDownTable.createRow("render_size", "Render Cover Size", renderWasteCost.cover_area.toFixed(2), "m²");
     costBreakDownTable.createRow("render_norminal_cost", "Render Norminal Cost", renderWasteCost.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("render_actual_cost", "Render Actual Cost", renderWasteCost.actual_cost.toFixed(2), "€/m²"); 
 
@@ -1092,16 +1099,16 @@ function projectCostCompute() {
         projectCostTable.createRow("wall_panel_total_cost", "Wall Panel Total Cost", wall_panel_total_cost.toFixed(2), "€");
     }
 
-    
+    // Calculating Floor Costs
     const floor_type = qs('#floor_type').value;
     if (floor_type === "wooden") {
-        // Calculating Wood Floor Cost
+        // Wood Floor Cost
         const floor_size = qs('#floor_size').value || 0;
         const wood_floor_actual_cost = table.getCellByName("wood_floor_actual_cost", "amount");
         const wood_floor_total_cost = wood_floor_actual_cost * floor_size;
         projectCostTable.createRow("wood_floor_total_cost", "Wood Floor Total Cost", wood_floor_total_cost.toFixed(2), "€");
     } else if (floor_type === "tile") {
-        // Calculating Tile Floor Cost 
+        // Tile Floor Cost 
         const floor_size = qs('#floor_size').value || 0;
         const tile_floor_actual_cost = table.getCellByName("tile_floor_actual_cost", "amount");
         const tile_floor_total_cost = tile_floor_actual_cost * floor_size;
