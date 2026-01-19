@@ -1276,8 +1276,8 @@ function shoppingListCompute(){
                 shopping_list.Render = numOfRender;
             } else if (kind === 'concreteFoundation') {
                 // Concrete Foundation Cost
-                // const numOf = ;
-                // shopping_list.Toilet = numOfToilet;
+                const foundation_area = qs('[data-field="area"]', row)?.value || 0;
+                shopping_list.Concrete_Foundation = foundation_area;
             }
         });
     }
