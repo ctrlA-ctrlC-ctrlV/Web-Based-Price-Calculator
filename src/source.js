@@ -1350,6 +1350,10 @@ function shoppingListCompute(){
     const window_list = qs('#windowsList');
     shopping_list = glazingShoppingListCompile(shopping_list, window_list, "Window");
 
+    // Calculating Number of 
+    const external_door_list = qs('#EXDoorsList');
+    shopping_list = glazingShoppingListCompile(shopping_list, external_door_list, "External Door");
+
     // Calculating Number of Floor Unites
     const floor_type = qs('#floor_type').value;
     if (floor_type === "wooden") {
