@@ -1045,6 +1045,26 @@ function renderCostBreakdown() {
     c.appendChild(grid);
 }
 
+function glazingCostCompute(list, cost) {
+    let priceSum = 0;
+
+    [...list.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        if (!wEl || !hEl) return;
+
+        const w = parseFloat(wEl.value) || 0;
+        const h = parseFloat(hEl.value) || 0;
+        const area = (w > 0 && h > 0) ? (w * h) : 0;
+        const price = area > 0 ? area * cost : 0;
+
+        if (area > 0) {
+            priceSum += price;
+        }
+    });
+    return(priceSum);
+}
+
 /** @returns { CostTable } */
 function projectCostCompute() {
     /** @type {CostTable []}*/
@@ -1125,6 +1145,25 @@ function projectCostCompute() {
         const wall_panel_total_cost = wall_panel_actual_cost * wall_panne_length;
         projectCostTable.createRow("wall_panel_total_cost", "Wall Panel Total Cost", wall_panel_total_cost.toFixed(2), "€");
     }
+
+    // Calculating Glazing Cost
+    const window_list = qs('#windowsList');
+    const window_cost = table.getCellByName("window_cost", "amount");
+    const window_total_cost = glazingCostCompute(window_list, window_cost);
+    if (window_total_cost != 0)
+        projectCostTable.createRow("window_total_cost", "Window Total Cost", window_total_cost.toFixed(2), "€");
+
+    const external_door_list = qs('#EXDoorsList');
+    const external_door_cost = table.getCellByName("external_door_cost", "amount");
+    const external_door_total_cost = glazingCostCompute(external_door_list, external_door_cost);
+    if (external_door_total_cost != 0)
+        projectCostTable.createRow("external_door_total_cost", "External Door Total Cost", external_door_total_cost.toFixed(2), "€");
+
+    const skylight_list = qs('#skylightList');
+    const skylight_cost = table.getCellByName("skylight_cost", "amount");
+    const skylight_total_cost = glazingCostCompute(skylight_list, skylight_cost);
+    if (skylight_total_cost != 0)
+        projectCostTable.createRow("skylight_total_cost", "Roof Window Total Cost", skylight_total_cost.toFixed(2), "€");
 
     // Calculating Floor Costs
     const floor_type = qs('#floor_type').value;
