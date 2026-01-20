@@ -1146,19 +1146,21 @@ function projectCostCompute() {
         projectCostTable.createRow("wall_panel_total_cost", "Wall Panel Total Cost", wall_panel_total_cost.toFixed(2), "€");
     }
 
-    // Calculating Glazing Cost
+    // Calculating Window Cost
     const window_list = qs('#windowsList');
     const window_cost = table.getCellByName("window_cost", "amount");
     const window_total_cost = glazingCostCompute(window_list, window_cost);
     if (window_total_cost != 0)
         projectCostTable.createRow("window_total_cost", "Window Total Cost", window_total_cost.toFixed(2), "€");
 
+    // Calculating External Door Cost
     const external_door_list = qs('#EXDoorsList');
     const external_door_cost = table.getCellByName("external_door_cost", "amount");
     const external_door_total_cost = glazingCostCompute(external_door_list, external_door_cost);
     if (external_door_total_cost != 0)
         projectCostTable.createRow("external_door_total_cost", "External Door Total Cost", external_door_total_cost.toFixed(2), "€");
 
+    // Calculating Skylight/Roof Window Cost
     const skylight_list = qs('#skylightList');
     const skylight_cost = table.getCellByName("skylight_cost", "amount");
     const skylight_total_cost = glazingCostCompute(skylight_list, skylight_cost);
