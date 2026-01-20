@@ -59,6 +59,9 @@ const defaults = {
     plasterboardHeight: 2.44,               //m    
     costPerPlasterboard: 20.5,              //€/board
     wastePercentagePlasterboard: 5,         //%
+    costPerM2Window: 450,                   //€/m²
+    costPerM2ExternalDoor: 450,             //€/m²
+    costPerM2Skylight: 800,                 //€/m²
     costPerWoodFloor: 55,                   //€/m²
     wastePercentageWoodFloor: 5,            //%
     costPerTileFloor: 37.1,                 //€/m²
@@ -603,7 +606,7 @@ function getExtras() {
             lines.push({ label: `Steel door(s) × ${qty}`, amount: cost });
         } else if (kind === 'concreteFoundation') {
             const area = qs('[data-field="area"]', row)?.value || 0;
-            const unit = parseFloat(qs('#cfg_extra_concreteFoundationRate').value) || parseFloat(defaults.ex_concretefoundationRate);
+            const unit = parseFloat(qs('#cfg_extra_concreteFoundationRate').value) || parseFloat(defaults.ex_concreteFoundationRate);
             const cost = area * unit;
             total += cost;
             lines.push({ label: `Concrete Foundation × ${area}m²`, amount: cost });
@@ -2002,7 +2005,10 @@ function initDefaults() {
     qs('#cfg_plasterboardWidth').value = defaults.plasterboardWidth;
     qs('#cfg_plasterboardHeight').value = defaults.plasterboardHeight;
     qs('#cfg_costPerPlasterboard').value = defaults.costPerPlasterboard;
-    qs('#cfg_wastePercentagePlasterboard').value = defaults.wastePercentagePlasterboard;    
+    qs('#cfg_wastePercentagePlasterboard').value = defaults.wastePercentagePlasterboard; 
+    qs('#cfg_costPerM2Window').value = defaults.costPerM2Window;
+    qs('#cfg_costPerM2ExternalDoor').value = defaults.costPerM2ExternalDoor; 
+    qs('#cfg_costPerM2Skylight').value = defaults.costPerM2Skylight; 
     qs('#cfg_costPerWoodFloor').value = defaults.costPerWoodFloor;
     qs('#cfg_wastePercentageWoodFloor').value = defaults.wastePercentageWoodFloor;
     qs('#cfg_costPerTileFloor').value = defaults.costPerTileFloor;
