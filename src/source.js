@@ -1421,13 +1421,6 @@ function renderShoppingList() {
         grid.appendChild(container);
     })
 
-    // Object.entries(shopping_list).forEach(([key, value]) => {
-    //     const container = document.createElement('div');
-    //     container.className = itemClass;
-    //     container.innerHTML = `<span class="text-sm">${key}</span><span class="font-medium">${value} unit(s)</span>`;
-    //     grid.appendChild(container);
-    // });
-
     s.appendChild(grid);
 }
 
@@ -1489,6 +1482,47 @@ function updateUrlParams() {
         ['cfg_extra_renderFinish', 'extra_renderFinish'],
         ['cfg_extra_steelDoor', 'extra_steelDoor'],
         ['cfg_extra_concreteFoundationRate', 'extra_concreteFoundationRate'],
+        ['cfg_osbWidth', 'osbWidth'],
+        ['cfg_osbHeight', 'osbHeight'],
+        ['cfg_costPerOsb', 'costPerOsb'],
+        ['cfg_wastePercentageOsb', 'wastePercentageOsb'],
+        ['cfg_claddingBlockWidth', 'claddingBlockWidth'],
+        ['cfg_claddingBlockHeight', 'claddingBlockHeight'],
+        ['cfg_costPerCladdingBlock', 'costPerCladdingBlock'],
+        ['cfg_wastePercentageCladdingBlock', 'wastePercentageCladdingBlock'],
+        ['cfg_costPerToilet', 'costPerToilet'],
+        ['cfg_costPerSink', 'costPerSink'],
+        ['cfg_costPerunderSinkHeater', 'costPerunderSinkHeater'],
+        ['cfg_costPerShower', 'costPerShower'],
+        ['cfg_costPerElecBoiler', 'costPerElecBoiler'],
+        ['cfg_costPerLightSwitch', 'costPerLightSwitch'],
+        ['cfg_costPerDoubleSocket', 'costPerDoubleSocket'],
+        ['cfg_wallPanelWidth', 'wallPanelWidth'],
+        ['cfg_wallPanelHeight', 'wallPanelHeight'],
+        ['cfg_costPerWallPanel', 'costPerWallPanel'],
+        ['cfg_wastePercentageWallPanel', 'wastePercentageWallPanel'],
+        ['cfg_coverPerSkimUnit', 'coverPerSkimUnit'],
+        ['cfg_costPerSkimUnit', 'costPerSkimUnit'],
+        ['cfg_wastePercentageSkim', 'wastePercentageSkim'],
+        ['cfg_plasterboardWidth', 'plasterboardWidth'],
+        ['cfg_plasterboardHeight', 'plasterboardHeight'],
+        ['cfg_costPerPlasterboard', 'costPerPlasterboard'],
+        ['cfg_wastePercentagePlasterboard', 'wastePercentagePlasterboard'],
+        ['cfg_costPerM2Window', 'costPerM2Window'],
+        ['cfg_costPerM2ExternalDoor', 'costPerM2ExternalDoor'],
+        ['cfg_costPerM2Skylight', 'costPerM2Skylight'],
+        ['cfg_costPerWoodFloor', 'costPerWoodFloor'],
+        ['cfg_wastePercentageWoodFloor', 'wastePercentageWoodFloor'],
+        ['cfg_costPerTileFloor', 'costPerTileFloor'],
+        ['cfg_wastePercentageTileFloor', 'wastePercentageTileFloor'],
+        ['cfg_epsWidth', 'epsWidth'],
+        ['cfg_epsHeight', 'epsHeight'],
+        ['cfg_costPerEps', 'costPerEps'],
+        ['cfg_wastePercentageEps', 'wastePercentageEps'],
+        ['cfg_coverPerRenderUnit', 'coverPerRenderUnit'],
+        ['cfg_costPerRenderUnit', 'costPerRenderUnit'],
+        ['cfg_wastePercentageRender', 'wastePercentageRender'],
+        ['cfg_costPerConcretFoundation', 'costPerConcretFoundation'],
     ].forEach(([id,key]) => {
         const el = qs('#' + id);
         if (!el) return;
@@ -1635,6 +1669,47 @@ function loadFromUrlParams() {
         cfg_extra_renderFinish : 'extra_renderFinish',
         cfg_extra_steelDoor : 'extra_steelDoor',
         cfg_extra_concreteFoundationRate: 'extra_concreteFoundationRate',
+        cfg_osbWidth: 'osbWidth',
+        cfg_osbHeight: 'osbHeight',
+        cfg_costPerOsb: 'costPerOsb',
+        cfg_wastePercentageOsb: 'wastePercentageOsb',
+        cfg_claddingBlockWidth: 'claddingBlockWidth',
+        cfg_claddingBlockHeight: 'claddingBlockHeight',
+        cfg_costPerCladdingBlock: 'costPerCladdingBlock',
+        cfg_wastePercentageCladdingBlock: 'wastePercentageCladdingBlock',
+        cfg_costPerToilet: 'costPerToilet',
+        cfg_costPerSink: 'costPerSink',
+        cfg_costPerunderSinkHeater: 'costPerunderSinkHeater',
+        cfg_costPerShower: 'costPerShower',
+        cfg_costPerElecBoiler: 'costPerElecBoiler',
+        cfg_costPerLightSwitch: 'costPerLightSwitch',
+        cfg_costPerDoubleSocket: 'costPerDoubleSocket',
+        cfg_wallPanelWidth: 'wallPanelWidth',
+        cfg_wallPanelHeight: 'wallPanelHeight',
+        cfg_costPerWallPanel: 'costPerWallPanel',
+        cfg_wastePercentageWallPanel: 'wastePercentageWallPanel',
+        cfg_coverPerSkimUnit: 'coverPerSkimUnit',
+        cfg_costPerSkimUnit: 'costPerSkimUnit',
+        cfg_wastePercentageSkim: 'wastePercentageSkim',
+        cfg_plasterboardWidth: 'plasterboardWidth',
+        cfg_plasterboardHeight: 'plasterboardHeight',
+        cfg_costPerPlasterboard: 'costPerPlasterboard',
+        cfg_wastePercentagePlasterboard: 'wastePercentagePlasterboard',
+        cfg_costPerM2Window: 'costPerM2Window',
+        cfg_costPerM2ExternalDoor: 'costPerM2ExternalDoor',
+        cfg_costPerM2Skylight: 'costPerM2Skylight',
+        cfg_costPerWoodFloor: 'costPerWoodFloor',
+        cfg_wastePercentageWoodFloor: 'wastePercentageWoodFloor',
+        cfg_costPerTileFloor: 'costPerTileFloor',
+        cfg_wastePercentageTileFloor: 'wastePercentageTileFloor',
+        cfg_epsWidth: 'epsWidth',
+        cfg_epsHeight: 'epsHeight',
+        cfg_costPerEps: 'costPerEps',
+        cfg_wastePercentageEps: 'wastePercentageEps',
+        cfg_coverPerRenderUnit: 'coverPerRenderUnit',
+        cfg_costPerRenderUnit: 'costPerRenderUnit',
+        cfg_wastePercentageRender: 'wastePercentageRender',
+        cfg_costPerConcretFoundation: 'costPerConcretFoundation',
     };
     Object.entries(cfgMap).forEach(([id,key]) => setIf(id,key));
 
