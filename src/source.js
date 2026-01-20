@@ -1255,81 +1255,141 @@ function shoppingListCompute(){
     /** @type {CostTable} */
     const costBreakDownTable = calcCostBreakdown();
 
-    const shopping_list = new Object;
+    const shopping_list_old = new Object;
+    const shopping_list = [];
 
     // Calculating Number of OSB Unites
     const total_area = costBreakDownTable.getCellByName("total_wall_area", "amount");
     const osb_cover_area = costBreakDownTable.getCellByName("osb_size", "amount");
     const numOfOSB = Math.ceil(total_area / osb_cover_area);
-    shopping_list.OSB = numOfOSB;
+    shopping_list_old.OSB = numOfOSB;
+    shopping_list.push({name: "OSB", value: numOfOSB});
 
     // Calculating Number of Cladding Unites
     const outer_area = costBreakDownTable.getCellByName("outer_area", "amount");
     const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
     const numOfClad = Math.ceil(outer_area / clad_cover_area);
-    shopping_list.Cladding = numOfClad;
+    shopping_list_old.Cladding = numOfClad;
+    shopping_list.push({name: "Cladding", value: numOfClad});
+    // shopping_list = [...shopping_list, {name: "Cladding", value: numOfClad}];
 
     // Calculating Number of Toilet Unites
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
     const bath2_amt = Number(qs('#bathroom_2').value) || 0;
     const numOfToilet = bath1_amt + bath2_amt;    
-    shopping_list.Toilet = numOfToilet;
+    shopping_list_old.Toilet = numOfToilet;
+    shopping_list.push({name: "Toilet", value: numOfToilet});
+    // shopping_list = [...shopping_list, {name: "Toilet", value: numOfToilet}];
 
     // Calculating Number of Sink Unites
     const numOfSink = numOfToilet;
-    shopping_list.Sink = numOfSink;
+    shopping_list_old.Sink = numOfSink;
+    shopping_list.push({name: "Sink", value: numOfSink});
+    // shopping_list = [...shopping_list, {name: "Sink", value: numOfSink}];
 
     // Calculating Number of Under Sink Heater Unites
     const numOfUndersink_heater = bath1_amt;
-    shopping_list.Undersink_Heater = numOfUndersink_heater;
-    
+    shopping_list_old.Undersink_Heater = numOfUndersink_heater;
+    shopping_list.push({name: "Undersink", value: numOfUndersink_heater});
+    // shopping_list = [...shopping_list, {name: "Undersink Heater", value: numOfUndersink_heater}];
 
     // Calculating Number of Shower Unites
     const numOfShower = bath2_amt;
-    shopping_list.Shower = numOfShower;
+    shopping_list_old.Shower = numOfShower;
+    shopping_list.push({name: "Shower", value: numOfShower});
+    // shopping_list = [...shopping_list, {name: "Shower", value: numOfShower}];
     
 
     // Calculating Number of Electric Boiler Unites
-    const numOfElecShower = bath2_amt;
-    shopping_list.Electric_Shower = numOfElecShower;
+    const numOfElecBoiler = bath2_amt;
+    shopping_list_old.Electric_Boiler = numOfElecBoiler;
+    shopping_list.push({name: "Electric Boiler", value: numOfElecBoiler});
+    // shopping_list = [...shopping_list, {name: "Electric Boiler", value: numOfElecBoiler}];
     
 
     // Calculating Number of Light Switch Unites
     const numOfSwitch = Number(qs('#switch').value) || 0;
-    shopping_list.Light_Switch = numOfSwitch;
+    shopping_list_old.Light_Switch = numOfSwitch;
+    shopping_list.push({name: "Light Switch", value: numOfSwitch});
+    // shopping_list = [...shopping_list, {name: "Light Switch", value: numOfSwitch}];
     
 
     // Calculating Number of Double Socket Unites
     const numOfSocket = Number(qs('#d_socket').value) || 0;
-    shopping_list.Socket = numOfSocket;
+    shopping_list_old.Socket = numOfSocket;
+    shopping_list.push({name: "Socket", value: numOfSocket});
+    // shopping_list = [...shopping_list, {name: "Socket", value: numOfSocket}];
 
-    
+    // Calculating Floor Shopping List
     if (qs('#inner_wall_type').value === "inner_wall_type_s") {
         const skim_cover_area = costBreakDownTable.getCellByName("skim_size", "amount");
         const numOfSkim = Math.ceil(total_area / skim_cover_area);
-        shopping_list.Skim = numOfSkim;
+        shopping_list_old.Skim = numOfSkim;
+        shopping_list.push({name: "Skim", value: numOfSkim});
+        // shopping_list = [...shopping_list, {name: "Skim", value: numOfSkim}];
 
         // Calculating Number of Plasterboard Unites
         const plasterboard_cover_area = costBreakDownTable.getCellByName("plasterboard_size", "amount");
         const numOfPlasterboard = Math.ceil(total_area / plasterboard_cover_area);
-        shopping_list.Plasterboard = numOfPlasterboard;
+        shopping_list_old.Plasterboard = numOfPlasterboard;
+        shopping_list.push({name: "Plasterboard", value: numOfPlasterboard});
+        // shopping_list = [...shopping_list, {name: "Plasterboard", value: numOfPlasterboard}];
     } else if (qs('#inner_wall_type').value === "inner_wall_type_p") {
         // Calculating Number of Wall Panel Unites
         const wall_panel_size = costBreakDownTable.getCellByName("wall_panel_size", "amount");
         const numOfWallPanel = Math.ceil(total_area / wall_panel_size);
-        shopping_list.Wall_Panel = numOfWallPanel;
+        shopping_list_old.Wall_Panel = numOfWallPanel;
+        shopping_list.push({name: "Wall Panel", value: numOfWallPanel});
+        // shopping_list = [...shopping_list, {name: "Wall Panel", value: numOfWallPanel}];
     }
+
+    // Calculating Number of Window
+    const window_list = qs('#windowsList');
+    const external_door_list = qs('#EXDoorsList');
+    const skylight_list = qs('#skylightList');
+
+    let window_shoppinglist = [];
+
+    [...window_list.children].forEach(row => {
+        const wEl = row.querySelector('[data-field="width"]');
+        const hEl = row.querySelector('[data-field="height"]');
+        if (!wEl || !hEl) return;
+
+        const w = parseFloat(wEl.value) || 0;
+        const h = parseFloat(hEl.value) || 0;
+
+        window_shoppinglist = [...window_shoppinglist, {width:w, height:h}];
+    });
+
+    if (window_shoppinglist.length > 0 ) {
+        let i = 1;
+
+        window_shoppinglist.forEach(row => {
+            shopping_list_old.Window = `${row.width}&times${row.height}`;
+            i++;
+        })
+        console.log(i)
+    }
+
+    
+    // const window = [
+    //     {w: 1, h:2}
+    // ]
 
     // Calculating Number of Floor Unites
     const floor_type = qs('#floor_type').value;
     if (floor_type === "wooden") {
         // Number of Wood Floor Unites, each unit cover 1m²
         const numOfWoodFloor = qs('#floor_size').value || 0;
-        shopping_list.Wood_Floor = numOfWoodFloor;
+        shopping_list_old.Wood_Floor = numOfWoodFloor;
+        shopping_list.push({name: "Wood Floor", value: numOfWoodFloor});
+        // shopping_list = [...shopping_list, {name: "Wood Floor", value: numOfWoodFloor}];
     } else if (floor_type === "tile") {
         // Number of Tile Floor Unites, each unit cover 1m²
         const numOfTileFloor = qs('#floor_size').value || 0;
-        shopping_list.Tile_Floor = numOfTileFloor;
+        shopping_list_old.Tile_Floor = numOfTileFloor;
+        shopping_list.push({name: "Tile Floor", value: numOfTileFloor});
+        // shopping_list = [...shopping_list, {name: "Tile Floor", value: numOfTileFloor}];
     }
 
     // Calculating Number of Extra
@@ -1343,21 +1403,28 @@ function shoppingListCompute(){
                 // Number of EPS Unites
                 const eps_cover_area = costBreakDownTable.getCellByName("eps_size", "amount");
                 const numOfEps = Math.ceil(outer_area / eps_cover_area);
-                shopping_list.EPS = numOfEps;
+                shopping_list_old.EPS = numOfEps;
+                shopping_list.push({name: "EPS", value: numOfnumOfEpsoilet});
+                shopping_list = [...shopping_list, {name: "EPS", value: numOfnumOfEpsoilet}];
             } else if (kind === 'render'){
                 // Number of Render Unites
                 const render_cover_area = costBreakDownTable.getCellByName("render_size", "amount");
                 const numOfRender = Math.ceil(outer_area / render_cover_area);
-                shopping_list.Render = numOfRender;
+                shopping_list_old.Render = numOfRender;
+                shopping_list.push({name: "Render", value: numOfRender});
+                shopping_list = [...shopping_list, {name: "Render", value: numOfRender}];
             } else if (kind === 'concreteFoundation') {
                 // Number of Concrete Foundation
                 const foundation_area = qs('[data-field="area"]', row)?.value || 0;
-                shopping_list.Concrete_Foundation = foundation_area;
+                shopping_list_old.Concrete_Foundation = foundation_area;
+                shopping_list.push({name: "Concrete Foundation", value: foundation_area});
+                // shopping_list = [...shopping_list, {name: "Concrete Foundation", value: foundation_area}];
             }
         });
     }
 
-    return shopping_list;
+    console.log(shopping_list)
+    return shopping_list_old;
 }
 
 function renderShoppingList() {
