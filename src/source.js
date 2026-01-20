@@ -1250,7 +1250,7 @@ function renderProjectCost() {
     p.appendChild(total);
 }
 
-function glazingShoppingListCompile(shopping_list, glazzing_list) {
+function glazingShoppingListCompile(shopping_list, glazzing_list, type) {
     let glist = [];
 
     [...glazzing_list.children].forEach(row => {
@@ -1268,7 +1268,7 @@ function glazingShoppingListCompile(shopping_list, glazzing_list) {
         let i = 1;
 
         glist.forEach(row => {
-            const name = "Window " + i;
+            const name = type + ' ' + i;
             shopping_list = [...shopping_list, {name:name, value: `${row.width}m &times ${row.height}m`}]
             i++;
         })
@@ -1374,9 +1374,7 @@ function shoppingListCompute(){
     //         i++;
     //     })
     // }
-    shopping_list = glazingShoppingListCompile(shopping_list, window_list);
-    shopping_list = glazingShoppingListCompile(shopping_list, external_door_list);
-    shopping_list = glazingShoppingListCompile(shopping_list, skylight_list);
+    
     
     // const window = [
     //     {w: 1, h:2}
