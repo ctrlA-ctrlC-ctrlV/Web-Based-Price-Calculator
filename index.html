@@ -633,6 +633,27 @@
         <label class="block">Cost per Double Socket (€)
           <input type="number" step="1" id="cfg_costPerDoubleSocket" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
+        <label class="block">Wall Panel Width (m)
+          <input type="number" step="1" id="cfg_wallPanelWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Wall Panel Height (m)
+          <input type="number" step="1" id="cfg_wallPanelHeight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Wall Panel (€/board)
+          <input type="number" step="1" id="cfg_costPerWallPanel" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Wall Panel Waste Percentage (%)
+          <input type="number" step="1" id="cfg_wastePercentageWallPanel" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Skim Cover (m² per unit)
+          <input type="number" step="1" id="cfg_coverPerSkimUnit" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Cost per Skim Unit (€/unit)
+          <input type="number" step="1" id="cfg_costPerSkimUnit" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
+        <label class="block">Waste Percentage per Skim Unit (%)
+          <input type="number" step="1" id="cfg_wastePercentageSkim" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        </label>
         <label class="block">Plasterboard Width (m)
           <input type="number" step="1" id="cfg_plasterboardWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
@@ -645,17 +666,14 @@
         <label class="block">Plasterboard Waste Percentage (%)
           <input type="number" step="1" id="cfg_wastePercentagePlasterboard" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
-        <label class="block">Wall Panel Width (m)
-          <input type="number" step="1" id="cfg_wallPanelWidth" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        <label class="block">Cost per m² - Window (€/m²)
+          <input type="number" step="1" id="cfg_costPerM2Window" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
-        <label class="block">Wall Panel Height (m)
-          <input type="number" step="1" id="cfg_wallPanelHeight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        <label class="block">Cost per m² - External Door (€/m²)
+          <input type="number" step="1" id="cfg_costPerM2ExternalDoor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
-        <label class="block">Cost per Wall Panel (€/board)
-          <input type="number" step="1" id="cfg_costPerWallPanel" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
-        </label>
-        <label class="block">Wall Panel Waste Percentage (%)
-          <input type="number" step="1" id="cfg_wastePercentageWallPanel" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
+        <label class="block">Cost per m² - Roof Window (€/m²)
+          <input type="number" step="1" id="cfg_costPerM2Skylight" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
         </label>
         <label class="block">Cost per m² - Wood Floor (€/m²)
           <input type="number" step="1" id="cfg_costPerWoodFloor" class="number-input mt-1 w-full px-3 py-2 rounded-xl border border-slate-300" />
@@ -707,6 +725,8 @@
       <section class="bg-white rounded-2xl shadow p-4 md:p-6">
         <h2 class="text-xl font-semibold mb-4">Project Cost Summary</h2>
         <div id="project_cost_summary" class="space-y-3"></div>
+        <h2 class="text-xl font-semibold mb-4 mt-4">Shopping List</h2>
+        <div id="shopping_list_summary" class="space-y-3"></div>
       </section>
       
     </main>    
