@@ -927,6 +927,15 @@ function calcCostBreakdown() {
     costBreakDownTable.createRow("plasterboard_norminal_cost", "Plasterboard Norminal Cost", pBoardWasteCosts.norminal_cost.toFixed(2), "€/m²");    
     costBreakDownTable.createRow("plasterboard_actual_cost", "Plasterboard Actual Cost", pBoardWasteCosts.actual_cost.toFixed(2), "€/m²");
     
+    // Glazing Per m² Cost
+    const window_cost = parseFloat(qs('#cfg_costPerM2Window').value) || defaults.costPerM2Window;
+    const external_door_cost = parseFloat(qs('#cfg_costPerM2ExternalDoor').value) || defaults.costPerM2ExternalDoor;
+    const skylight_cost = parseFloat(qs('#cfg_costPerM2Skylight').value) || defaults.costPerM2Skylight;
+
+    costBreakDownTable.createRow("window_cost", "Window Cost", window_cost.toFixed(2), "€/m²"); 
+    costBreakDownTable.createRow("external_door_cost", "External Door Cost", external_door_cost.toFixed(2), "€/m²"); 
+    costBreakDownTable.createRow("skylight_cost", "Roof Window Cost", skylight_cost.toFixed(2), "€/m²"); 
+    
     // Wood Floor Per m² Cost
     const woodFloorNominalCost = parseFloat(qs('#cfg_costPerWoodFloor').value) || defaults.costPerWoodFloor;
     const woodFloor_waste = parseFloat(qs('#cfg_wastePercentageWoodFloor').value) || defaults.wastePercentageWoodFloor;
