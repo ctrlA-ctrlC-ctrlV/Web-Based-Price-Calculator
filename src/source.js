@@ -1348,37 +1348,7 @@ function shoppingListCompute(){
 
     // Calculating Number of Window
     const window_list = qs('#windowsList');
-    const external_door_list = qs('#EXDoorsList');
-    const skylight_list = qs('#skylightList');
-
-    // let window_shoppinglist = [];
-
-    // [...window_list.children].forEach(row => {
-    //     const wEl = row.querySelector('[data-field="width"]');
-    //     const hEl = row.querySelector('[data-field="height"]');
-    //     if (!wEl || !hEl) return;
-
-    //     const w = parseFloat(wEl.value) || 0;
-    //     const h = parseFloat(hEl.value) || 0;
-
-    //     window_shoppinglist = [...window_shoppinglist, {width:w, height:h}];
-    // });
-
-    // if (window_shoppinglist.length > 0 ) {
-    //     let i = 1;
-
-    //     window_shoppinglist.forEach(row => {
-    //         const name = "Window " + i;
-    //         shopping_list_old.Window = `${row.width}&times${row.height}`;
-    //         shopping_list = [...shopping_list, {name:name, value: `${row.width}m &times ${row.height}m`}]
-    //         i++;
-    //     })
-    // }
-    
-    
-    // const window = [
-    //     {w: 1, h:2}
-    // ]
+    shopping_list = glazingShoppingListCompile(shopping_list, window_list, "Window");
 
     // Calculating Number of Floor Unites
     const floor_type = qs('#floor_type').value;
