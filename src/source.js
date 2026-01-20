@@ -1256,7 +1256,7 @@ function shoppingListCompute(){
     const costBreakDownTable = calcCostBreakdown();
 
     const shopping_list_old = new Object;
-    const shopping_list = [];
+    let shopping_list = [];
 
     // Calculating Number of OSB Unites
     const total_area = costBreakDownTable.getCellByName("total_wall_area", "amount");
@@ -1270,77 +1270,76 @@ function shoppingListCompute(){
     const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
     const numOfClad = Math.ceil(outer_area / clad_cover_area);
     shopping_list_old.Cladding = numOfClad;
-    shopping_list.push({name: "Cladding", value: numOfClad});
-    // shopping_list = [...shopping_list, {name: "Cladding", value: numOfClad}];
+    shopping_list = [...shopping_list, {name: "Cladding", value: numOfClad}];
 
     // Calculating Number of Toilet Unites
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
     const bath2_amt = Number(qs('#bathroom_2').value) || 0;
     const numOfToilet = bath1_amt + bath2_amt;    
     shopping_list_old.Toilet = numOfToilet;
-    shopping_list.push({name: "Toilet", value: numOfToilet});
-    // shopping_list = [...shopping_list, {name: "Toilet", value: numOfToilet}];
+    // shopping_list.push({name: "Toilet", value: numOfToilet});
+    shopping_list = [...shopping_list, {name: "Toilet", value: numOfToilet}];
 
     // Calculating Number of Sink Unites
     const numOfSink = numOfToilet;
     shopping_list_old.Sink = numOfSink;
-    shopping_list.push({name: "Sink", value: numOfSink});
-    // shopping_list = [...shopping_list, {name: "Sink", value: numOfSink}];
+    // shopping_list.push({name: "Sink", value: numOfSink});
+    shopping_list = [...shopping_list, {name: "Sink", value: numOfSink}];
 
     // Calculating Number of Under Sink Heater Unites
     const numOfUndersink_heater = bath1_amt;
     shopping_list_old.Undersink_Heater = numOfUndersink_heater;
-    shopping_list.push({name: "Undersink", value: numOfUndersink_heater});
-    // shopping_list = [...shopping_list, {name: "Undersink Heater", value: numOfUndersink_heater}];
+    // shopping_list.push({name: "Undersink", value: numOfUndersink_heater});
+    shopping_list = [...shopping_list, {name: "Undersink Heater", value: numOfUndersink_heater}];
 
     // Calculating Number of Shower Unites
     const numOfShower = bath2_amt;
     shopping_list_old.Shower = numOfShower;
-    shopping_list.push({name: "Shower", value: numOfShower});
-    // shopping_list = [...shopping_list, {name: "Shower", value: numOfShower}];
+    // shopping_list.push({name: "Shower", value: numOfShower});
+    shopping_list = [...shopping_list, {name: "Shower", value: numOfShower}];
     
 
     // Calculating Number of Electric Boiler Unites
     const numOfElecBoiler = bath2_amt;
     shopping_list_old.Electric_Boiler = numOfElecBoiler;
-    shopping_list.push({name: "Electric Boiler", value: numOfElecBoiler});
-    // shopping_list = [...shopping_list, {name: "Electric Boiler", value: numOfElecBoiler}];
+    // shopping_list.push({name: "Electric Boiler", value: numOfElecBoiler});
+    shopping_list = [...shopping_list, {name: "Electric Boiler", value: numOfElecBoiler}];
     
 
     // Calculating Number of Light Switch Unites
     const numOfSwitch = Number(qs('#switch').value) || 0;
     shopping_list_old.Light_Switch = numOfSwitch;
-    shopping_list.push({name: "Light Switch", value: numOfSwitch});
-    // shopping_list = [...shopping_list, {name: "Light Switch", value: numOfSwitch}];
+    // shopping_list.push({name: "Light Switch", value: numOfSwitch});
+    shopping_list = [...shopping_list, {name: "Light Switch", value: numOfSwitch}];
     
 
     // Calculating Number of Double Socket Unites
     const numOfSocket = Number(qs('#d_socket').value) || 0;
     shopping_list_old.Socket = numOfSocket;
-    shopping_list.push({name: "Socket", value: numOfSocket});
-    // shopping_list = [...shopping_list, {name: "Socket", value: numOfSocket}];
+    // shopping_list.push({name: "Socket", value: numOfSocket});
+    shopping_list = [...shopping_list, {name: "Socket", value: numOfSocket}];
 
     // Calculating Floor Shopping List
     if (qs('#inner_wall_type').value === "inner_wall_type_s") {
         const skim_cover_area = costBreakDownTable.getCellByName("skim_size", "amount");
         const numOfSkim = Math.ceil(total_area / skim_cover_area);
         shopping_list_old.Skim = numOfSkim;
-        shopping_list.push({name: "Skim", value: numOfSkim});
-        // shopping_list = [...shopping_list, {name: "Skim", value: numOfSkim}];
+        // shopping_list.push({name: "Skim", value: numOfSkim});
+        shopping_list = [...shopping_list, {name: "Skim", value: numOfSkim}];
 
         // Calculating Number of Plasterboard Unites
         const plasterboard_cover_area = costBreakDownTable.getCellByName("plasterboard_size", "amount");
         const numOfPlasterboard = Math.ceil(total_area / plasterboard_cover_area);
         shopping_list_old.Plasterboard = numOfPlasterboard;
-        shopping_list.push({name: "Plasterboard", value: numOfPlasterboard});
-        // shopping_list = [...shopping_list, {name: "Plasterboard", value: numOfPlasterboard}];
+        // shopping_list.push({name: "Plasterboard", value: numOfPlasterboard});
+        shopping_list = [...shopping_list, {name: "Plasterboard", value: numOfPlasterboard}];
     } else if (qs('#inner_wall_type').value === "inner_wall_type_p") {
         // Calculating Number of Wall Panel Unites
         const wall_panel_size = costBreakDownTable.getCellByName("wall_panel_size", "amount");
         const numOfWallPanel = Math.ceil(total_area / wall_panel_size);
         shopping_list_old.Wall_Panel = numOfWallPanel;
-        shopping_list.push({name: "Wall Panel", value: numOfWallPanel});
-        // shopping_list = [...shopping_list, {name: "Wall Panel", value: numOfWallPanel}];
+        // shopping_list.push({name: "Wall Panel", value: numOfWallPanel});
+        shopping_list = [...shopping_list, {name: "Wall Panel", value: numOfWallPanel}];
     }
 
     // Calculating Number of Window
@@ -1382,14 +1381,14 @@ function shoppingListCompute(){
         // Number of Wood Floor Unites, each unit cover 1m²
         const numOfWoodFloor = qs('#floor_size').value || 0;
         shopping_list_old.Wood_Floor = numOfWoodFloor;
-        shopping_list.push({name: "Wood Floor", value: numOfWoodFloor});
-        // shopping_list = [...shopping_list, {name: "Wood Floor", value: numOfWoodFloor}];
+        // shopping_list.push({name: "Wood Floor", value: numOfWoodFloor});
+        shopping_list = [...shopping_list, {name: "Wood Floor", value: numOfWoodFloor}];
     } else if (floor_type === "tile") {
         // Number of Tile Floor Unites, each unit cover 1m²
         const numOfTileFloor = qs('#floor_size').value || 0;
         shopping_list_old.Tile_Floor = numOfTileFloor;
-        shopping_list.push({name: "Tile Floor", value: numOfTileFloor});
-        // shopping_list = [...shopping_list, {name: "Tile Floor", value: numOfTileFloor}];
+        // shopping_list.push({name: "Tile Floor", value: numOfTileFloor});
+        shopping_list = [...shopping_list, {name: "Tile Floor", value: numOfTileFloor}];
     }
 
     // Calculating Number of Extra
@@ -1417,8 +1416,8 @@ function shoppingListCompute(){
                 // Number of Concrete Foundation
                 const foundation_area = qs('[data-field="area"]', row)?.value || 0;
                 shopping_list_old.Concrete_Foundation = foundation_area;
-                shopping_list.push({name: "Concrete Foundation", value: foundation_area});
-                // shopping_list = [...shopping_list, {name: "Concrete Foundation", value: foundation_area}];
+                // shopping_list.push({name: "Concrete Foundation", value: foundation_area});
+                shopping_list = [...shopping_list, {name: "Concrete Foundation", value: foundation_area}];
             }
         });
     }
