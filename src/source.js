@@ -1045,6 +1045,12 @@ function renderCostBreakdown() {
     c.appendChild(grid);
 }
 
+/**
+ * 
+ * @param {*} list 
+ * @param {number} cost 
+ * @returns {number}
+ */
 function glazingCostCompute(list, cost) {
     let priceSum = 0;
 
