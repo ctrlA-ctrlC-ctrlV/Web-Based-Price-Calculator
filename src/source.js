@@ -1273,7 +1273,7 @@ function glazingShoppingListCompile(shopping_list, glazzing_list) {
             i++;
         })
     }
-    shopping_list.push()
+    return shopping_list
 }
 
 /** @returns {Object} */
@@ -1351,30 +1351,32 @@ function shoppingListCompute(){
     const external_door_list = qs('#EXDoorsList');
     const skylight_list = qs('#skylightList');
 
-    let window_shoppinglist = [];
+    // let window_shoppinglist = [];
 
-    [...window_list.children].forEach(row => {
-        const wEl = row.querySelector('[data-field="width"]');
-        const hEl = row.querySelector('[data-field="height"]');
-        if (!wEl || !hEl) return;
+    // [...window_list.children].forEach(row => {
+    //     const wEl = row.querySelector('[data-field="width"]');
+    //     const hEl = row.querySelector('[data-field="height"]');
+    //     if (!wEl || !hEl) return;
 
-        const w = parseFloat(wEl.value) || 0;
-        const h = parseFloat(hEl.value) || 0;
+    //     const w = parseFloat(wEl.value) || 0;
+    //     const h = parseFloat(hEl.value) || 0;
 
-        window_shoppinglist = [...window_shoppinglist, {width:w, height:h}];
-    });
+    //     window_shoppinglist = [...window_shoppinglist, {width:w, height:h}];
+    // });
 
-    if (window_shoppinglist.length > 0 ) {
-        let i = 1;
+    // if (window_shoppinglist.length > 0 ) {
+    //     let i = 1;
 
-        window_shoppinglist.forEach(row => {
-            const name = "Window " + i;
-            shopping_list_old.Window = `${row.width}&times${row.height}`;
-            shopping_list = [...shopping_list, {name:name, value: `${row.width}m &times ${row.height}m`}]
-            i++;
-        })
-    }
-
+    //     window_shoppinglist.forEach(row => {
+    //         const name = "Window " + i;
+    //         shopping_list_old.Window = `${row.width}&times${row.height}`;
+    //         shopping_list = [...shopping_list, {name:name, value: `${row.width}m &times ${row.height}m`}]
+    //         i++;
+    //     })
+    // }
+    shopping_list = glazingShoppingListCompile(shopping_list, window_list);
+    shopping_list = glazingShoppingListCompile(shopping_list, external_door_list);
+    shopping_list = glazingShoppingListCompile(shopping_list, skylight_list);
     
     // const window = [
     //     {w: 1, h:2}
