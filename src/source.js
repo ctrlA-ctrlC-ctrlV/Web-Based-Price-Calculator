@@ -4,29 +4,29 @@ const defaults = {
     /**
      * Pricing Defaults 
      */
-    baseRatePerM2: 1200,       // base build €/m²
-    fixedCharge: 6000,
+    baseRatePerM2: 1038,       // base build €/m²
+    fixedCharge: 5190,
     height: 2.4,
-    cladRate: 80,
-    bathTypeOneCharge: 2500,
-    bathTypeTwoCharge: 4500,
-    windowCharge: 500,
-    windowRate: 400,
-    exDoorCharge: 500,
-    exDoorRate: 400,
-    skylightCharge: 900,
-    skylightRate: 750,
-    switch: 50,
-    doubleSocket: 60,
-    innerDoorChar: 500,
-    innerWallType: { none: 0, inner_wall_type_p: 200, inner_wall_type_s:300 },
-    floor: { none: 0, wooden: 40, tile: 60},
+    cladRate: 69.2,
+    bathTypeOneCharge: 2162.5,
+    bathTypeTwoCharge: 3892.5,
+    windowCharge: 432.5,
+    windowRate: 346,
+    exDoorCharge: 432,
+    exDoorRate: 345.6,
+    skylightCharge: 777.6,
+    skylightRate: 648,
+    switch: 43.2,
+    doubleSocket: 51.84,
+    innerDoorChar: 432,
+    innerWallType: { none: 0, inner_wall_type_p: 172.8, inner_wall_type_s:259.2 },
+    floor: { none: 0, wooden: 34.6, tile: 51.84},
     deliveryFreeKm: 30,
     deliveryRatePerKm: 2.2,    // €/km beyond free radius
-    ex_EPSInstRate: 40,
-    ex_renderRate: 120,
-    ex_steelDoorCharge: 500,
-    ex_concreteFoundationRate: 200,
+    ex_EPSInstRate: 34.6,
+    ex_renderRate: 103.7,
+    ex_steelDoorCharge: 432,
+    ex_concreteFoundationRate: 172.8,
     vatPct: 13.5,
     discountPct: 0,
 
@@ -709,9 +709,6 @@ function compute() {
 
     // Calculation of extra
     const { cost: extrasCost, lines: extraLines } = getExtras();
-    //const ex_espCost = EPSInsulation * defaults.ex_ESPInstRate;
-    //const ex_renderCost = renderFinish * defaults.ex_renderRate;
-    //const ex_steelDoorCost = steelDoor * defaults.ex_steelDoorCharge;
 
     // Total Calculation
     let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost;
@@ -722,9 +719,9 @@ function compute() {
     const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
     const discountAmt = appliedDiscountPct;
 
-    const subnet = subtotal - discountAmt;
-    const vat = vatPct > 0 ? subnet * (vatPct / 100) : 0;
-    const net = subnet - vat;
+    const net = subtotal - discountAmt;
+    const vat = vatPct > 0 ? net * (vatPct / 100) : 0;
+    //const net = subnet + vat;
     const total = fmtNum(net + vat, 0);
 
     const lines = [
