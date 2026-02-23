@@ -571,8 +571,20 @@
           <h3 class="section-title">DESCRIPTION</h3>
           <ul id="p_lines" class="desc-list text-[13px] leading-relaxed"></ul>
 
+          <!-- Pre VAT -->
+          <div class="mt-8 flex justify-between items-center border-t-2 border-slate-300 pt-4">
+            <span class="quote-heading-2">PRE VAT</span>
+            <span id="p_preVatValue"></span>
+          </div>
+
+          <!-- VAT -->
+          <div class="mt-2 flex justify-between items-center">
+            <span class="quote-heading-2" id="p_vatLabel">VAT</span>
+            <span id="p_vatValue"></span>
+          </div>
+
           <!-- Total -->
-          <div id="p_total" class="mt-8 flex justify-between items-center font-bold text-lg border-t-2 border-slate-300 pt-4">
+          <div id="p_total" class="mt-4 flex justify-between items-center font-bold text-lg border-t-2 border-slate-300 pt-4">
             <span class="quote-heading uppercase">TOTAL</span>
             <span id="p_totalValue"></span>
           </div>

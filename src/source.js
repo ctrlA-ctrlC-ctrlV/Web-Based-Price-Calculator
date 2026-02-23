@@ -741,6 +741,18 @@ function compute() {
 
     renderSummary({ a, lines, subtotal, discountPct: appliedDiscountPct, discountAmt, net, vatPct, vat, total });
     
+    const pPreVatEl = qs('#p_preVatValue');
+    if (pPreVatEl) {
+        pPreVatEl.textContent = fmtCurrency(net);
+    }
+    const pVatLabelEl = qs('#p_vatLabel');
+    if (pVatLabelEl) {
+        pVatLabelEl.textContent = `VAT (${vatPct.toFixed(1)}%)`;
+    }
+    const pVatEl = qs('#p_vatValue');
+    if (pVatEl) {
+        pVatEl.textContent = fmtCurrency(vat);
+    }
     const pTotalEl = qs('#p_totalValue');
     if (pTotalEl) {
         pTotalEl.textContent = fmtCurrency(total);
