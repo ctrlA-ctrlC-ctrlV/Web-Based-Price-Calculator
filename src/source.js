@@ -606,7 +606,7 @@ function addExtra(kind) {
     if (!list) return;
 
     // insure there is only one of ...
-    const singletons = new Set(['eps', 'render', 'steelDoor', 'concreteFoundation']);
+    const singletons = new Set(['eps', 'steelDoor', 'concreteFoundation']);
     if (singletons.has(kind)) {
         const existing = extraRow(kind);
         if (existing) { flashRow(existing); return; }
@@ -614,12 +614,11 @@ function addExtra(kind) {
 
     let node = null;
 
-    if (kind === 'eps' || kind === 'render') {
+    if (kind === 'eps') {
         const tpl = qs('#tpl-extra-perimeter');
         node = tpl.content.firstElementChild.cloneNode(true);
         node.dataset.kind = kind;
-        qs('[data-label]', node).textContent =
-        kind === 'eps' ? '100mm EPS insulation' : 'Render finish';
+        qs('[data-label]', node).textContent = '100mm EPS insulation';
 
         const areaEl = qs('[data-field="area"]', node);
         const updateLen = () => { areaEl.value = perimeterM2().toFixed(2); compute(); };
@@ -684,14 +683,12 @@ function getExtras() {
 
     [...list.children].forEach(row => {
         const kind = row.dataset.kind;
-        if (kind === 'eps' || kind === 'render') {
+        if (kind === 'eps') {
             const len = perimeterM2(); // locked to perimeter
-            const rate = (kind === 'eps')
-                ? (parseFloat(qs('#cfg_extra_epsInsulation').value) || parseFloat(defaults.ex_EPSInstRate))
-                : (parseFloat(qs('#cfg_extra_renderFinish').value) || parseFloat(defaults.ex_renderRate));
+            const rate = parseFloat(qs('#cfg_extra_epsInsulation').value) || parseFloat(defaults.ex_EPSInstRate);
             const cost = len * rate;
             total += cost;
-            lines.push({ label: `${kind === 'eps' ? '100mm EPS insulation' : 'Render finish'} (${len.toFixed(2)} m perimeter)`, amount: cost });
+            lines.push({ label: `100mm EPS insulation (${len.toFixed(2)} m perimeter)`, amount: cost });
         } else if (kind === 'steelDoor') {
             const qty = qs('[data-field="qty"]', row)?.value || 0;
             const unit = parseFloat(qs('#cfg_extra_steelDoor').value) || parseFloat(defaults.ex_steelDoorCharge);
@@ -722,7 +719,7 @@ function initExtrasUi() {
   if (!addBtn || !picker) return;
 
   // disable options for singletons already present
-  ['eps','render','steelDoor'].forEach(k => {
+  ['eps','steelDoor'].forEach(k => {
     if (extraRow(k)) setOptionDisabled(k, true);
   });
 
@@ -1196,6 +1193,13 @@ function projectCostCompute() {
     const clad_total_Cost = clad_area * clad_actual_cost;
     projectCostTable.createRow("clad_total_Cost", "Plastic Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
 
+    // Calculating Rendering Cost
+    const renderingRow = extFinishRow('rendering');
+    const rendering_area = renderingRow ? (parseFloat(qs('[data-field="area"]', renderingRow)?.value) || 0) : 0;
+    const render_actual_cost = table.getCellByName("render_actual_cost", "amount");
+    const render_total_cost = rendering_area * render_actual_cost;
+    projectCostTable.createRow("render_total_cost", "Rendering Total Cost", render_total_cost.toFixed(2), "€");
+
     // Calculating Toilet Cost
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
     const bath2_amt = Number(qs('#bathroom_2').value) || 0;
@@ -1308,12 +1312,6 @@ function projectCostCompute() {
                 const eps_actual_cost = table.getCellByName("eps_actual_cost", "amount");
                 const eps_total_cost = eps_actual_cost * insulation_area;
                 projectCostTable.createRow("eps_total_cost", "EPS Total Cost", eps_total_cost.toFixed(2), "€");
-            } else if (kind === 'render'){
-                // Render cost
-                const render_area = table.getCellByName("outer_area", "amount");
-                const render_actual_cost = table.getCellByName("render_actual_cost", "amount");
-                const render_total_cost = render_actual_cost * render_area;
-                projectCostTable.createRow("render_total_cost", "Render Total Cost", render_total_cost.toFixed(2), "€");
             } else if (kind === 'concreteFoundation') {
                 // Concrete Foundation Cost
                 const foundation_area = qs('[data-field="area"]', row)?.value || 0;
@@ -1402,6 +1400,15 @@ function shoppingListCompute(){
     const numOfClad = Math.ceil(outer_area / clad_cover_area);
     shopping_list = [...shopping_list, {name: "Plastic Cladding", value: numOfClad}];
 
+    // Calculating Number of Rendering Unites
+    const renderFinishRow = extFinishRow('rendering');
+    if (renderFinishRow) {
+        const render_cover_area = costBreakDownTable.getCellByName("render_size", "amount");
+        const renderArea = parseFloat(qs('[data-field="area"]', renderFinishRow)?.value) || 0;
+        const numOfRender = renderArea > 0 ? Math.ceil(renderArea / render_cover_area) : 0;
+        shopping_list = [...shopping_list, {name: "Render", value: numOfRender}];
+    }
+
     // Calculating Number of Toilet Unites
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
     const bath2_amt = Number(qs('#bathroom_2').value) || 0;
@@ -1488,11 +1495,6 @@ function shoppingListCompute(){
                 const eps_cover_area = costBreakDownTable.getCellByName("eps_size", "amount");
                 const numOfEps = Math.ceil(outer_area / eps_cover_area);
                 shopping_list = [...shopping_list, {name: "EPS", value: numOfEps}];
-            } else if (kind === 'render'){
-                // Number of Render Unites
-                const render_cover_area = costBreakDownTable.getCellByName("render_size", "amount");
-                const numOfRender = Math.ceil(outer_area / render_cover_area);
-                shopping_list = [...shopping_list, {name: "Render", value: numOfRender}];
             } else if (kind === 'concreteFoundation') {
                 // Number of Concrete Foundation
                 const foundation_area = qs('[data-field="area"]', row)?.value || 0;
@@ -1689,8 +1691,6 @@ function updateUrlParams() {
             const kind = row.dataset.kind;
             if (kind === 'eps'){
                 lines.push('eps');
-            } else if (kind === 'render') {
-                lines.push('render');
             } else if (kind === 'steelDoor') {
                 const qty = qs('[data-field="qty"]', row)?.value || 0;
                 lines.push(`steelDoor-${qty}`);
@@ -1928,8 +1928,14 @@ function loadFromUrlParams() {
             tokens.forEach(token => {
 
                 // simple toggles
-                if (token === 'eps' || token === 'render') {
+                if (token === 'eps') {
                     addExtra(token);
+                    return;
+                }
+
+                // backward compat: old URLs with 'render' in extras → add as External Finish rendering
+                if (token === 'render') {
+                    addExtFinish('rendering');
                     return;
                 }
 
