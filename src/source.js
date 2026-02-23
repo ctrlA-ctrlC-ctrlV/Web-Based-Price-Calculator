@@ -8,6 +8,7 @@ const defaults = {
     fixedCharge: 5190,
     height: 2.4,
     cladRate: 69.2,
+    metalCladRate: 86.4,
     bathTypeOneCharge: 2162.5,
     bathTypeTwoCharge: 3892.5,
     windowCharge: 432.5,
@@ -484,6 +485,99 @@ function addSkylight(prefill = { width: '', height: '' }) {
 }
 //------------------------------- End of Skylight Module ------------------------------------
 
+// ------------------------------- Start of External Finish Module -------------------------------
+const EXT_FINISH_TYPES = {
+    plasticCladding: 'Plastic Cladding',
+    rendering: 'Rendering',
+    metalCladding: 'Metal Cladding',
+};
+
+function extFinishRow(kind) {
+    return [...(qs('#extFinishList')?.children || [])].find(n => n.dataset.kind === kind) || null;
+}
+
+function setExtFinishOptionDisabled(kind, disabled) {
+    const opt = qs(`#extFinishPicker option[value="${kind}"]`);
+    if (opt) opt.disabled = !!disabled;
+}
+
+function addExtFinish(kind, prefill) {
+    const list = qs('#extFinishList');
+    if (!list) return null;
+
+    if (!EXT_FINISH_TYPES[kind]) return null;
+
+    // each type can only appear once
+    const existing = extFinishRow(kind);
+    if (existing) { flashRow(existing); return null; }
+
+    const tpl = qs('#tpl-extFinish');
+    const node = tpl.content.firstElementChild.cloneNode(true);
+    node.dataset.kind = kind;
+    qs('[data-label]', node).textContent = EXT_FINISH_TYPES[kind];
+
+    const areaEl = qs('[data-field="area"]', node);
+    if (prefill && prefill.area != null) areaEl.value = prefill.area;
+    ['input','change'].forEach(ev => areaEl.addEventListener(ev, compute));
+
+    qs('[data-action="remove"]', node).addEventListener('click', () => {
+        node.remove();
+        setExtFinishOptionDisabled(kind, false);
+        compute();
+    });
+
+    list.appendChild(node);
+    setExtFinishOptionDisabled(kind, true);
+    compute();
+    return node;
+}
+
+function getExtFinish() {
+    const list = qs('#extFinishList');
+    if (!list) return { cost: 0, lines: [] };
+
+    let total = 0;
+    const lines = [];
+
+    [...list.children].forEach(row => {
+        const kind = row.dataset.kind;
+        const area = parseFloat(qs('[data-field="area"]', row)?.value) || 0;
+        let rate = 0;
+
+        if (kind === 'plasticCladding') {
+            rate = parseFloat(qs('#cfg_cladRate').value) || defaults.cladRate;
+        } else if (kind === 'rendering') {
+            rate = parseFloat(qs('#cfg_extra_renderFinish').value) || defaults.ex_renderRate;
+        } else if (kind === 'metalCladding') {
+            rate = parseFloat(qs('#cfg_metalCladRate').value) || defaults.metalCladRate;
+        }
+
+        const cost = area * rate;
+        total += cost;
+        lines.push({ label: `${EXT_FINISH_TYPES[kind]} (${area.toFixed(2)} m\u00b2)`, amount: cost });
+    });
+
+    return { cost: total, lines };
+}
+
+function initExtFinishUi() {
+    const picker = qs('#extFinishPicker');
+    if (!picker) return;
+
+    // disable options for types already present
+    Object.keys(EXT_FINISH_TYPES).forEach(k => {
+        if (extFinishRow(k)) setExtFinishOptionDisabled(k, true);
+    });
+
+    picker.addEventListener('change', () => {
+        const v = picker.value;
+        if (!v) return;
+        addExtFinish(v);
+        picker.selectedIndex = 0;
+    });
+}
+// ------------------------------- End of External Finish Module -------------------------------
+
 // ------------------------------- Start of Extras Module -------------------------------
 // --- helpers
 function extraRow(kind) {
@@ -710,10 +804,13 @@ function compute() {
     // Calculation of extra
     const { cost: extrasCost, lines: extraLines } = getExtras();
 
+    // Calculation of external finish
+    const { cost: extFinishCost, lines: extFinishLines } = getExtFinish();
+
     // Total Calculation
     let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost;
     //let extraSubtotal  = 0;//ex_espCost + ex_renderCost + ex_steelDoorCost;
-    let subtotal = noneExtraSubtotal + extrasCost;
+    let subtotal = noneExtraSubtotal + extrasCost + extFinishCost;
 
     const discountPct = parseFloat(qs('#discountPct').value);
     const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
@@ -727,6 +824,9 @@ function compute() {
     const lines = [
         { label: `Base build (${a.toFixed(2)} m²)`, amount: base },
         { label: `Cladding (${cladSize.toFixed(2)} m²)`, amount: cladCost },
+    ];
+    extFinishLines.forEach(l => lines.push(l));
+    lines.push(
         { label: `Bathrooms`, amount: bathCost },
         { label: `Electrical`, amount: eleCost },
         { label: `Internal doors`, amount: innerDoorCost },
@@ -736,7 +836,7 @@ function compute() {
         { label: `Roof windows`, amount: skylightCost },
         { label: `Flooring`, amount: floorCost },
         { label: deliveryExtraKm > 0 ? `Delivery (${deliveryExtraKm} km beyond ${freeKm} km)` : 'Delivery (within free radius)', amount: deliverCost },
-    ];
+    );
     extraLines.forEach(l => lines.push(l));
 
     renderSummary({ a, lines, subtotal, discountPct: appliedDiscountPct, discountAmt, net, vatPct, vat, total });
@@ -1491,6 +1591,7 @@ function updateUrlParams() {
         ['cfg_extra_renderFinish', 'extra_renderFinish'],
         ['cfg_extra_steelDoor', 'extra_steelDoor'],
         ['cfg_extra_concreteFoundationRate', 'extra_concreteFoundationRate'],
+        ['cfg_metalCladRate', 'metalCladRate'],
         ['cfg_osbWidth', 'osbWidth'],
         ['cfg_osbHeight', 'osbHeight'],
         ['cfg_costPerOsb', 'costPerOsb'],
@@ -1613,6 +1714,19 @@ function updateUrlParams() {
         return {lines: []};
     }
 
+    // External Finish: serialize as "plasticCladding-[area],rendering-[area],..."
+    const extFinishListEl = qs('#extFinishList');
+    if (extFinishListEl) {
+        const efLines = [];
+        [...extFinishListEl.children].forEach(row => {
+            const kind = row.dataset.kind;
+            const area = parseFloat(qs('[data-field="area"]', row)?.value) || 0;
+            efLines.push(`${kind}-${area}`);
+        });
+        if (efLines.length) params.set('extFinish', efLines.join(','));
+        else params.delete('extFinish');
+    }
+
     const newUrl = location.pathname + '?' + params.toString();
     history.replaceState(null, '', newUrl);
 }
@@ -1678,6 +1792,7 @@ function loadFromUrlParams() {
         cfg_extra_renderFinish : 'extra_renderFinish',
         cfg_extra_steelDoor : 'extra_steelDoor',
         cfg_extra_concreteFoundationRate: 'extra_concreteFoundationRate',
+        cfg_metalCladRate: 'metalCladRate',
         cfg_osbWidth: 'osbWidth',
         cfg_osbHeight: 'osbHeight',
         cfg_costPerOsb: 'costPerOsb',
@@ -1869,6 +1984,23 @@ function loadFromUrlParams() {
             });
         }
     }
+
+    // External Finish: parse "plasticCladding-[area],rendering-[area],..."
+    if (params.has('extFinish')) {
+        const tokens = (params.get('extFinish') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const list = qs('#extFinishList');
+        if (list) {
+            list.innerHTML = '';
+            tokens.forEach(token => {
+                const dashIdx = token.lastIndexOf('-');
+                if (dashIdx > 0) {
+                    const kind = token.slice(0, dashIdx).trim();
+                    const area = parseFloat(token.slice(dashIdx + 1).trim()) || 0;
+                    addExtFinish(kind, { area });
+                }
+            });
+        }
+    }
 }
 
 function persistToLocalStorage() {
@@ -1938,6 +2070,18 @@ function persistToLocalStorage() {
         data.skylights = arr;
     }
 
+    // External Finish array: [ {kind: 'plasticCladding', area: 12.5}, ... ]
+    const extFinishListEl = qs('#extFinishList');
+    if (extFinishListEl) {
+        const arr = [];
+        [...extFinishListEl.children].forEach(row => {
+            const kind = row.dataset.kind;
+            const area = parseFloat(qs('[data-field="area"]', row)?.value) || 0;
+            if (kind) arr.push({ kind, area });
+        });
+        data.extFinish = arr;
+    }
+
     localStorage.setItem('gr_calc', JSON.stringify(data));
 }
 
@@ -1950,6 +2094,7 @@ function loadFromLocalStorage() {
             if (id === 'windows') return; // handled separately
             if (id === 'exDoors') return; // handled separately
             if (id === 'skylights') return; // handled separately
+            if (id === 'extFinish') return; // handled separately
             const el = qs('#' + id);
             if (el && val != null) el.value = val;
         });
@@ -1984,6 +2129,15 @@ function loadFromLocalStorage() {
                 if (isFinite(skylights.width) && isFinite(skylights.height)) {
                 addSkylight({ width: skylights.width, height: skylights.height });
                 }
+            });
+        }
+
+        // external finish restore
+        if (Array.isArray(data.extFinish) && data.extFinish.length > 0) {
+            const efList = qs('#extFinishList');
+            if (efList) efList.innerHTML = '';
+            data.extFinish.forEach(ef => {
+                if (ef.kind) addExtFinish(ef.kind, { area: ef.area || 0 });
             });
         }
     } catch (err) {
@@ -2028,6 +2182,17 @@ function buildPrintQuote() {
     }
     const cladding = parseFloat(val('cladding')) || 0;
     if (cladding > 0) addLi('Cladding size', `${fmtNum(cladding)} m²`);
+
+    // 1b) External Finish
+    const efList = qs('#extFinishList');
+    if (efList && efList.children.length) {
+        [...efList.children].forEach(row => {
+            const kind = row.dataset.kind;
+            const area = parseFloat(qs('[data-field="area"]', row)?.value) || 0;
+            const label = EXT_FINISH_TYPES[kind] || kind;
+            if (area > 0) addLi(`External Finish — ${label}`, `${fmtNum(area)} m²`);
+        });
+    }
 
     // 2) Bathrooms
     const b1 = parseFloat(val('bathroom_1')) || 0;
@@ -2143,6 +2308,7 @@ function initDefaults() {
     qs('#cfg_fixedCharge').value = defaults.fixedCharge;
     qs('#cfg_height').value = defaults.height;
     qs('#cfg_cladRate').value = defaults.cladRate;
+    qs('#cfg_metalCladRate').value = defaults.metalCladRate;
     qs('#cfg_bathTypeOneCharge').value = defaults.bathTypeOneCharge;
     qs('#cfg_bathTypeTwoCharge').value = defaults.bathTypeTwoCharge;
     qs('#cfg_switchCharge').value = defaults.switch;
@@ -2304,6 +2470,7 @@ window.addEventListener('beforeprint', buildPrintQuote);
 // Boot
 window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
+    initExtFinishUi();
     initExtrasUi();
     const loadedFromUrl = loadFromUrlParams();
     loadFromLocalStorage(); 
