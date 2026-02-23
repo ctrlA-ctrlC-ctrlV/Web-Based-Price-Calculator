@@ -744,7 +744,6 @@ function compute() {
     // Fetch config panel value
     const baseRate = parseFloat(qs('#cfg_baseRate').value) || defaults.baseRatePerM2;
     const fixedCharge = parseFloat(qs('#cfg_fixedCharge').value) || defaults.fixedCharge;
-    const cladRate = parseFloat(qs('#cfg_cladRate').value) || defaults.cladRate;
     const bathTypeOneCharge = parseFloat(qs('#cfg_bathTypeOneCharge').value) || defaults.bathTypeOneCharge;
     const bathTypeTwoCharge = parseFloat(qs('#cfg_bathTypeTwoCharge').value) || defaults.bathTypeTwoCharge;
     const switchCharge = parseFloat(qs('#cfg_switchCharge').value) || defaults.switch;
@@ -772,7 +771,6 @@ function compute() {
     const defaultDiscountPct = parseFloat(qs('#cfg_discount').value) || defaults.discountPct;
 
     // Fetch Left Inputs
-    const cladSize = parseFloat(qs('#cladding').value) || 0;
     const bathTypeOne = qs('#bathroom_1').value || 0;
     const bathTypeTwo = qs('#bathroom_2').value || 0;
     const eSwitch = qs('#switch').value;
@@ -789,7 +787,6 @@ function compute() {
 
     // Calculation of non extra
     const base = a * baseRate + fixedCharge;
-    const cladCost = cladSize * cladRate;
     const bathCost = bathTypeOne * bathTypeOneCharge + bathTypeTwo * bathTypeTwoCharge ;
     const eleCost = eSwitch * switchCharge + dSocket * doubleSocket;
     const innerDoorCost = innerDoor * innerDoorCharge;
@@ -808,7 +805,7 @@ function compute() {
     const { cost: extFinishCost, lines: extFinishLines } = getExtFinish();
 
     // Total Calculation
-    let noneExtraSubtotal = base + cladCost + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost;
+    let noneExtraSubtotal = base + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost;
     //let extraSubtotal  = 0;//ex_espCost + ex_renderCost + ex_steelDoorCost;
     let subtotal = noneExtraSubtotal + extrasCost + extFinishCost;
 
@@ -823,7 +820,6 @@ function compute() {
 
     const lines = [
         { label: `Base build (${a.toFixed(2)} m²)`, amount: base },
-        { label: `Cladding (${cladSize.toFixed(2)} m²)`, amount: cladCost },
     ];
     extFinishLines.forEach(l => lines.push(l));
     lines.push(
@@ -962,7 +958,7 @@ function calcCostBreakdown() {
     costBreakDownTable.createRow("osb_norminal_cost", "OSB Norminal Cost", osbWastCosts.norminal_cost.toFixed(2), "€/m²");
     costBreakDownTable.createRow("osb_actual_cost", "OSB Actual Cost", osbWastCosts.actual_cost.toFixed(2), "€/m²");
 
-    // Cladding Per m² Calculation
+    // Plastic Cladding Per m² Calculation
     const clad_width = parseFloat(qs('#cfg_claddingBlockWidth').value) || defaults.claddingBlockWidth;
     const clad_height = parseFloat(qs('#cfg_claddingBlockHeight').value) || defaults.claddingBlockHeight;
     const clad_cost = parseFloat(qs('#cfg_costPerCladdingBlock').value) || defaults.costPerCladdingBlock;
@@ -970,9 +966,9 @@ function calcCostBreakdown() {
 
     const clad_area = clad_width * clad_height;
     const cladWasteCosts = wasteCostCalc(clad_area, clad_cost, clad_waste);
-    costBreakDownTable.createRow("clad_size", "Cladding Cover Size", cladWasteCosts.cover_area.toFixed(2), "m²");
-    costBreakDownTable.createRow("clad_norminal_cost", "Cladding Norminal Cost", cladWasteCosts.norminal_cost.toFixed(2), "€/m²");
-    costBreakDownTable.createRow("clad_actual_cost", "Cladding Actual Cost", cladWasteCosts.actual_cost.toFixed(2), "€/m²");
+    costBreakDownTable.createRow("clad_size", "Plastic Cladding Cover Size", cladWasteCosts.cover_area.toFixed(2), "m²");
+    costBreakDownTable.createRow("clad_norminal_cost", "Plastic Cladding Norminal Cost", cladWasteCosts.norminal_cost.toFixed(2), "€/m²");
+    costBreakDownTable.createRow("clad_actual_cost", "Plastic Cladding Actual Cost", cladWasteCosts.actual_cost.toFixed(2), "€/m²");
 
     // Toilet Unit Cost
     const toiletUnitCost = parseFloat(qs('#cfg_costPerToilet').value) || defaults.costPerToilet;
@@ -1098,8 +1094,8 @@ const costBreakdownList = [
     { name: "total_wall_area",              label: "Total Surface Area",          amount: total_wall_area.toFixed(2),                   unit: "m²" },
     { name: "osb_norminal_cost",            label: "OSB Norminal Cost",           amount: osbWastCosts.norminal_cost.toFixed(2),        unit: "€/m²" },
     { name: "osb_actual_cost",              label: "OSB Actual Cost",             amount: osbWastCosts.actual_cost.toFixed(2),          unit: "€/m²" },
-    { name: "clad_norminal_cost",           label: "Cladding Norminal Cost",      amount: cladWasteCosts.norminal_cost.toFixed(2),      unit: "€/m²" },
-    { name: "clad_actual_cost",             label: "Cladding Actual Cost",        amount: cladWasteCosts.actual_cost.toFixed(2),        unit: "€/m²" },
+    { name: "clad_norminal_cost",           label: "Plastic Cladding Norminal Cost",      amount: cladWasteCosts.norminal_cost.toFixed(2),      unit: "€/m²" },
+    { name: "clad_actual_cost",             label: "Plastic Cladding Actual Cost",        amount: cladWasteCosts.actual_cost.toFixed(2),        unit: "€/m²" },
     { name: "toilet_cost",                  label: "Toilet Unite Cost",           amount: toiletUnitCost.toFixed(2),                    unit: "€" },
     { name: "sink_cost",                    label: "Sink Unite Cost",             amount: sinkUnitCost.toFixed(2),                      unit: "€" },
     { name: "undersink_heater_cost",        label: "Undersink Heater Unite Cost", amount: ushUnitCost.toFixed(2),                       unit: "€" },
@@ -1193,11 +1189,12 @@ function projectCostCompute() {
     const osb_total_Cost = total_wall_area * osb_actual_cost;
     projectCostTable.createRow("osb_total_Cost", "OSB Total Cost", osb_total_Cost.toFixed(2), "€");
 
-    // Calculating Cladding Cost
-    const clad_area = Number(qs('#cladding').value || 0);
+    // Calculating Plastic Cladding Cost
+    const plasticCladRow = extFinishRow('plasticCladding');
+    const clad_area = plasticCladRow ? (parseFloat(qs('[data-field="area"]', plasticCladRow)?.value) || 0) : 0;
     const clad_actual_cost = table.getCellByName("clad_actual_cost", "amount");
     const clad_total_Cost = clad_area * clad_actual_cost;
-    projectCostTable.createRow("clad_total_Cost", "Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
+    projectCostTable.createRow("clad_total_Cost", "Plastic Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
 
     // Calculating Toilet Cost
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
@@ -1399,11 +1396,11 @@ function shoppingListCompute(){
     const numOfOSB = Math.ceil(total_area / osb_cover_area);
     shopping_list.push({name: "OSB", value: numOfOSB});
 
-    // Calculating Number of Cladding Unites
+    // Calculating Number of Plastic Cladding Unites
     const outer_area = costBreakDownTable.getCellByName("outer_area", "amount");
     const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
     const numOfClad = Math.ceil(outer_area / clad_cover_area);
-    shopping_list = [...shopping_list, {name: "Cladding", value: numOfClad}];
+    shopping_list = [...shopping_list, {name: "Plastic Cladding", value: numOfClad}];
 
     // Calculating Number of Toilet Unites
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
@@ -1544,8 +1541,7 @@ function updateUrlParams() {
 
     // Plain inputs (left panel + quote details)
     [
-        'width','depth','cladding',
-        'bathroom_1','bathroom_2',
+        'width','depth',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
         'floor_type','floor_size',
@@ -1750,7 +1746,7 @@ function loadFromUrlParams() {
 
     // Plain inputs
     [
-        'width','depth','cladding',
+        'width','depth',
         'bathroom_1','bathroom_2',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
@@ -2008,7 +2004,7 @@ function persistToLocalStorage() {
 
     // Plain inputs (left panel + quote details)
     [
-        'width','depth','cladding',
+        'width','depth',
         'bathroom_1','bathroom_2',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
@@ -2176,12 +2172,10 @@ function buildPrintQuote() {
     const roomArea = Math.max(0, width * depth);
 
     // DESCRIPTION (no prices)
-    // 1) Room size / cladding
+    // 1) Room size
     if (width > 0 && depth > 0) {
         addLi('Gross floor area', `${fmtNum(width)} m × ${fmtNum(depth)} m (${fmtNum(roomArea)} m²)`);
     }
-    const cladding = parseFloat(val('cladding')) || 0;
-    if (cladding > 0) addLi('Cladding size', `${fmtNum(cladding)} m²`);
 
     // 1b) External Finish
     const efList = qs('#extFinishList');
@@ -2412,11 +2406,7 @@ function copyClientLink() {
 }
 
 function updateCladSize(){
-    const width = parseFloat(qs('#width').value) || 0;
-    const depth = parseFloat(qs('#depth').value) || 0;
-    const height = parseFloat(qs('#cfg_height').value) || defaults.height;
-    const totArea = parseFloat((width+depth)*2*height).toFixed(2)
-    qs('#cladding').value = width > 0 && depth > 0 ? (totArea) : 0;
+    // No longer needed — plastic cladding is now managed via External Finish section
 }
 
 function ensureAtLeastOneWindowRow() {
