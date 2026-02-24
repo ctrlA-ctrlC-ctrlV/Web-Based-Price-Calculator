@@ -8,7 +8,7 @@ const defaults = {
     fixedCharge: 5190,
     height: 2.4,
     cladRate: 69.2,
-    metalCladRate: 86.4,
+    metalCladRate: 40,
     bathTypeOneCharge: 2162.5,
     bathTypeTwoCharge: 3892.5,
     windowCharge: 432.5,
@@ -38,10 +38,14 @@ const defaults = {
     osbHeight: 2.44,                        //m
     costPerOsb: 18.11,                      //€/board
     wastePercentageOsb: 5,                  //%
-    claddingBlockWidth: 2.9,                //m
-    claddingBlockHeight: 0.222,             //m
+    claddingBlockWidth: 0.222,              //m
+    claddingBlockHeight: 2.9,               //m
     costPerCladdingBlock: 31.43,            //€/board
     wastePercentageCladdingBlock: 17.24,    //%
+    metalCladWidth: .5,                     //m
+    metalCladHeight: 2.43,                  //m
+    costPerMetalCladding: 29.95,            //€/board
+    wastePercentageMetalCladding: 5,        //%
     costPerToilet: 104.95,                  //€
     costPerSink: 96,                        //€
     costPerunderSinkHeater: 160,            //€
@@ -2342,6 +2346,13 @@ function initDefaults() {
     qs('#cfg_claddingBlockHeight').value = defaults.claddingBlockHeight;
     qs('#cfg_costPerCladdingBlock').value = defaults.costPerCladdingBlock;
     qs('#cfg_wastePercentageCladdingBlock').value = defaults.wastePercentageCladdingBlock;
+    qs('#cfg_metalCladdingWidth').value = defaults.metalCladWidth;
+    qs('#cfg_metalCladdingHeight').value = defaults.metalCladHeight;
+    qs('#cfg_costPerMetalCladding').value = defaults.costPerMetalCladding;
+    qs('#cfg_wastePercentageMetalCladding').value = defaults.wastePercentageMetalCladding;
+    qs('#cfg_coverPerRenderUnit').value = defaults.coverPerRenderUnit;
+    qs('#cfg_costPerRenderUnit').value = defaults.costPerRenderUnit;    
+    qs('#cfg_wastePercentageRender').value = defaults.wastePercentageRender;
     qs('#cfg_costPerToilet').value = defaults.costPerToilet;
     qs('#cfg_costPerSink').value = defaults.costPerSink;
     qs('#cfg_costPerunderSinkHeater').value = defaults.costPerunderSinkHeater;
@@ -2370,10 +2381,7 @@ function initDefaults() {
     qs('#cfg_epsWidth').value = defaults.epsWidth;
     qs('#cfg_epsHeight').value = defaults.epsHeight;
     qs('#cfg_costPerEps').value = defaults.costPerEps;
-    qs('#cfg_wastePercentageEps').value = defaults.wastePercentageEps;
-    qs('#cfg_coverPerRenderUnit').value = defaults.coverPerRenderUnit;
-    qs('#cfg_costPerRenderUnit').value = defaults.costPerRenderUnit;    
-    qs('#cfg_wastePercentageRender').value = defaults.wastePercentageRender;
+    qs('#cfg_wastePercentageEps').value = defaults.wastePercentageEps;    
     qs('#cfg_costPerConcretFoundation').value = defaults.costPerConcretFoundation;
 }
 
