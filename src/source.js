@@ -11,6 +11,7 @@ const defaults = {
     metalCladRate: 30,
     bathTypeOneCharge: 2162.5,
     bathTypeTwoCharge: 3892.5,
+    saunaRoomCharge: 5000,
     windowCharge: 432.5,
     windowRate: 346,
     exDoorCharge: 432,
@@ -51,6 +52,7 @@ const defaults = {
     costPerunderSinkHeater: 160,            //€
     costPerShower: 294.95,                  //€
     costPerElecBoiler: 191.17,              //€
+    costPerSauna: 3000,                     //€
     costPerLightSwitch: 1.65,               //€
     costPerDoubleSocket: 3.55,              //€
     wallPanelWidth: 2.7,                    //m
@@ -2464,6 +2466,7 @@ function initDefaults() {
     qs('#cfg_metalCladRate').value = defaults.metalCladRate;
     qs('#cfg_bathTypeOneCharge').value = defaults.bathTypeOneCharge;
     qs('#cfg_bathTypeTwoCharge').value = defaults.bathTypeTwoCharge;
+    qs('#cfg_saunaRoomCharge').value = defaults.saunaRoomCharge;
     qs('#cfg_switchCharge').value = defaults.switch;
     qs('#cfg_socketCharge').value = defaults.doubleSocket;
     qs('#cfg_internalDoorCharge').value = defaults.innerDoorChar;
