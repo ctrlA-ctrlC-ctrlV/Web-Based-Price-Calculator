@@ -516,15 +516,15 @@ function get_total_outer_wall_area() {
     return (total_outer_wall_area);
 }
 
-function get_largest_wall_area() {
-    const w = parseFloat(qs('#width').value) || 0;
-    const d = parseFloat(qs('#depth').value) || 0;
-    const h = parseFloat(qs('#cfg_height')) || defaults.height;
+// function get_largest_wall_area() {
+//     const w = parseFloat(qs('#width').value) || 0;
+//     const d = parseFloat(qs('#depth').value) || 0;
+//     const h = parseFloat(qs('#cfg_height')) || defaults.height;
 
-    // Largest Wall Area = (Find Who is Larger, Width or Depth?) * Height;
-    const largest_wall_area = Math.max(w,d) * h;
-    return (largest_wall_area);
-}
+//     // Largest Wall Area = (Find Who is Larger, Width or Depth?) * Height;
+//     const largest_wall_area = Math.max(w,d) * h;
+//     return (largest_wall_area);
+// }
 
 function addExtFinish(kind, prefill) {
     const list = qs('#extFinishList');
@@ -542,12 +542,33 @@ function addExtFinish(kind, prefill) {
     qs('[data-label]', node).textContent = EXT_FINISH_TYPES[kind];
 
     const areaEl = qs('[data-field="area"]', node);
-    if (prefill && prefill.area != null) areaEl.value = prefill.area;
+    if (prefill && prefill.area != null) {
+        areaEl.value = prefill.area;
+    } else {
+        const currentCount = list.children.length; // count before appending
+        if (currentCount === 0) {
+            // Only one finish – default to total outer wall area
+            areaEl.value = get_total_outer_wall_area();
+        } else {
+            // More than one finish – default to 0
+            areaEl.value = 0;
+            if (currentCount === 1) {
+                // Reset first finish area back to 0
+                const firstArea = qs('[data-field="area"]', list.children[0]);
+                if (firstArea) firstArea.value = 0;
+            }
+        }
+    }
     ['input','change'].forEach(ev => areaEl.addEventListener(ev, compute));
 
     qs('[data-action="remove"]', node).addEventListener('click', () => {
         node.remove();
         setExtFinishOptionDisabled(kind, false);
+        // If only one finish remains, set its area to total outer wall area
+        if (list.children.length === 1) {
+            const remainingArea = qs('[data-field="area"]', list.children[0]);
+            if (remainingArea) remainingArea.value = get_total_outer_wall_area();
+        }
         compute();
     });
 
