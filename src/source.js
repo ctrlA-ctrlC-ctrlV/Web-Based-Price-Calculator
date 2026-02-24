@@ -758,6 +758,69 @@ function initExtrasUi() {
 }
 // ------------------------------- End of Extras Module -------------------------------
 
+// --- Trade Mode ---
+/**
+ * Compute the final total (incl. VAT) using a specific base rate,
+ * without side-effects on the UI.
+ */
+function computeTotalForRate(overrideBaseRate) {
+    const a = areaM2();
+    const fixedCharge = parseFloat(qs('#cfg_fixedCharge').value) || defaults.fixedCharge;
+    const bathTypeOneCharge = parseFloat(qs('#cfg_bathTypeOneCharge').value) || defaults.bathTypeOneCharge;
+    const bathTypeTwoCharge = parseFloat(qs('#cfg_bathTypeTwoCharge').value) || defaults.bathTypeTwoCharge;
+    const switchCharge = parseFloat(qs('#cfg_switchCharge').value) || defaults.switch;
+    const doubleSocket = parseFloat(qs('#cfg_socketCharge').value) || defaults.doubleSocket;
+    const innerDoorCharge = parseFloat(qs('#cfg_internalDoorCharge').value) || defaults.innerDoorChar;
+    const none = 0;
+    const inner_wall_type_p = parseFloat(qs('#cfg_innerWallPanel').value) || defaults.innerWallType.inner_wall_type_p;
+    const inner_wall_type_s = parseFloat(qs('#cfg_innerWallSnP').value) || defaults.innerWallType.inner_wall_type_s;
+    const internalWallTypes = { none, inner_wall_type_p, inner_wall_type_s };
+    const wooden = parseFloat(qs('#cfg_floorWooden').value) || defaults.floor.wooden;
+    const tile = parseFloat(qs('#cfg_floorTile').value) || defaults.floor.tile;
+    const floorTypes = { none, wooden, tile };
+    const freeKm = parseFloat(qs('#cfg_freeKm').value) || defaults.deliveryFreeKm;
+    const rateKm = parseFloat(qs('#cfg_ratePerKm').value) || defaults.deliveryRatePerKm;
+    const vatPct = parseFloat(qs('#cfg_vat').value) || defaults.vatPct;
+    const defaultDiscountPct = parseFloat(qs('#cfg_discount').value) || defaults.discountPct;
+
+    const bathTypeOne = qs('#bathroom_1').value || 0;
+    const bathTypeTwo = qs('#bathroom_2').value || 0;
+    const eSwitch = qs('#switch').value;
+    const dSocket = qs('#d_socket').value;
+    const innerDoor = qs('#inner_door').value || 0;
+    const innerWallType = qs('#inner_wall_type').value;
+    const innerWallQuan = qs('#wall_quan').value || 0;
+    const floorType = qs('#floor_type').value;
+    const floorSize = qs('#floor_size').value || 0;
+    const distance = parseFloat(qs('#distance').value) || 0;
+
+    const base = a * overrideBaseRate + fixedCharge;
+    const bathCost = bathTypeOne * bathTypeOneCharge + bathTypeTwo * bathTypeTwoCharge;
+    const eleCost = eSwitch * switchCharge + dSocket * doubleSocket;
+    const innerDoorCost = innerDoor * innerDoorCharge;
+    const innerWallCost = internalWallTypes[innerWallType] * innerWallQuan;
+    const windowCost = getWinData();
+    const exDoorCost = getEXDoorData();
+    const skylightCost = getSkylightData();
+    const floorCost = floorTypes[floorType] * floorSize;
+    const deliveryExtraKm = Math.max(0, distance - freeKm);
+    const deliverCost = deliveryExtraKm * rateKm;
+    const { cost: extrasCost } = getExtras();
+    const { cost: extFinishCost } = getExtFinish();
+
+    let subtotal = base + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost + extrasCost + extFinishCost;
+    const discountPct = parseFloat(qs('#discountPct').value);
+    const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
+    const net = subtotal - appliedDiscountPct;
+    const vat = vatPct > 0 ? net * (vatPct / 100) : 0;
+    return Math.round(net + vat);
+}
+
+function isTradeMode() {
+    const toggle = qs('#tradeToggle');
+    return toggle && toggle.checked;
+}
+
 function compute() {
     const fmtNum = (n, dp=2) => Number(n).toFixed(dp).replace(/\.00$/, '');
     
@@ -2346,6 +2409,25 @@ function buildPrintQuote() {
 
     // Notes
     qs('#p_notes').textContent = val('notes') || '';
+
+    // Trade mode: show dual pricing (trade + normal)
+    const tradePricingEl = qs('#p_tradePricing');
+    if (tradePricingEl) {
+        if (isTradeMode()) {
+            const tradeTotal = computeTotalForRate(1000);
+            const normalTotal = computeTotalForRate(1200);
+            qs('#p_tradePriceValue').textContent = fmtCurrency(tradeTotal);
+            qs('#p_normalPriceValue').textContent = fmtCurrency(normalTotal);
+            tradePricingEl.style.display = '';
+            // Hide the standard total row in trade mode
+            const stdTotal = qs('#p_total');
+            if (stdTotal) stdTotal.style.display = 'none';
+        } else {
+            tradePricingEl.style.display = 'none';
+            const stdTotal = qs('#p_total');
+            if (stdTotal) stdTotal.style.display = '';
+        }
+    }
 }
 
 function initDefaults() {
@@ -2512,6 +2594,17 @@ if (qs('#clientLinkBtn')) qs('#clientLinkBtn').addEventListener('click', copyCli
 if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>{
     buildPrintQuote();
     window.print();
+});
+
+// Trade toggle wiring
+if (qs('#tradeToggle')) qs('#tradeToggle').addEventListener('change', () => {
+    const baseRateEl = qs('#cfg_baseRate');
+    if (isTradeMode()) {
+        baseRateEl.value = 1000;
+    } else {
+        baseRateEl.value = 1200;
+    }
+    compute();
 });
 
 // build the print quote just-in-time

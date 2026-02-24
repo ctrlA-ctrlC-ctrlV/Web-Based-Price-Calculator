@@ -79,8 +79,23 @@
           <option value="GBP">£ GBP</option>
         </select>
         <button id="shareBtn" class="px-4 py-2 rounded-xl bg-slate-900 text-white shadow hover:bg-slate-800">Copy internal link</button>
-        <button id="clientLinkBtn" class="px-4 py-2 rounded-xl border border-slate-300 bg-white shadow hover:bg-slate-100">Copy client link</button>
+
+        <!-- Currently client share button is not needed -->
+        <span hidden> 
+          <button id="clientLinkBtn" class="px-4 py-2 rounded-xl border border-slate-300 bg-white shadow hover:bg-slate-100">Copy client link</button>
+        </span>
+
         <button id="printBtn" class="px-4 py-2 rounded-xl border border-slate-300 bg-white shadow hover:bg-slate-100">Print / Save PDF</button>
+
+        <!-- Toggle Button-->
+        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+          <span class="text-sm font-medium text-slate-600">Trade</span>
+          <div class="relative">
+            <input type="checkbox" id="tradeToggle" class="sr-only peer" />
+            <div class="w-10 h-5 bg-slate-300 peer-checked:bg-sky-500 rounded-full transition-colors"></div>
+            <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-5 transition-transform"></div>
+          </div>
+        </label>
       </div>
     </header>
     
@@ -623,6 +638,18 @@
           <div id="p_total" class="mt-4 flex justify-between items-center font-bold text-lg border-t-2 border-slate-300 pt-4">
             <span class="quote-heading uppercase">TOTAL</span>
             <span id="p_totalValue"></span>
+          </div>
+
+          <!-- Trade mode: dual pricing (hidden by default, shown when trade toggle is on) -->
+          <div id="p_tradePricing" style="display:none;">
+            <div class="mt-6 flex justify-between items-center font-bold text-lg border-t-2 border-sky-400 pt-4 text-sky-700">
+              <span class="quote-heading uppercase">TRADE PRICE</span>
+              <span id="p_tradePriceValue"></span>
+            </div>
+            <div class="mt-2 flex justify-between items-center text-base text-slate-500">
+              <span class="quote-heading uppercase">NORMAL PRICE</span>
+              <span id="p_normalPriceValue"></span>
+            </div>
           </div>
 
           <!-- Notes -->
