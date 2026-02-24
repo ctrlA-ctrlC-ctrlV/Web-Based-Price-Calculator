@@ -1423,6 +1423,15 @@ function shoppingListCompute(){
     const numOfClad = Math.ceil(outer_area / clad_cover_area);
     shopping_list = [...shopping_list, {name: "Plastic Cladding", value: numOfClad}];
 
+    // Calculating Number of Metal Cladding Unites
+    const metalCladRow = extFinishRow('metalCladding');
+    if (metalCladRow) {
+        const metal_clad_area = metalCladRow ? (parseFloat(qs('[data-field="area"]', metalCladding)?.value) || 0) : 0;
+        const m_clad_area = costBreakDownTable.getCellByName("m_clad_size", "amount");
+        const numOfMetalClad = m_clad_area > 0 ? Math.ceil(metal_clad_area/m_clad_area) : 0;
+        shopping_list = [...shopping_list, {name: "Metal Cladding", value: numOfMetalClad}];
+    }
+
     // Calculating Number of Rendering Unites
     const renderFinishRow = extFinishRow('rendering');
     if (renderFinishRow) {
