@@ -1704,6 +1704,7 @@ function updateUrlParams() {
         ['cfg_cladRate','cladRate'],
         ['cfg_bathTypeOneCharge','bathTypeOneCharge'],
         ['cfg_bathTypeTwoCharge','bathTypeTwoCharge'],
+        ['cfg_saunaRoomCharge','saunaRoomCharge'],
         ['cfg_switchCharge','switchCharge'],
         ['cfg_socketCharge','socketCharge'],
         ['cfg_internalDoorCharge','internalDoorCharge'],
