@@ -2149,7 +2149,7 @@ function persistToLocalStorage() {
     // Plain inputs (left panel + quote details)
     [
         'width','depth',
-        'bathroom_1','bathroom_2',
+        'bathroom_1','bathroom_2', 'saunaRoom',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
         'floor_type','floor_size',
