@@ -505,6 +505,27 @@ function setExtFinishOptionDisabled(kind, disabled) {
     if (opt) opt.disabled = !!disabled;
 }
 
+function get_total_outer_wall_area() {
+    const w = parseFloat(qs('#width').value) || 0;
+    const d = parseFloat(qs('#depth').value) || 0;
+    const h = parseFloat(qs('#cfg_height')) || defaults.height;
+
+    // Total Outer Wall Area = 2 * (Width * Height + Depth * Height)
+    const total_outer_wall_area = 2 * (w*h + d*h);
+
+    return (total_outer_wall_area);
+}
+
+function get_largest_wall_area() {
+    const w = parseFloat(qs('#width').value) || 0;
+    const d = parseFloat(qs('#depth').value) || 0;
+    const h = parseFloat(qs('#cfg_height')) || defaults.height;
+
+    // Largest Wall Area = (Find Who is Larger, Width or Depth?) * Height;
+    const largest_wall_area = Math.max(w,d) * h;
+    return (largest_wall_area);
+}
+
 function addExtFinish(kind, prefill) {
     const list = qs('#extFinishList');
     if (!list) return null;
