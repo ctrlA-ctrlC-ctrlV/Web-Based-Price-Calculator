@@ -88,14 +88,17 @@
         <button id="printBtn" class="px-4 py-2 rounded-xl border border-slate-300 bg-white shadow hover:bg-slate-100">Print / Save PDF</button>
 
         <!-- Toggle Button-->
-        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-          <span class="text-sm font-medium text-slate-600">Trade</span>
-          <div class="relative">
-            <input type="checkbox" id="tradeToggle" class="sr-only peer" />
-            <div class="w-10 h-5 bg-slate-300 peer-checked:bg-sky-500 rounded-full transition-colors"></div>
-            <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-5 transition-transform"></div>
-          </div>
-        </label>
+        <div class="flex items-center gap-2">
+          <span id="tradeLabel" class="text-sm font-medium text-slate-600">Trade: Off</span>
+          <button
+            id="tradeToggle"
+            role="switch"
+            aria-checked="false"
+            class="relative inline-flex h-8 w-14 items-center rounded-full bg-gray-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
+          >
+            <span class="inline-block h-6 w-6 translate-x-1 rounded-full bg-white shadow-md transition-transform duration-300"></span>
+          </button>
+        </div>
       </div>
     </header>
     

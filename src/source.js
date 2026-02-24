@@ -818,7 +818,7 @@ function computeTotalForRate(overrideBaseRate) {
 
 function isTradeMode() {
     const toggle = qs('#tradeToggle');
-    return toggle && toggle.checked;
+    return toggle && toggle.getAttribute('aria-checked') === 'true';
 }
 
 function compute() {
@@ -2597,9 +2597,18 @@ if (qs('#printBtn')) qs('#printBtn').addEventListener('click', ()=>{
 });
 
 // Trade toggle wiring
-if (qs('#tradeToggle')) qs('#tradeToggle').addEventListener('change', () => {
+if (qs('#tradeToggle')) qs('#tradeToggle').addEventListener('click', () => {
+    const btn = qs('#tradeToggle');
+    const on = btn.getAttribute('aria-checked') === 'true';
+    btn.setAttribute('aria-checked', !on);
+    btn.classList.toggle('bg-indigo-600', !on);
+    btn.classList.toggle('bg-gray-300', on);
+    btn.querySelector('span').classList.toggle('translate-x-7', !on);
+    btn.querySelector('span').classList.toggle('translate-x-1', on);
+    qs('#tradeLabel').textContent = !on ? 'Trade: On' : 'Trade: Off';
+
     const baseRateEl = qs('#cfg_baseRate');
-    if (isTradeMode()) {
+    if (!on) {
         baseRateEl.value = 1000;
     } else {
         baseRateEl.value = 1200;
