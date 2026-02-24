@@ -1211,7 +1211,7 @@ function projectCostCompute() {
 
     // Calculating Metal Cladding Cost
     const metalCladRow = extFinishRow('metalCladding');
-    const metal_clad_area = metalCladRow ? (parseFloat(qs('[data-field="area"]', metalCladding)?.value) || 0) : 0;
+    const metal_clad_area = metalCladRow ? (parseFloat(qs('[data-field="area"]', metalCladRow)?.value) || 0) : 0;
     const metal_clad_actual_cost = table.getCellByName("m_clad_actual_cost", "amount");
     const metal_clad_total_Cost = metal_clad_area * metal_clad_actual_cost;
     projectCostTable.createRow("metal_clad_total_Cost", "Metal Cladding Total Cost", metal_clad_total_Cost.toFixed(2), "€");
@@ -1418,28 +1418,25 @@ function shoppingListCompute(){
     shopping_list.push({name: "OSB", value: numOfOSB});
 
     // Calculating Number of Plastic Cladding Unites
-    const outer_area = costBreakDownTable.getCellByName("outer_area", "amount");
+    const plasticCladdingRow = extFinishRow('plasticCladding');
+    const outer_area = plasticCladdingRow ? (parseFloat(qs('[data-field="area"]', plasticCladdingRow)?.value) || 0) : 0;
     const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
-    const numOfClad = Math.ceil(outer_area / clad_cover_area);
+    const numOfClad = clad_cover_area > 0 ? Math.ceil(outer_area / clad_cover_area) : 0;
     shopping_list = [...shopping_list, {name: "Plastic Cladding", value: numOfClad}];
 
     // Calculating Number of Metal Cladding Unites
     const metalCladRow = extFinishRow('metalCladding');
-    if (metalCladRow) {
-        const metal_clad_area = metalCladRow ? (parseFloat(qs('[data-field="area"]', metalCladding)?.value) || 0) : 0;
-        const m_clad_area = costBreakDownTable.getCellByName("m_clad_size", "amount");
-        const numOfMetalClad = m_clad_area > 0 ? Math.ceil(metal_clad_area/m_clad_area) : 0;
-        shopping_list = [...shopping_list, {name: "Metal Cladding", value: numOfMetalClad}];
-    }
+    const metal_cover_clad_area = metalCladRow ? (parseFloat(qs('[data-field="area"]', metalCladRow)?.value) || 0) : 0;
+    const m_clad_area = costBreakDownTable.getCellByName("m_clad_size", "amount");
+    const numOfMetalClad = m_clad_area > 0 ? Math.ceil(metal_cover_clad_area/m_clad_area) : 0;
+    shopping_list = [...shopping_list, {name: "Metal Cladding", value: numOfMetalClad}];
 
     // Calculating Number of Rendering Unites
     const renderFinishRow = extFinishRow('rendering');
-    if (renderFinishRow) {
-        const render_cover_area = costBreakDownTable.getCellByName("render_size", "amount");
-        const renderArea = parseFloat(qs('[data-field="area"]', renderFinishRow)?.value) || 0;
-        const numOfRender = renderArea > 0 ? Math.ceil(renderArea / render_cover_area) : 0;
-        shopping_list = [...shopping_list, {name: "Render", value: numOfRender}];
-    }
+    const render_cover_area = renderFinishRow ? (parseFloat(qs('[data-field="area"]', renderFinishRow)?.value) || 0) : 0
+    const render_area = costBreakDownTable.getCellByName("render_size", "amount");
+    const numOfRender = render_cover_area > 0 ? Math.ceil(render_cover_area / render_area) : 0;
+    shopping_list = [...shopping_list, {name: "Render", value: numOfRender}];
 
     // Calculating Number of Toilet Unites
     const bath1_amt = Number(qs('#bathroom_1').value) || 0;
