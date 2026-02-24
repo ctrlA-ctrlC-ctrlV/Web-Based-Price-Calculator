@@ -1212,7 +1212,7 @@ function projectCostCompute() {
     // Calculating Metal Cladding Cost
     const metalCladRow = extFinishRow('metalCladding');
     const metal_clad_area = metalCladRow ? (parseFloat(qs('[data-field="area"]', metalCladding)?.value) || 0) : 0;
-    const metal_clad_actual_cost = table.getCellByName("clad_actual_cost", "amount");
+    const metal_clad_actual_cost = table.getCellByName("m_clad_actual_cost", "amount");
     const metal_clad_total_Cost = metal_clad_area * metal_clad_actual_cost;
     projectCostTable.createRow("metal_clad_total_Cost", "Metal Cladding Total Cost", metal_clad_total_Cost.toFixed(2), "€");
 
