@@ -2338,8 +2338,10 @@ function buildPrintQuote() {
     // 2) Bathrooms
     const b1 = parseFloat(val('bathroom_1')) || 0;
     const b2 = parseFloat(val('bathroom_2')) || 0;
+    const s = parseFloat(val('saunaRoom')) || 0;
     if (b1 > 0) addLi('Toilet + Sink (qty)', fmtNum(b1, 0));
     if (b2 > 0) addLi('Toilet + Sink + Shower (qty)', fmtNum(b2, 0));
+    if (s > 0) addLi('Sauna Room (qty)', fmtNum(s, 0));
 
     // 3) Electrics
     const sw = parseFloat(val('switch')) || 0;
