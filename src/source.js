@@ -491,7 +491,7 @@ function addSkylight(prefill = { width: '', height: '' }) {
 
 // ------------------------------- Start of External Finish Module -------------------------------
 const EXT_FINISH_TYPES = {
-    plasticCladding: 'Plastic Cladding',
+    plasticCladding: 'Composite Cladding',
     rendering: 'Rendering',
     metalCladding: 'Metal Cladding',
 };
@@ -967,9 +967,9 @@ function calcCostBreakdown() {
 
     const clad_area = clad_width * clad_height;
     const cladWasteCosts = wasteCostCalc(clad_area, clad_cost, clad_waste);
-    costBreakDownTable.createRow("clad_size", "Plastic Cladding Cover Size", cladWasteCosts.cover_area.toFixed(2), "m²");
-    costBreakDownTable.createRow("clad_norminal_cost", "Plastic Cladding Norminal Cost", cladWasteCosts.norminal_cost.toFixed(2), "€/m²");
-    costBreakDownTable.createRow("clad_actual_cost", "Plastic Cladding Actual Cost", cladWasteCosts.actual_cost.toFixed(2), "€/m²");
+    costBreakDownTable.createRow("clad_size", "Composite Cladding Cover Size", cladWasteCosts.cover_area.toFixed(2), "m²");
+    costBreakDownTable.createRow("clad_norminal_cost", "Composite Cladding Norminal Cost", cladWasteCosts.norminal_cost.toFixed(2), "€/m²");
+    costBreakDownTable.createRow("clad_actual_cost", "Composite Cladding Actual Cost", cladWasteCosts.actual_cost.toFixed(2), "€/m²");
 
     // Metal Cladding Per m² Calculation
     const m_clad_width = parseFloat(qs('#cfg_metalCladdingWidth').value) || defaults.metalCladWidth;
@@ -1107,8 +1107,8 @@ const costBreakdownList = [
     { name: "total_wall_area",              label: "Total Surface Area",          amount: total_wall_area.toFixed(2),                   unit: "m²" },
     { name: "osb_norminal_cost",            label: "OSB Norminal Cost",           amount: osbWastCosts.norminal_cost.toFixed(2),        unit: "€/m²" },
     { name: "osb_actual_cost",              label: "OSB Actual Cost",             amount: osbWastCosts.actual_cost.toFixed(2),          unit: "€/m²" },
-    { name: "clad_norminal_cost",           label: "Plastic Cladding Norminal Cost",      amount: cladWasteCosts.norminal_cost.toFixed(2),      unit: "€/m²" },
-    { name: "clad_actual_cost",             label: "Plastic Cladding Actual Cost",        amount: cladWasteCosts.actual_cost.toFixed(2),        unit: "€/m²" },
+    { name: "clad_norminal_cost",           label: "Composite Cladding Norminal Cost",      amount: cladWasteCosts.norminal_cost.toFixed(2),      unit: "€/m²" },
+    { name: "clad_actual_cost",             label: "Composite Cladding Actual Cost",        amount: cladWasteCosts.actual_cost.toFixed(2),        unit: "€/m²" },
     { name: "toilet_cost",                  label: "Toilet Unite Cost",           amount: toiletUnitCost.toFixed(2),                    unit: "€" },
     { name: "sink_cost",                    label: "Sink Unite Cost",             amount: sinkUnitCost.toFixed(2),                      unit: "€" },
     { name: "undersink_heater_cost",        label: "Undersink Heater Unite Cost", amount: ushUnitCost.toFixed(2),                       unit: "€" },
@@ -1207,7 +1207,7 @@ function projectCostCompute() {
     const clad_area = plasticCladRow ? (parseFloat(qs('[data-field="area"]', plasticCladRow)?.value) || 0) : 0;
     const clad_actual_cost = table.getCellByName("clad_actual_cost", "amount");
     const clad_total_Cost = clad_area * clad_actual_cost;
-    projectCostTable.createRow("clad_total_Cost", "Plastic Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
+    projectCostTable.createRow("clad_total_Cost", "Composite Cladding Total Cost", clad_total_Cost.toFixed(2), "€");
 
     // Calculating Metal Cladding Cost
     const metalCladRow = extFinishRow('metalCladding');
@@ -1422,7 +1422,7 @@ function shoppingListCompute(){
     const outer_area = plasticCladdingRow ? (parseFloat(qs('[data-field="area"]', plasticCladdingRow)?.value) || 0) : 0;
     const clad_cover_area = costBreakDownTable.getCellByName("clad_size", "amount");
     const numOfClad = clad_cover_area > 0 ? Math.ceil(outer_area / clad_cover_area) : 0;
-    shopping_list = [...shopping_list, {name: "Plastic Cladding", value: numOfClad}];
+    shopping_list = [...shopping_list, {name: "Composite Cladding", value: numOfClad}];
 
     // Calculating Number of Metal Cladding Unites
     const metalCladRow = extFinishRow('metalCladding');
