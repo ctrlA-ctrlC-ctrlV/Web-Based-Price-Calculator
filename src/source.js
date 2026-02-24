@@ -8,7 +8,7 @@ const defaults = {
     fixedCharge: 5190,
     height: 2.4,
     cladRate: 69.2,
-    metalCladRate: 40,
+    metalCladRate: 30,
     bathTypeOneCharge: 2162.5,
     bathTypeTwoCharge: 3892.5,
     windowCharge: 432.5,
@@ -25,7 +25,7 @@ const defaults = {
     deliveryFreeKm: 30,
     deliveryRatePerKm: 2.2,    // €/km beyond free radius
     ex_EPSInstRate: 34.6,
-    ex_renderRate: 103.7,
+    ex_renderRate: 85,
     ex_steelDoorCharge: 432,
     ex_concreteFoundationRate: 172.8,
     vatPct: 13.5,
@@ -42,9 +42,9 @@ const defaults = {
     claddingBlockHeight: 2.9,               //m
     costPerCladdingBlock: 31.43,            //€/board
     wastePercentageCladdingBlock: 17.24,    //%
-    metalCladWidth: .5,                     //m
+    metalCladWidth: 1,                      //m
     metalCladHeight: 2.43,                  //m
-    costPerMetalCladding: 29.95,            //€/board
+    costPerMetalCladding: 10,               //€/board
     wastePercentageMetalCladding: 5,        //%
     costPerToilet: 104.95,                  //€
     costPerSink: 96,                        //€
@@ -75,8 +75,8 @@ const defaults = {
     epsHeight: 1.22,                        //m
     costPerEps: 1.82,                       //€/board
     wastePercentageEps: 5,                  //%
-    costPerRenderUnit: 20.74,               //€
-    coverPerRenderUnit: 0.85,               //m²
+    costPerRenderUnit: 20,                  //€
+    coverPerRenderUnit: 1,                  //m²
     wastePercentageRender: 5,               //%
     costPerConcretFoundation: 233.33,       //€/m²
 };
