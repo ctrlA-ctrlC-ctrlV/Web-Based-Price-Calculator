@@ -854,6 +854,7 @@ function compute() {
     const fixedCharge = parseFloat(qs('#cfg_fixedCharge').value) || defaults.fixedCharge;
     const bathTypeOneCharge = parseFloat(qs('#cfg_bathTypeOneCharge').value) || defaults.bathTypeOneCharge;
     const bathTypeTwoCharge = parseFloat(qs('#cfg_bathTypeTwoCharge').value) || defaults.bathTypeTwoCharge;
+    const saunaRoomCharge = parseFloat(qs('#cfg_saunaRoomCharge').value) || defaults.saunaRoomCharge;
     const switchCharge = parseFloat(qs('#cfg_switchCharge').value) || defaults.switch;
     const doubleSocket = parseFloat(qs('#cfg_socketCharge').value) || defaults.doubleSocket;
     const innerDoorCharge = parseFloat(qs('#cfg_internalDoorCharge').value) || defaults.innerDoorChar;
@@ -881,6 +882,7 @@ function compute() {
     // Fetch Left Inputs
     const bathTypeOne = qs('#bathroom_1').value || 0;
     const bathTypeTwo = qs('#bathroom_2').value || 0;
+    const saunaRooms = qs('#saunaRoom').value || 0;
     const eSwitch = qs('#switch').value;
     const dSocket = qs('#d_socket').value;
     const innerDoor = qs('#inner_door').value || 0;
@@ -895,7 +897,8 @@ function compute() {
 
     // Calculation of non extra
     const base = a * baseRate + fixedCharge;
-    const bathCost = bathTypeOne * bathTypeOneCharge + bathTypeTwo * bathTypeTwoCharge ;
+    const saunaRoomsCost = saunaRooms * saunaRoomCharge;
+    const bathCost = bathTypeOne * bathTypeOneCharge + bathTypeTwo * bathTypeTwoCharge + saunaRoomsCost;
     const eleCost = eSwitch * switchCharge + dSocket * doubleSocket;
     const innerDoorCost = innerDoor * innerDoorCharge;
     const innerWallCost = internalWallTypes[innerWallType] * innerWallQuan;
