@@ -979,9 +979,9 @@ function calcCostBreakdown() {
 
     const m_clad_area = m_clad_width * m_clad_height;
     const metalCladWasteCosts = wasteCostCalc(m_clad_area, m_clad_cost, m_clad_waste);
-    costBreakDownTable.createRow("clad_size", "Metal Cladding Cover Size", metalCladWasteCosts.cover_area.toFixed(2), "m²");
-    costBreakDownTable.createRow("clad_norminal_cost", "Metal Cladding Norminal Cost", metalCladWasteCosts.norminal_cost.toFixed(2), "€/m²");
-    costBreakDownTable.createRow("clad_actual_cost", "Metal Cladding Actual Cost", metalCladWasteCosts.actual_cost.toFixed(2), "€/m²");
+    costBreakDownTable.createRow("m_clad_size", "Metal Cladding Cover Size", metalCladWasteCosts.cover_area.toFixed(2), "m²");
+    costBreakDownTable.createRow("m_clad_norminal_cost", "Metal Cladding Norminal Cost", metalCladWasteCosts.norminal_cost.toFixed(2), "€/m²");
+    costBreakDownTable.createRow("m_clad_actual_cost", "Metal Cladding Actual Cost", metalCladWasteCosts.actual_cost.toFixed(2), "€/m²");
     
     // Toilet Unit Cost
     const toiletUnitCost = parseFloat(qs('#cfg_costPerToilet').value) || defaults.costPerToilet;
