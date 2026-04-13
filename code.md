@@ -413,7 +413,7 @@
               <div class="brand-title">QUOTE</div>
             </div>
             <div class="brand-right">
-              <img src="./assets/sdeal-logo.png" alt="SDeal Construction" class="logo" />
+              <img src="./assets/modular_house_logo.png" alt="SDeal Construction" class="logo" />
             </div>
           </div>
 
