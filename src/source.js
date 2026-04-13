@@ -786,7 +786,7 @@ function initExtrasUi() {
  * Compute the final total (incl. VAT) using a specific base rate,
  * without side-effects on the UI.
  */
-function computeTotalForRate(overrideBaseRate) {
+function computeTotalForRate(overrideBaseRate, skipDiscount = false) {
     const a = areaM2();
     const fixedCharge = parseFloat(qs('#cfg_fixedCharge').value) || defaults.fixedCharge;
     const bathTypeOneCharge = parseFloat(qs('#cfg_bathTypeOneCharge').value) || defaults.bathTypeOneCharge;
@@ -834,7 +834,8 @@ function computeTotalForRate(overrideBaseRate) {
     let subtotal = base + bathCost + eleCost + innerDoorCost + innerWallCost + windowCost + exDoorCost + skylightCost + floorCost + deliverCost + extrasCost + extFinishCost;
     const discountPct = parseFloat(qs('#discountPct').value);
     const appliedDiscountPct = isFinite(discountPct) && discountPct >= 0 ? discountPct : defaultDiscountPct;
-    const net = subtotal - appliedDiscountPct;
+    const discountAmt = skipDiscount ? 0 : appliedDiscountPct;
+    const net = subtotal - discountAmt;
     const vat = vatPct > 0 ? net * (vatPct / 100) : 0;
     return Math.round(net + vat);
 }
@@ -2445,7 +2446,7 @@ function buildPrintQuote() {
     if (tradePricingEl) {
         if (isTradeMode()) {
             const tradeTotal = computeTotalForRate(1000);
-            const normalTotal = computeTotalForRate(1200);
+            const normalTotal = computeTotalForRate(1200, true);
             qs('#p_tradePriceValue').textContent = fmtCurrency(tradeTotal);
             qs('#p_normalPriceValue').textContent = fmtCurrency(normalTotal);
             tradePricingEl.style.display = '';
