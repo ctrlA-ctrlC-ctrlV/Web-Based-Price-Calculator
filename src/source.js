@@ -951,7 +951,7 @@ function compute() {
     
     const pPreVatEl = qs('#p_preVatValue');
     if (pPreVatEl) {
-        pPreVatEl.textContent = fmtCurrency(net);
+        pPreVatEl.textContent = fmtCurrency(subtotal);
     }
     const pVatLabelEl = qs('#p_vatLabel');
     if (pVatLabelEl) {
@@ -960,6 +960,16 @@ function compute() {
     const pVatEl = qs('#p_vatValue');
     if (pVatEl) {
         pVatEl.textContent = fmtCurrency(vat);
+    }
+    const pDiscountRow = qs('#p_discountRow');
+    const pDiscountEl = qs('#p_discountValue');
+    if (pDiscountRow && pDiscountEl) {
+        if (discountAmt > 0) {
+            pDiscountEl.textContent = '- ' + fmtCurrency(discountAmt);
+            pDiscountRow.style.display = '';
+        } else {
+            pDiscountRow.style.display = 'none';
+        }
     }
     const pTotalEl = qs('#p_totalValue');
     if (pTotalEl) {
