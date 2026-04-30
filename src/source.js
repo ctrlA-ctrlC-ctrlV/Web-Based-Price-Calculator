@@ -2594,6 +2594,34 @@ function updateCladSize(){
     // No longer needed — plastic cladding is now managed via External Finish section
 }
 
+// When width or depth change, auto-refresh fields derived from them.
+function syncDerivedFromDims() {
+    const w = parseFloat(qs('#width')?.value) || 0;
+    const d = parseFloat(qs('#depth')?.value) || 0;
+
+    // 1) Floor size mirrors the base footprint (w × d)
+    const floorEl = qs('#floor_size');
+    if (floorEl) {
+        const newFloor = (w > 0 && d > 0) ? +(w * d).toFixed(2) : 0;
+        floorEl.value = newFloor;
+    }
+
+    // 2) If there's exactly one External Finish row, keep its area
+    //    locked to the total outer wall area (matches addExtFinish default).
+    const efList = qs('#extFinishList');
+    if (efList && efList.children.length === 1) {
+        const areaEl = qs('[data-field="area"]', efList.children[0]);
+        if (areaEl) areaEl.value = get_total_outer_wall_area();
+    }
+
+    // 3) EPS extra (perimeter-locked) — refresh its area too.
+    const eps = extraRow('eps');
+    if (eps) {
+        const epsArea = qs('[data-field="area"]', eps);
+        if (epsArea) epsArea.value = perimeterM2().toFixed(2);
+    }
+}
+
 function ensureAtLeastOneWindowRow() {
   const list = qs('#windowsList');
   if (!list) return;
@@ -2623,8 +2651,8 @@ function ensureAtLeastOneSkylightRow() {
 
 ['width', 'depth'].forEach(element => {
     const el = qs(`#${element}`);
-    el?.addEventListener('input', updateCladSize);
-    el?.addEventListener('change', updateCladSize);
+    el?.addEventListener('input', syncDerivedFromDims);
+    el?.addEventListener('change', syncDerivedFromDims);
 });
 
 
