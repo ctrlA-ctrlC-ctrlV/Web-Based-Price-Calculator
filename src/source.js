@@ -1694,6 +1694,7 @@ function updateUrlParams() {
     // Plain inputs (left panel + quote details)
     [
         'width','depth',
+        'bathroom_1','bathroom_2','saunaRoom',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
         'floor_type','floor_size',
@@ -1898,7 +1899,7 @@ function loadFromUrlParams() {
     // Plain inputs
     [
         'width','depth',
-        'bathroom_1','bathroom_2',
+        'bathroom_1','bathroom_2','saunaRoom',
         'switch','d_socket',
         'inner_door','inner_wall_type','wall_quan',
         'floor_type','floor_size',
@@ -2666,8 +2667,12 @@ window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
     initExtFinishUi();
     initExtrasUi();
+    // Load localStorage FIRST so cascading compute() calls triggered by
+    // URL-driven addWindow/addEXDoor/addSkylight/addExtra/addExtFinish don't
+    // overwrite persisted fields (e.g. bathrooms) that aren't part of the URL.
+    // URL params still win because loadFromUrlParams runs after and applies last.
+    loadFromLocalStorage();
     const loadedFromUrl = loadFromUrlParams();
-    loadFromLocalStorage(); 
     ensureAtLeastOneWindowRow();
     ensureAtLeastOneEXDoorRow();
     ensureAtLeastOneSkylightRow();           
