@@ -1879,8 +1879,8 @@ function updateUrlParams() {
     history.replaceState(null, '', newUrl);
 }
 
-function loadFromUrlParams() {
-    const params = new URLSearchParams(location.search);
+function loadFromUrlParams(search = location.search) {
+    const params = new URLSearchParams(search);
     if (![...params.keys()].length) return false; // nothing to load
 
     const setIf = (id, key = id) => {
@@ -2695,12 +2695,17 @@ window.addEventListener('DOMContentLoaded', () => {
     initDefaults();
     initExtFinishUi();
     initExtrasUi();
+    // Snapshot the query string now: restoring localStorage below fires
+    // compute() -> updateUrlParams(), which rewrites the URL from the DOM
+    // before URL params are applied (erasing e.g. 'extras' from the address
+    // bar on machines with saved state).
+    const initialSearch = location.search;
     // Load localStorage FIRST so cascading compute() calls triggered by
     // URL-driven addWindow/addEXDoor/addSkylight/addExtra/addExtFinish don't
     // overwrite persisted fields (e.g. bathrooms) that aren't part of the URL.
     // URL params still win because loadFromUrlParams runs after and applies last.
     loadFromLocalStorage();
-    const loadedFromUrl = loadFromUrlParams();
+    const loadedFromUrl = loadFromUrlParams(initialSearch);
     ensureAtLeastOneWindowRow();
     ensureAtLeastOneEXDoorRow();
     ensureAtLeastOneSkylightRow();           
